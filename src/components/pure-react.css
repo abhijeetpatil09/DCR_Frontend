@@ -1,0 +1,109 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: #3a3cbb;
+  background-image: url('../Assets/DCR-background.png');
+}
+
+.header,
+.footer {
+  display: flex;
+  background: #9ea2e4;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  color: #4749a7;
+  text-align: center;
+}
+
+.icon {
+  padding: 10px;
+}
+
+.icon:hover {
+  cursor: pointer;
+}
+
+.header-title {
+  margin: auto;
+  font-size: larger;
+  align-items: center;
+  padding-left: 10%;
+}
+
+
+.container {
+  display: flex;
+  flex: 1;
+}
+
+.drawer {
+  background: #d8dcd6;
+  width: 0px;
+  transition: width 0.7s;
+}
+
+.opened {
+  width: 240px;
+}
+
+.main {
+  flex: 1;
+  background: #f7f5f5;
+  /* background-image: url('../Assets/DCR-background.png'); */
+}
+
+.headerleft,
+.footerleft {
+  display: flex;
+  background: #9ea2e4;
+  height: 50px;
+  align-items: center;
+  justify-content: left;
+  color: #fc86aa;
+  margin-right: 30px;
+}
+
+.home {
+  /* background-color: azure; */
+  background-image: url('../Assets/DCR-background.png');
+  background-size: 100%;
+  justify-content: center;
+  text-align: left;
+  margin-left: 10px;
+  min-height: 100%;
+}
+
+.homecenter {
+  /* background-color: azure; */
+  background-image: url('../Assets/DCR-background.png');
+  background-size: 100%;
+  justify-content: center;
+  /* text-align: center; */
+  align-items: center;
+  min-height: 100%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.active {
+  color: #fc86aa;
+}
+
+.hoonartek-title {
+  font-family: Arial, sans-serif;
+  font-size: 48px;
+  color:#f7f5f5
+}
+
+.my-component {
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* other background styles */
+}
