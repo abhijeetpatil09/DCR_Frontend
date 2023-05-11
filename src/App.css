@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
 }
@@ -42,3 +43,12 @@
   background-repeat: no-repeat;
   /* other background styles */
 }
+
+/* 
+.Toastify__toast--success {
+  background-color: #004236 !important;
+  text-align: center;
+  font-size: 16px;
+  color: #FFFFFF !important;
+  font-weight: bold !important;
+} */

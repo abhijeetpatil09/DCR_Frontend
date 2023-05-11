@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
-import ReactDOM from "react-dom";
+import React from 'react';
+import { ToastContainer } from 'react-toastify';
+
 import Login from "./components/Login";
 import Queryform from './components/Queryform';
 import Querystatus from './components/Querystatus';
-import PureReact from "./components/PureReact";
+import Sidebar from "./components/CommonComponent/Sidebar";
 import Requestinfo from './components/Requestinfo';
 import Home from './components/Home';
 import S3fileupload from './components/S3fileupload';
 import { BrowserRouter, Routes, Route  } from 'react-router-dom';
-import myBackgroundImage from "./Assets/DCR-background.png";
 import Publisherform from './components/Publisherform';
-import SnowflakeDataFetcher from './components/Py';
+
+import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-
-
   return (
     <BrowserRouter>
         <div>
-          <PureReact>
+          <Sidebar>
             <Routes>
               <Route path='/' element = {<Login/>} />
               <Route path='/home' element = {<Home/>} />
@@ -29,18 +28,10 @@ function App() {
               <Route path='/publisherform' element = {<Publisherform/>} />
               <Route path='/s3fileupload' element = {<S3fileupload/>} />
             </Routes>
-          </PureReact>
-          {/* <div>
-      <h1>Snowflake Data Fetcher</h1>
-      <SnowflakeDataFetcher />
-    </div> */}
+          </Sidebar>
+          <ToastContainer />
         </div>
     </BrowserRouter>
-
-    // <div>
-    //   <h1>Snowflake Data Fetcher</h1>
-    //   <SnowflakeDataFetcher />
-    // </div>
   );
 }
 

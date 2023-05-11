@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import React from "react";
 import image from '../Assets/DRC.png';
 import "./styles.css";
 import "./pure-react.css";
-
 
 const Home = () => {
 
@@ -33,7 +31,7 @@ const Home = () => {
             Any PII data loaded into the clean room is secured and encrypted. The data owner has full control over the 
             clean room, while approved partners can get a feed with anonymized data.  
             </p>
-            <img src={image} alt = 'Image Description'/>
+            <img src={image} alt = 'Image_Description'/>
 
             <h2>Snowflake technologies to build Data Clean Room are:</h2>
             <p>

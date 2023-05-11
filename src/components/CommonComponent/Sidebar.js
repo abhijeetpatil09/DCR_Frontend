@@ -1,30 +1,32 @@
 import { useState } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import "./pure-react.css";
-import "./styles.css";
-import HoonartekLogo from '../Assets/HtMediaGroup.png';
-import myBackgroundImage from '../Assets/DCR-background.png';
-import { useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
-import { selectUser } from "../features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import * as actions from "../../redux/actions/index";
 
-const PureReact = ({ children }) => {
-  const [isOpened, setIsOpened] = useState(false);
-  const user = useSelector(selectUser)
+import HoonartekLogo from '../../Assets/HtMediaGroup.png';
+
+import "../pure-react.css";
+import "../styles.css";
+
+const Sidebar = ({ children }) => {
   const navigate = useNavigate()
-  console.log(user);
-  console.log(user['role']);
+  const dispatch = useDispatch();
+
+  const state = useSelector(state => state);
+  const user = state && state.user;
+  
+  const [isOpened, setIsOpened] = useState(false);
+
+  const handleSignOut = () => {
+    dispatch(actions.logoutUser())
+    navigate('/');
+  };
+
   const navigateTo =(page)=>{
     navigate(page)
   }
-  const styles = {
-    backgroundImage: `url(${myBackgroundImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    height: '300px',
-    width: '100%',
-  };
 
   return (
     <div className="App">
@@ -36,14 +38,14 @@ const PureReact = ({ children }) => {
           <h1 class="hoonartek-title">h</h1>
         </div> */}
         <div>
-          <img src={HoonartekLogo} alt = 'Image Description' width="100" height="40"/>
+          <img src={HoonartekLogo} alt = 'Image_Description' width="100" height="40"/>
         </div>
         {/* <div>
           <h1 class="hoonartek-title">nartek</h1>
         </div> */}
         <div className="header-title ">Distributed Data Clean Room</div>
         <div className="headerleft">
-          <NavLink to = '/' style={{color: "white"}}>Sign In</NavLink>
+          <div onClick={handleSignOut} style={{color: "white"}}>{(user?.name) ? "Sign Out" : "Sign In"}</div>
         </div>
       </div>
       <div className="container">
@@ -70,4 +72,4 @@ const PureReact = ({ children }) => {
   );
 };
 
-export default PureReact;
+export default Sidebar;

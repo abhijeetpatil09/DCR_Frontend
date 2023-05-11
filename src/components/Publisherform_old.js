@@ -66,8 +66,6 @@ const Publisherform = () => {
         // setSelectedColumns(selectedOptions);
     };
 
-    
-
     const sendEmail = () => {
 
         // create reusable transporter object using the default SMTP transport
