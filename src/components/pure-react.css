@@ -1,10 +1,10 @@
 .App {
-  text-align: center;
+  /* text-align: center;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  color: #3a3cbb;
-  background-image: url('../Assets/DCR-background.png');
+  color: #3a3cbb; */
+  /* background-image: url('../Assets/DCR-background.png'); */
 }
 
 .header,
@@ -40,9 +40,9 @@
 }
 
 .drawer {
-  background: #d8dcd6;
-  width: 0px;
-  transition: width 0.7s;
+  /* background: #d8dcd6;
+  width: 70px; */
+  transition: width 1.7s;
 }
 
 .opened {
@@ -68,22 +68,22 @@
 
 .home {
   /* background-color: azure; */
-  background-image: url('../Assets/DCR-background.png');
+  /* background-image: url('../Assets/DCR-background.png');
   background-size: 100%;
   justify-content: center;
   text-align: left;
   margin-left: 10px;
-  min-height: 100%;
+  min-height: 100%; */
 }
 
 .homecenter {
   /* background-color: azure; */
-  background-image: url('../Assets/DCR-background.png');
+  /* background-image: url('../Assets/DCR-background.png');
   background-size: 100%;
-  justify-content: center;
+  justify-content: center; */
   /* text-align: center; */
-  align-items: center;
-  min-height: 100%;
+  /* align-items: center;
+  min-height: 100%; */
 }
 
 .center {

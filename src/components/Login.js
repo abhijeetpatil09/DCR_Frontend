@@ -7,8 +7,8 @@ import { Button } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 import * as actions from "../redux/actions/index";
 
-import "./pure-react.css";
-import "./styles.css";
+// import "./pure-react.css";
+// import "./styles.css";
 import AWS from "aws-sdk";
 
 function Login() {
@@ -126,11 +126,11 @@ function Login() {
             // Username not found
             setLoading(false);
             setErrorMessages({ name: "uname", message: errors.uname });
-            toast.error('Error in Logged In!!!');
+            toast.error('You entered an incorrect username, password or both.');
           }
         }
       })
-      .catch((error) => { 
+      .catch((error) => {
         setLoading(false);
         console.log(error)
       });
@@ -152,45 +152,69 @@ function Login() {
       <div className="error">{errorMessages.message}</div>
     );
 
-    // JSX code for login form
+  // JSX code for login form
   const renderForm = (
-    <div className="form">
-      <div className="input-container">
-        <label>Username </label>
-        <input
-          type="text"
-          name="uname"
-          onChange={(e) => setUserName(e.target.value)}
-          required
-        />
+    <div className="space-y-6">
+      <div>
+        <label htmlFor="uname" className="block text-sm font-medium leading-6 text-gray-900">Username </label>
+        <div className="mt-2">
+          <input
+            id="uname"
+            type="text"
+            name="uname"
+            placeholder="Please enter a username. e.g. aditi_nair"
+            onChange={(e) => setUserName(e.target.value)}
+            required
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+          />
+        </div>
         {renderErrorMessage("uname")}
       </div>
-      <div className="input-container">
-        <label>Password </label>
-        <input type="password" name="pass" required onChange={(e) => setPassword(e.target.value)} />
+      <div>
+        <label htmlFor="pass" className="block text-sm font-medium leading-6 text-gray-900">
+          Password
+        </label>
+        <div className="mt-2">
+
+          <input
+            id="pass"
+            type="password"
+            name="pass"
+            placeholder="Please enter your password."
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+          />
+        </div>
         {renderErrorMessage("pass")}
       </div>
-      <div className="button-container">
-        <Button onClick={handleSubmit} style={{ backgroundColor: '#4CAF50', color: '#FFFFFF', padding: '5px 3rem'}}>
-          {loading ? <CircularProgress style={{ width: '28px', height: '28px', color: '#FFFFFF'}}/> : "Submit"}
-        </Button>
+      <div>
+        <button 
+          onClick={handleSubmit}
+          className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+          >
+          {loading ? <CircularProgress style={{ width: '24px', height: '24px', color: '#FFFFFF' }} /> : "Submit"}
+        </button>
       </div>
     </div>
   );
 
   return (
-      <div className="homecenter">
-        <div className="center">
-          <div className="login-form">
-            <div className="title">Sign In</div>
-            {isSubmitted ? (
-              <div>User is successfully logged in</div>
-            ) : (
-              renderForm
-            )}
-          </div>
-        </div>
+    <div className="flex min-h-full flex-1 flex-col justify-start px-6 py-12 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 className="mt-10 text-center text-2xl font-semibold  leading-9 tracking-tight text-deep-navy">
+          Sign in to your account
+        </h2>
       </div>
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {isSubmitted ? (
+          <div>User is successfully logged in</div>
+        ) : (
+          renderForm
+        )}
+      </div>
+
+    </div>
   );
 }
 
