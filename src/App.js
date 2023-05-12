@@ -11,13 +11,13 @@ import S3fileupload from './components/S3fileupload';
 import { BrowserRouter, Routes, Route  } from 'react-router-dom';
 import Publisherform from './components/Publisherform';
 
-import './App.css';
+// import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <BrowserRouter>
-        <div>
+        <div className='bg-gray-100'>
           <Sidebar>
             <Routes>
               <Route path='/' element = {<Login/>} />

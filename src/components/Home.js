@@ -1,7 +1,7 @@
 import React from "react";
 import image from '../Assets/DRC.png';
-import "./styles.css";
-import "./pure-react.css";
+// import "./styles.css";
+// import "./pure-react.css";
 
 const Home = () => {
 
