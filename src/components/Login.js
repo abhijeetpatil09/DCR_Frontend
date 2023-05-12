@@ -126,7 +126,7 @@ function Login() {
             // Username not found
             setLoading(false);
             setErrorMessages({ name: "uname", message: errors.uname });
-            toast.error('Login error. Please verify credentials and try again.');
+            toast.error('You entered an incorrect username, password or both.');
           }
         }
       })
@@ -162,6 +162,7 @@ function Login() {
             id="uname"
             type="text"
             name="uname"
+            placeholder="Please enter a username. e.g. aditi_nair"
             onChange={(e) => setUserName(e.target.value)}
             required
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
@@ -179,6 +180,7 @@ function Login() {
             id="pass"
             type="password"
             name="pass"
+            placeholder="Please enter your password."
             required
             onChange={(e) => setPassword(e.target.value)}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
@@ -200,7 +202,7 @@ function Login() {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-start px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-10 text-center text-2xl font-semibold  leading-9 tracking-tight text-deep-navy">
           Sign in to your account
         </h2>
       </div>

@@ -43,9 +43,9 @@ const Sidebar = ({ children }) => {
         {/* <div>
           <h1 class="hoonartek-title">nartek</h1>
         </div> */}
-        <div className=" flex flex-row items-start  ">
-          <span  className=" text-deep-navy font-bold  text-3xl ml-36" >DataXChange</span>
-          <img src={GroupMLogo} alt = 'Image_Description'  className="h-10"/>
+        <div className=" flex flex-row items-center  ">
+          <span  className=" text-deep-navy font-bold  text-3xl ml-36" ><span className="text-electric-green text-4xl">D</span>ata<span className="text-electric-green text-4xl">X</span>change</span>
+          <img src={GroupMLogo} alt = 'Image_Description'  className="h-10 pt-2"/>
         </div>
         <div className=" ">
 
