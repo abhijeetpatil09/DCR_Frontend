@@ -70,7 +70,7 @@ const Publisherform = () => {
 
   useEffect(() => {
     setRequestId(reqId);
-    if(TableData) {
+    if (TableData) {
       setTableHead(TableData?.head || []);
       setTableRows(TableData?.rows || []);
     }
@@ -288,16 +288,21 @@ const Publisherform = () => {
         array.push(row);
       }
     }
-    dispatch(actions.PublisherForm({ RequestId: runId, TableData : { head: head, rows: array } }))
+    dispatch(actions.PublisherForm({ RequestId: runId, TableData: { head: head, rows: array } }))
   };
 
   const fetchcsvTableData = async (key) => {
     // let run_id = '1691891590797';  
-    let run_id =  '1691891590796';
+    // let run_id = '1691891590796';
+    let run_id = "1681891590569";
+
+
+
 
     // let file_name = 'advertiser_match_1691891590797.csv';
-    let file_name = 'advertiser_match_1691891590796.csv';
-
+    // let file_name = 'advertiser_match_1691891590796.csv';
+    let file_name = "customer_enrichment_1681891590569.csv";
+    
     try {
       const data = await s3
         .getObject({
@@ -306,7 +311,7 @@ const Publisherform = () => {
           Key: `query_result_tables/${run_id}/${file_name}`,
         })
         .promise();
-        fetchTable(data, run_id);
+      fetchTable(data, run_id);
     } catch (err) {
       console.error(err);
     }
@@ -314,163 +319,134 @@ const Publisherform = () => {
 
 
   return (
-    <div className="home">
-      <form name="myForm" onSubmit={handleSubmit}>
-        <br></br>
-        <div
-          style={{
-            boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
-            padding: "10px",
-            width: "500px",
-            height: "350px",
-            margin: "auto",
-            backgroundColor: "#f0f9ff",
-          }}
-        >
-          <h2 style={{ textAlign: "center" }}>Advertiser Record Match</h2>
-          <br></br>
-          <div className="input-container">
-            <label>
-              Query Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
-              <select
-                name="Query_Name"
-                style={{ marginLeft: "10px" }}
-                onChange={handleCustomerFormData}
-                required
-                className="my-select"
-              >
-                <option value="">--Select--</option>
-                <option value="advertiser_match">Advertiser Match</option>
-              </select>
-            </label>
-          </div>
-
-          <div className="input-container">
-            <label>
-              Upload File
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
-              <input
-                className="my-select"
-                style={{ marginLeft: "11px" }}
-                type="file"
-                id="myFileInput"
-                onChange={handleFileInput}
-                required
-              />
-            </label>
-          </div>
-
-          <div className="input-container">
-            <label>
-              Identifier Type &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
-              <select
-                name="Column_Names"
-                style={{ marginLeft: "12px" }}
-                onChange={handleCustomerFormData}
-                required
-                className="my-select"
-              >
-                <option value="">--Select--</option>
-                <option value="emailid">Email</option>
-                <option value="phone">Phone</option>
-                <option value="MAID">MAID-WIP</option>
-              </select>
-            </label>
-          </div>
-
-          <div className="input-container">
-            <label>
-              Match Attribute &nbsp;&nbsp;&nbsp;:&nbsp;
-              <select
-                name="Match_Attribute"
-                style={{ marginLeft: "11px" }}
-                onChange={handleCustomerFormData}
-                required
-                className="my-select"
-              >
-                <option value="">--Select--</option>
-                <option value="overall">Overall</option>
-                <option value="age">Age</option>
-                <option value="gender">Gender</option>
-                <option value="phone">Phone</option>
-              </select>
-            </label>
-            {formData["Match_Attribute"] === "gender" && (
-              <div>
-                Select Gender &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
-                <label>
-                  <input
-                    type="radio"
-                    value="male"
-                    checked={gender === "male"}
-                    onChange={(e) => setGender(e.target.value)}
-                  />
-                  Male
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    value="female"
-                    checked={gender === "female"}
-                    onChange={(e) => setGender(e.target.value)}
-                  />
-                  Female
-                </label>
-              </div>
-            )}
-            {formData["Match_Attribute"] === "age" && (
-              <div>
-                <label>
-                  Enter Age
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
-                  <input
-                    type="text"
-                    onChange={handleInputChange}
-                    style={{ marginLeft: "11px" }}
+    <div className="flex flex-col  ">
+      <h3 className="mt-4 text-xl font-bold text-deep-navy">Publisher query</h3>
+      <div className="flex flex-row  gap-3  w-full">
+        <div className="flex flex-col flex-shrink h-auto">
+          <form className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto  w-80 max-w-xs" name="myForm" onSubmit={handleSubmit}>
+            <span className="text-sm mb-4 font-light text-coal">Advertiser record match</span>
+            <div>
+              <div className=" mt-2 pb-2 flex flex-col">
+                <label>Query Name</label>
+                <select
+                    name="Query_Name"
+                    onChange={handleCustomerFormData}
                     required
-                    className="my-select"
-                  ></input>
-                  <div style={{ fontSize: "13px", marginLeft: "140px" }}>
-                    * Please enter comma seperated values eg: 25,14,30,28
+                    className="w-full"
+                  >
+                  <option value="">Please select</option>
+                  <option value="advertiser_match">Advertiser Match</option>
+                </select>
+              </div>
+
+              <div className="mt-2 pb-21 flex flex-col">
+                <label>Upload File</label>
+                <input
+                    className="w-full "
+                    type="file"
+                    id="myFileInput"
+                    onChange={handleFileInput}
+                    required
+                  />
+              </div>
+
+              <div className="mt-2 pb-21 flex flex-col">
+                <label>Identifier Type</label>
+                <select
+                    name="Column_Names"
+                    onChange={handleCustomerFormData}
+                    required
+                    className="w-full"
+                  >
+                    <option value="">Please select</option>
+                    <option value="emailid">Email</option>
+                    <option value="phone">Phone</option>
+                    <option value="MAID">MAID-WIP</option>
+                  </select>
+              </div>
+
+              <div className="mt-2 pb-21 flex flex-col">
+                <label>
+                  Match Attribute
+                
+                </label>
+                <select
+                    name="Match_Attribute"
+                    onChange={handleCustomerFormData}
+                    required
+                    className="w-full"
+                  >
+                    <option value="">Please select</option>
+                    <option value="overall">Overall</option>
+                    <option value="age">Age</option>
+                    <option value="gender">Gender</option>
+                    <option value="phone">Phone</option>
+                  </select>
+                {formData["Match_Attribute"] === "gender" && (
+                  <div className="mt-2 pb-21 flex flex-col">
+                    Select Gender  
+                    <label>
+                      <input
+                        type="radio"
+                        value="male"
+                        checked={gender === "male"}
+                        onChange={(e) => setGender(e.target.value)}
+                      />
+                      <span className="pl-2">Male</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="female"
+                        checked={gender === "female"}
+                        onChange={(e) => setGender(e.target.value)}
+                      />
+                        <span className="pl-2">Female</span>
+                    </label>
                   </div>
-                  {inputError && (
-                    <div
-                      style={{
-                        fontSize: "13px",
-                        marginLeft: "140px",
-                        color: "red",
-                      }}
-                    >
-                      {inputError}
-                    </div>
-                  )}
-                </label>
+                )}
+                {formData["Match_Attribute"] === "age" && (
+                  <div className="mt-2 pb-21 flex flex-col">
+                    <label>Enter Age </label>
+                    <input
+                        type="text"
+                        onChange={handleInputChange}
+                        required
+                        className="w-full"
+                        placeholder="e.g. 25,14,30,28"
+                      ></input>
+                      {/* <span className="mt-2">
+                        * Please enter comma seperated values eg: 25,14,30,28
+                      </span> */}
+                      {inputError && (
+                        <div className="text-red-500">
+                          {inputError}
+                        </div>
+                      )}
+                  </div>
+                )}
+                {formData["Match_Attribute"] === "phone" && (
+                  <div className="mt-2 pb-21 flex flex-col">
+                    <label>Phone No</label>
+                    <input
+                        type="text"
+                        required
+                        className="w-full"
+                      />
+                  </div>
+                )}
               </div>
-            )}
-            {formData["Match_Attribute"] === "phone" && (
-              <div>
-                <label>
-                  Phone No
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;
-                  <input
-                    type="text"
-                    style={{ marginLeft: "11px" }}
-                    required
-                    className="my-select"
-                  ></input>
-                </label>
+              <div className="flex justify-end">
+                <button
+                  className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+
+                  type="submit"
+                >Submit query</button>
               </div>
-            )}
-          </div>
-          <br></br>
-          <input
-            style={{ marginLeft: "160px" }}
-            type="submit"
-            value="Submit Query Request"
-          />
+            </div>
+          </form>
         </div>
-      </form>
-      {/* <div className="homecenter">
+        {/* <div className="homecenter">
         <h4 style={{ marginLeft: "130px" }}>Output Console:</h4>
 
         <table style={{ marginLeft: "130px", marginBottom: "10px" }}>
@@ -496,10 +472,12 @@ const Publisherform = () => {
           </tbody>
         </table>
       </div> */}
-
-      {tableHead?.length > 0 && tableRows?.length > 0 ? (
-        <Table id={requestId} head={tableHead} rows={tableRows} />
-      ) : null}
+        <div className=" flex flex-1 overflow-scroll">
+          {tableHead?.length > 0 && tableRows?.length > 0 ? (
+            <Table   id={requestId} head={tableHead} rows={tableRows} />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };
