@@ -89,35 +89,35 @@ const LandingPage = () => {
                     <img alt="" loading="lazy" width="2245" height="1636" decoding="async" data-nimg="1" className="absolute left-1/2 top-1/2 max-w-none translate-x-[-44%] translate-y-[-42%]"   src="/_next/static/media/background-features.5f7a9ac9.jpg" />
                     <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
-                            <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">Collaborative </h2>
-                            <p className="mt-6 text-lg tracking-tight text-blue-100">Well everything you need if you aren’t that picky about minor details like tax compliance.</p>
+                            <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">Collaborative Intelligence</h2>
+                            <p className="mt-6 text-lg tracking-tight text-blue-100">Seamlessly collaborate, share, and derive insights from vour data, revolutionizing the way you work with data.</p>
                         </div>
                         <div className="mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0">
                             <div className="-mx-4 flex overflow-x-auto pb-4 sm:mx-0 sm:overflow-visible sm:pb-0 lg:col-span-5">
                                 <div className="relative z-10 flex gap-x-4 whitespace-nowrap px-4 sm:mx-auto sm:px-0 lg:mx-0 lg:block lg:gap-x-0 lg:gap-y-1 lg:whitespace-normal" role="tablist" aria-orientation="vertical">
                                     <div className="group relative rounded-full bg-white px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:bg-white/10 lg:p-6 lg:ring-1 lg:ring-inset lg:ring-white/10">
                                         <h3>
-                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-600 lg:text-white" id="headlessui-tabs-tab-:R2ba9m:" role="tab" type="button" aria-selected="true" tabindex="0" data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-:Rda9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Payroll</button>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-600 lg:text-white" id="headlessui-tabs-tab-:R2ba9m:" role="tab" type="button" aria-selected="true" tabindex="0" data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-:Rda9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Low Code and No code UI </button>
                                         </h3>
-                                        <p className="mt-2 hidden text-sm text-white lg:block">Keep track of everyone's salaries and whether or not they've been paid. Direct deposit not supported.</p>
+                                        <p className="mt-2 hidden text-sm text-white lg:block">Low Code and No Code UI for Tailored User Experiences eliminating the need of knowing technical details to use data clean room. </p>
                                     </div>
                                     <div className="group relative rounded-full px-4 py-1 hover:bg-white/10 lg:rounded-l-xl lg:rounded-r-none lg:p-6 lg:hover:bg-white/5">
                                         <h3>
-                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R2ja9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rla9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Claim expenses</button>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R2ja9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rla9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Smooth Onboarding</button>
                                         </h3>
-                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">All of your receipts organized into one place, as long as you don't mind typing in the data by hand.</p>
+                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">Get started quickly and invite partners to securely collaborate without much effort. </p>
                                     </div>
                                     <div className="group relative rounded-full px-4 py-1 hover:bg-white/10 lg:rounded-l-xl lg:rounded-r-none lg:p-6 lg:hover:bg-white/5">
                                         <h3>
-                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R2ra9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rta9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>VAT handling</button>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R2ra9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rta9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Governance</button>
                                         </h3>
-                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">We only sell our software to companies who don't deal with VAT at all, so technically we do all the VAT stuff they need.</p>
+                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">Meet regulatory requirements and maintain compliance with industry standards. Cleanrooms enable you to track and monitor data interactions, providing an audit trail for governance and compliance purposes. </p>
                                     </div>
                                     <div className="group relative rounded-full px-4 py-1 hover:bg-white/10 lg:rounded-l-xl lg:rounded-r-none lg:p-6 lg:hover:bg-white/5">
                                         <h3>
-                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R33a9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:R15a9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Reporting</button>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R33a9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:R15a9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Secure Collaboration Workspace</button>
                                         </h3>
-                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.</p>
+                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">DataHeaven serves as a dedicated workspace for collaborative data analysis and exploration. Users can collaborate within a controlled and secure environment. </p>
                                     </div>
                                 </div>
                             </div>
@@ -175,9 +175,9 @@ const LandingPage = () => {
                                             <path d="m30 15-4 5-4-11-4 18-4-11-4 7-4-5" stroke="url(#:R2mdm:)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                         </svg>
                                     </div>
-                                    <h3 className="mt-6 text-sm font-medium text-blue-600">Reporting</h3>
-                                    <p className="font-display mt-2 text-xl text-slate-900">Stay on top of things with always up-to-date reporting features.</p>
-                                    <p className="mt-4 text-sm text-slate-600">We talked about reporting in the section above but we needed three items here, so mentioning it one more time for posterity.</p>
+                                    <h3 className="mt-6 text-sm font-medium text-blue-600">Match Rate</h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">DataHeaven presents a powerful use case for Match Rate, showcasing the capabilities of Snowflake Data Clean Room. With Match Rate, you can efficiently match and merge data from Provider’s date while maintaining a secure and controlled environment.  </p>
+                                    <p className="mt-4 text-sm text-slate-600">Match Rate, coupled with Snowflake Data Clean Room, empowers organizations to achieve accurate and reliable data matching. With our solution, you can streamline data consolidation, enhance data quality, and drive valuable insights without compromising data security. </p>
                                 </div>
                                 <div className="relative mt-10 pb-10">
                                     <div className="absolute -inset-x-4 bottom-0 top-8 bg-slate-200 sm:-inset-x-6"></div>
@@ -193,9 +193,9 @@ const LandingPage = () => {
                                             <path d="M8 10a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z" fill="#fff"></path>
                                         </svg>
                                     </div>
-                                    <h3 className="mt-6 text-sm font-medium text-blue-600">Inventory</h3>
-                                    <p className="font-display mt-2 text-xl text-slate-900">Never lose track of what’s in stock with accurate inventory tracking.</p>
-                                    <p className="mt-4 text-sm text-slate-600">We don’t offer this as part of our software but that statement is inarguably true. Accurate inventory tracking would help you for sure.</p>
+                                    <h3 className="mt-6 text-sm font-medium text-blue-600">Customer Enrichment</h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">With our solution, you can enrich customer data, gain valuable insights, and deliver personalized experiences while ensuring the highest standards of data security and privacy. </p>
+                                    <p className="mt-4 text-sm text-slate-600">Secure Data Collaboration, DataHeaven with Snowflake Data Clean Room provides a controlled environment for collaborating with internal and external stakeholders, allowing you to securely access and share customer data for enrichment purposes. </p>
                                 </div>
                                 <div className="relative mt-10 pb-10">
                                     <div className="absolute -inset-x-4 bottom-0 top-8 bg-slate-200 sm:-inset-x-6"></div>
@@ -235,10 +235,10 @@ const LandingPage = () => {
                                         </svg>
                                     </div>
                                     <h3 className="mt-6 text-sm font-medium text-blue-600">
-                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rirdm:" role="tab" type="button" aria-selected="true" tabindex="0" data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-:Rbbdm:"><span className="absolute inset-0"></span>Reporting</button>
+                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rirdm:" role="tab" type="button" aria-selected="true" tabindex="0" data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-:Rbbdm:"><span className="absolute inset-0"></span>Match Rate</button>
                                     </h3>
-                                    <p className="font-display mt-2 text-xl text-slate-900">Stay on top of things with always up-to-date reporting features.</p>
-                                    <p className="mt-4 text-sm text-slate-600">We talked about reporting in the section above but we needed three items here, so mentioning it one more time for posterity.</p>
+                                    <p className="font-display mt-2 text-xl text-slate-900">DataHeaven presents a powerful use case for Match Rate.</p>
+                                    <p className="mt-4 text-sm text-slate-600">Match Rate, coupled with Snowflake Data Clean Room, empowers organizations to achieve accurate and reliable data matching. With our solution, you can streamline data consolidation, enhance data quality, and drive valuable insights without compromising data security. </p>
                                 </div>
                                 <div className="relative opacity-75 hover:opacity-100">
                                     <div className="w-9 rounded-lg bg-slate-500">
@@ -249,7 +249,7 @@ const LandingPage = () => {
                                         </svg>
                                     </div>
                                     <h3 className="mt-6 text-sm font-medium text-slate-600">
-                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rkrdm:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rjbdm:"><span className="absolute inset-0"></span>Inventory</button>
+                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rkrdm:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rjbdm:"><span className="absolute inset-0"></span>Customer Enrichment</button>
                                     </h3>
                                     <p className="font-display mt-2 text-xl text-slate-900">Never lose track of what’s in stock with accurate inventory tracking.</p>
                                     <p className="mt-4 text-sm text-slate-600">We don’t offer this as part of our software but that statement is inarguably true. Accurate inventory tracking would help you for sure.</p>
@@ -262,7 +262,7 @@ const LandingPage = () => {
                                         </svg>
                                     </div>
                                     <h3 className="mt-6 text-sm font-medium text-slate-600">
-                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rmrdm:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rrbdm:"><span className="absolute inset-0"></span>Contacts</button>
+                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rmrdm:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rrbdm:"><span className="absolute inset-0"></span>Secure Data Collaboration</button>
                                     </h3>
                                     <p className="font-display mt-2 text-xl text-slate-900">Organize all of your contacts, service providers, and invoices in one place.</p>
                                     <p className="mt-4 text-sm text-slate-600">This also isn’t actually a feature, it’s just some friendly advice. We definitely recommend that you do this, you’ll feel really organized and professional.</p>
@@ -292,7 +292,7 @@ const LandingPage = () => {
                         <div className="mx-auto max-w-lg text-center">
                             <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">Get started today</h2>
                             <p className="mt-4 text-lg tracking-tight text-white">It’s time to take control of your books. Buy our software so you can feel like you’re doing something productive.</p>
-                            <a className="group mt-10 inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-blue-50 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:bg-blue-200 active:text-slate-600" href="/register">Get 6 months free</a>
+                            <a className="group mt-10 inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-blue-50 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:bg-blue-200 active:text-slate-600" href="/register">Get started today</a>
                         </div>
                     </div>
                 </section>
