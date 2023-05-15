@@ -3,15 +3,14 @@ import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button } from '@mui/material';
 import { CircularProgress } from '@mui/material';
-import * as actions from "../redux/actions/index";
+import * as actions from "../../redux/actions/index";
 
 // import "./pure-react.css";
 // import "./styles.css";
 import AWS from "aws-sdk";
 
-function Login() {
+const Register = () => {
   //const blob = new Blob([data.Body.toString()], { type: 'text/csv' });
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -189,6 +188,24 @@ function Login() {
         {renderErrorMessage("pass")}
       </div>
       <div>
+        <label htmlFor="pass" className="block text-sm font-medium leading-6 text-gray-900">
+          Confirm Password
+        </label>
+        <div className="mt-2">
+
+          <input
+            id="pass"
+            type="password"
+            name="pass"
+            placeholder="Please enter your password again."
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+          />
+        </div>
+        {renderErrorMessage("pass")}
+      </div>
+      <div>
         <button 
           onClick={handleSubmit}
           className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
@@ -218,7 +235,7 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
 
   // const database = [
   //   {

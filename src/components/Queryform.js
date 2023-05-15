@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AWS from "aws-sdk";
+import axios from "axios";
 
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -61,9 +62,9 @@ const s3 = new AWS.S3({
 });
 
 const Queryform = () => {
-  const state = useSelector(state => state);
+  const state = useSelector((state) => state);
   const dispatch = useDispatch();
-  
+
   const user = state && state.user;
   const TableData = state && state.ConsumerForm && state.ConsumerForm.TableData;
   const reqId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
@@ -71,9 +72,13 @@ const Queryform = () => {
   const [selectedProvider, setSelectedProvider] = useState("");
 
   const [formData, setFormData] = useState(initialState);
-  const [requestId, setRequestId] = useState('');
+  const [requestId, setRequestId] = useState("");
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
+
+  const [providerList, setProviderList] = useState([]);
+  const [templateList, setTemplateList] = useState("");
+  const [databaseName, setDatabaseName] = useState("");
 
   const [submit, setSubmit] = useState(false);
 
@@ -97,12 +102,82 @@ const Queryform = () => {
 
   useEffect(() => {
     setRequestId(reqId);
-    if(TableData) {
+    if (TableData) {
       setTableHead(TableData?.head || []);
       setTableRows(TableData?.rows || []);
     }
   }, [TableData, reqId]);
 
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: "select provider from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS;",
+        },
+      })
+      .then((response) => {
+        if (response?.data) {
+          setProviderList(response?.data?.data);
+        } else {
+          setProviderList([]);
+        }
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  useEffect(() => {
+    if (databaseName !== "") {
+      axios
+        .get("http://127.0.0.1:5000/data_fetcher", {
+          params: {
+            query: `select template_name from ${databaseName}.CLEANROOM.TEMPLATES where template_name <> 'advertiser_match';`,
+          },
+        })
+        .then((response) => {
+          if (response?.data) {
+            console.log("response?.data", response?.data);
+            setTemplateList(response.data.data);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [databaseName]);
+
+  const handleSelectProvider = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+      RunId: Date.now(),
+    });
+    setTemplateList([]);
+    getDatabaseName(event.target.value);
+  };
+
+  const handleSelectedTemp = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+      RunId: Date.now(),
+    });
+  };
+
+  const getDatabaseName = (selectedProvider) => {
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: `select database from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS where provider = '${selectedProvider}';`,
+        },
+      })
+      .then((response) => {
+        if (response?.data) {
+          let db_name = response?.data?.data;
+          setDatabaseName(db_name[0]?.DATABASE);
+        } else {
+          setDatabaseName("");
+        }
+      })
+      .catch((error) => console.log(error));
+  };
 
   const handleCustomerFormData = (e) => {
     setFormData({
@@ -241,17 +316,20 @@ const Queryform = () => {
         array.push(row);
       }
     }
-    dispatch(actions.ConsumerQueryForm({ RequestId: runId, TableData : { head: head, rows: array } }))
+    dispatch(
+      actions.ConsumerQueryForm({
+        RequestId: runId,
+        TableData: { head: head, rows: array },
+      })
+    );
   };
 
   const fetchcsvTableData = async (key) => {
-    let run_id = '1691891590798';  
+    let run_id = "1691891590798";
     // let run_id =  '1681891590569';
 
-    let file_name = 'customer_enrichment_1691891590798.csv';
+    let file_name = "customer_enrichment_1691891590798.csv";
     // let file_name = 'customer_enrichment_1681891590569.csv';
-
-    // select * from $db_name.public.$templaet_name_$runid limit 1000;
 
     try {
       const data = await s3
@@ -261,11 +339,13 @@ const Queryform = () => {
           Key: `query_result_tables/${run_id}/${file_name}`,
         })
         .promise();
-        fetchTable(data, run_id);
+      fetchTable(data, run_id);
     } catch (err) {
       console.error(err);
     }
   };
+
+  // select * from $db_name.public.$templaet_name_$runid limit 1000;
 
   return (
     <div className="home">
@@ -284,6 +364,57 @@ const Queryform = () => {
           <h2 style={{ textAlign: "center" }}>Submit your Query Request</h2>
           <br></br>
           <div className="input-container">
+            <label>
+              Provider Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
+              <select
+                id="provider"
+                name="Provider_Name"
+                required
+                className="my-select"
+                value={formData["Provider_Name"]}
+                onChange={handleSelectProvider}
+              >
+                <option value="">Select a provider</option>
+                {providerList?.length > 0 ? (
+                  providerList.map((item, index) => (
+                    <option key={index} value={item.PROVIDER}>
+                      {item.PROVIDER}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">Loading...</option>
+                )}
+              </select>
+            </label>
+          </div>
+
+          <div className="input-container">
+            <label>
+              Query
+              Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
+              <select
+                id="selectedTemp"
+                required
+                name="Query_Names"
+                value={formData["Query_Names"]}
+                className="my-select"
+                onChange={handleSelectedTemp}
+              >
+                <option value="">Select a Template</option>
+                {templateList?.length > 0 ? (
+                  templateList.map((item, index) => (
+                    <option key={index} value={item.TEMPLATE_NAME}>
+                      {item.TEMPLATE_NAME}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">Loading...</option>
+                )}
+              </select>
+            </label>
+          </div>
+
+          {/* <div className="input-container">
             <label>
               Query
               Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
@@ -307,9 +438,9 @@ const Queryform = () => {
                 </option>
               </select>
             </label>
-          </div>
+          </div> */}
 
-          <div className="input-container">
+          {/* <div className="input-container">
             <label>
               Provider Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
               <select
@@ -323,7 +454,7 @@ const Queryform = () => {
                 <option value="hoonartek">Hoonartek</option>
               </select>
             </label>
-          </div>
+          </div> */}
 
           <div className="input-container">
             <label>
@@ -381,7 +512,7 @@ const Queryform = () => {
       </form>
 
       {tableHead?.length > 0 && tableRows?.length > 0 ? (
-        <Table id={requestId} head={tableHead} rows={tableRows}  />
+        <Table id={requestId} head={tableHead} rows={tableRows} />
       ) : null}
     </div>
   );
