@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 import * as actions from "../../redux/actions/index";
-
+import BgVideo from '../../Assets/loginbg.mp4';
+import BgVideoGreen from '../../Assets/loginbg_green.mp4';
 // import "./pure-react.css";
 // import "./styles.css";
 import AWS from "aws-sdk";
@@ -156,7 +157,7 @@ const Login = () => {
   const renderForm = (
     <div className="space-y-6">
       <div>
-        <label htmlFor="uname" className="block text-sm font-medium leading-6 text-gray-900">Username </label>
+        <label htmlFor="uname" className="block text-sm font-medium leading-6 text-electric-green">Username </label>
         <div className="mt-2">
           <input
             id="uname"
@@ -165,13 +166,13 @@ const Login = () => {
             placeholder="Please enter a username. e.g. aditi_nair"
             onChange={(e) => setUserName(e.target.value)}
             required
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
           />
         </div>
         {renderErrorMessage("uname")}
       </div>
       <div>
-        <label htmlFor="pass" className="block text-sm font-medium leading-6 text-gray-900">
+        <label htmlFor="pass" className="block text-sm font-medium leading-6 text-electric-green">
           Password
         </label>
         <div className="mt-2">
@@ -183,7 +184,7 @@ const Login = () => {
             placeholder="Please enter your password."
             required
             onChange={(e) => setPassword(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
           />
         </div>
         {renderErrorMessage("pass")}
@@ -200,20 +201,32 @@ const Login = () => {
   );
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-start px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-semibold  leading-9 tracking-tight text-deep-navy">
+      
+    <div className="   flex flex-row  flex-1   justify-center items-center bg-deep-navy">
+   
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm w-2/6  bg-deep-navy mb-10 lg:mb-20">
+        <div class=" flex flex-row items-center justify-center  ">
+          <span class=" text-white font-semi-bold  text-2xl  ">
+            <span class="text-electric-green text-4xl">D</span>ata<span class="text-electric-green text-4xl">X</span>change</span>
+        </div>
+        <h2 className="mt-10 mb-10 text-center text-2xl font-light   leading-9 tracking-tight text-electric-green">
           Sign in to your account
         </h2>
-      </div>
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      {/* </div>
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm relative z-30"> */}
         {isSubmitted ? (
           <div>User is successfully logged in</div>
         ) : (
           renderForm
         )}
       </div>
-
+      <div className="relative overflow-hidden h-screen w-4/6 ">
+        <video autoplay="autoplay" loop="true" muted
+            class="absolute z-10 w-auto min-w-full min-h-full max-w-none  backdrop-contrast-100 backdrop-blur-sm">
+            <source src={BgVideoGreen} type="video/mp4"/>
+            <source src={BgVideo} type="video/mp4"/>
+        </video>
+      </div>
     </div>
   );
 }

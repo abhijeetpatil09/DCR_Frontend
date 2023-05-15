@@ -348,172 +348,159 @@ const Queryform = () => {
   // select * from $db_name.public.$templaet_name_$runid limit 1000;
 
   return (
-    <div className="home">
-      <form name="myForm" onSubmit={handleSubmit}>
-        <br></br>
-        <div
-          style={{
-            boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
-            padding: "10px",
-            width: "500px",
-            height: "375px",
-            margin: "auto",
-            backgroundColor: "#f0f9ff",
-          }}
-        >
-          <h2 style={{ textAlign: "center" }}>Submit your Query Request</h2>
-          <br></br>
-          <div className="input-container">
-            <label>
-              Provider Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
-              <select
-                id="provider"
-                name="Provider_Name"
-                required
-                className="my-select"
-                value={formData["Provider_Name"]}
-                onChange={handleSelectProvider}
-              >
-                <option value="">Select a provider</option>
-                {providerList?.length > 0 ? (
-                  providerList.map((item, index) => (
-                    <option key={index} value={item.PROVIDER}>
-                      {item.PROVIDER}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">Loading...</option>
-                )}
-              </select>
-            </label>
-          </div>
+    <div className="flex flex-col  ">
+      <h3 className="mt-4 text-xl font-bold text-deep-navy">Consumer query</h3>
+      <div className="flex flex-row  gap-3  w-full">
+        <div className="flex flex-col flex-shrink h-auto">
+          <form className="border border-gray-400 rounded my-4 px-4 py-2   w-80 max-w-xs" name="myForm" onSubmit={handleSubmit}>
+            <span className="text-sm mb-4 font-light text-coal">Query request</span>
+            <div>
 
-          <div className="input-container">
-            <label>
-              Query
-              Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
-              <select
-                id="selectedTemp"
-                required
-                name="Query_Names"
-                value={formData["Query_Names"]}
-                className="my-select"
-                onChange={handleSelectedTemp}
-              >
-                <option value="">Select a Template</option>
-                {templateList?.length > 0 ? (
-                  templateList.map((item, index) => (
-                    <option key={index} value={item.TEMPLATE_NAME}>
-                      {item.TEMPLATE_NAME}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">Loading...</option>
-                )}
-              </select>
-            </label>
-          </div>
+              <div className="mt-2 pb-2 flex flex-col">
+                <label>Provider Name</label>
+                <select
+                  id="provider"
+                  name="Provider_Name"
+                  required
+                  className="w-full"
+                  value={formData["Provider_Name"]}
+                  onChange={handleSelectProvider}
+                >
+                  <option value="">Select a provider</option>
+                  {providerList?.length > 0 ? (
+                    providerList.map((item, index) => (
+                      <option key={index} value={item.PROVIDER}>
+                        {item.PROVIDER}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">Loading...</option>
+                  )}
+                </select>
+              </div>
 
-          {/* <div className="input-container">
-            <label>
-              Query
-              Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
-              <select
-                name="Query_Names"
-                onChange={handleCustomerFormData}
-                required
-                className="my-select"
-              >
-                <option value="">--Select--</option>
-                <option value="customer_overlap">Customer Overlap</option>
-                <option value="customer_overlap_multiparty">
-                  Customer Overlap Multiparty
-                </option>
-                <option value="customer_enrichment">Customer Enrichment</option>
-                <option value="customer_overlap_waterfall">
-                  Customer Overlap Waterfall
-                </option>
-                <option value="customer_overlap_multiparty_subscribers">
-                  Customer Overlap Multiparty Subscribers
-                </option>
-              </select>
-            </label>
-          </div> */}
+              <div className="mt-2 pb-2 flex flex-col">
+                <label>Query name </label>
+                <select
+                  id="selectedTemp"
+                  required
+                  name="Query_Names"
+                  value={formData["Query_Names"]}
+                  className="w-full"
+                  onChange={handleSelectedTemp}
+                >
+                  <option value="">Select a template</option>
+                  {templateList?.length > 0 ? (
+                    templateList.map((item, index) => (
+                      <option key={index} value={item.TEMPLATE_NAME}>
+                        {item.TEMPLATE_NAME}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">Loading...</option>
+                  )}
+                </select>
+              </div>
 
-          {/* <div className="input-container">
-            <label>
-              Provider Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
-              <select
-                name="Provider_Name"
-                onChange={handleProviderChange}
-                required
-                className="my-select"
-              >
-                <option value="">--Select--</option>
-                <option value="htmedia">HT Media</option>
-                <option value="hoonartek">Hoonartek</option>
-              </select>
-            </label>
-          </div> */}
+              {/* <div className="input-container">
+              <label>
+                Query
+                Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
+                <select
+                  name="Query_Names"
+                  onChange={handleCustomerFormData}
+                  required
+                  className="my-select"
+                >
+                  <option value="">--Select--</option>
+                  <option value="customer_overlap">Customer Overlap</option>
+                  <option value="customer_overlap_multiparty">
+                    Customer Overlap Multiparty
+                  </option>
+                  <option value="customer_enrichment">Customer Enrichment</option>
+                  <option value="customer_overlap_waterfall">
+                    Customer Overlap Waterfall
+                  </option>
+                  <option value="customer_overlap_multiparty_subscribers">
+                    Customer Overlap Multiparty Subscribers
+                  </option>
+                </select>
+              </label>
+            </div> */}
 
-          <div className="input-container">
-            <label>
-              Column Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
-              <select
-                className="my-select"
-                multiple
-                name="Column_Names"
-                required
-                onChange={handleSelectChange}
-              >
-                {selectedProvider &&
-                  dependentOptions[selectedProvider].map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="input-container">
-            <label>
-              Consumer Name&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
-              <select
-                name="Consumer_Name"
-                onChange={handleCustomerFormData}
-                required
-                className="my-select"
-              >
-                <option value="">--Select--</option>
-                {user["name"] === "HTmedia" && (
+              {/* <div className="input-container">
+              <label>
+                Provider Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
+                <select
+                  name="Provider_Name"
+                  onChange={handleProviderChange}
+                  required
+                  className="my-select"
+                >
+                  <option value="">--Select--</option>
                   <option value="htmedia">HT Media</option>
-                )}
-                {user["name"] === "Hoonartek" && (
                   <option value="hoonartek">Hoonartek</option>
-                )}
-                {user["name"] === "admin" && (
-                  <option value="htmedia">HT Media</option>
-                )}
-                {user["name"] === "admin" && (
-                  <option value="hoonartek">Hoonartek</option>
-                )}
-              </select>
-            </label>
-          </div>
-          <div>
-            <input
-              style={{ marginLeft: "200px", alignItems: "center" }}
-              type="submit"
-              value="Submit Query Request"
-            />
-          </div>
+                </select>
+              </label>
+            </div> */}
+
+              <div className="mt-2 pb-2 flex flex-col">
+                <label>Column name</label>
+                <select
+                  className="w-full"
+                  multiple
+                  name="Column_Names"
+                  required
+                  onChange={handleSelectChange}
+                >
+                  {selectedProvider &&
+                    dependentOptions[selectedProvider].map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              <div className="mt-2 pb-2 flex flex-col">
+                <label>Consumer name</label>
+                <select
+                  name="Consumer_Name"
+                  onChange={handleCustomerFormData}
+                  required
+                  className="w-full"
+                >
+                  <option value="">--Select--</option>
+                  {user["name"] === "HTmedia" && (
+                    <option value="htmedia">HT Media</option>
+                  )}
+                  {user["name"] === "Hoonartek" && (
+                    <option value="hoonartek">Hoonartek</option>
+                  )}
+                  {user["name"] === "admin" && (
+                    <option value="htmedia">HT Media</option>
+                  )}
+                  {user["name"] === "admin" && (
+                    <option value="hoonartek">Hoonartek</option>
+                  )}
+                </select>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+
+                  type="submit"
+                >Submit query</button>
+              </div>
+            </div>
+          </form>
         </div>
-      </form>
-
-      {tableHead?.length > 0 && tableRows?.length > 0 ? (
-        <Table id={requestId} head={tableHead} rows={tableRows} />
-      ) : null}
+        <div className=" flex flex-grow">
+          {tableHead?.length > 0 && tableRows?.length > 0 ? (
+            <Table id={requestId} head={tableHead} rows={tableRows} />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };
