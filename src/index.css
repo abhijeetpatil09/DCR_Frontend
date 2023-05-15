@@ -7,6 +7,7 @@
 @layer base {
   html {
     font-family: Poppins, system-ui, sans-serif;
+    scroll-behavior: smooth;
   }
 }
 body {
@@ -21,4 +22,13 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* For HoonarTek Logo on Landing Page */
+.fil0 {
+  fill: white
+}
+
+.fil1 {
+  fill: url(#id0)
 }

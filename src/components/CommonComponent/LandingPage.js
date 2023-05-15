@@ -69,22 +69,264 @@ const LandingPage = () => {
                         <ul role="list" className="mt-8 flex items-center justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0">
                             <li>
                                 <ul role="list" className="flex flex-col items-center gap-y-8 sm:flex-row sm:gap-x-12 sm:gap-y-0">
-                                    {/* <li className="flex"><img alt="Transistor" loading="lazy" width="158" height="48" decoding="async" data-nimg="1" style="color:transparent" src="/_next/static/media/transistor.7274e6c3.svg" /></li>
-                        <li className="flex"><img alt="Tuple" loading="lazy" width="105" height="48" decoding="async" data-nimg="1" style="color:transparent" src="/_next/static/media/tuple.74eb0ae0.svg" /></li>
-                        <li className="flex"><img alt="StaticKit" loading="lazy" width="127" height="48" decoding="async" data-nimg="1" style="color:transparent" src="/_next/static/media/statickit.d7937794.svg" /></li> */}
+                                    <li className="flex"><img alt="Transistor" loading="lazy" width="158" height="48" decoding="async" data-nimg="1"  src="https://salient.tailwindui.com/_next/static/media/transistor.7274e6c3.svg" /></li>
+                        <li className="flex"><img alt="Tuple" loading="lazy" width="105" height="48" decoding="async" data-nimg="1"  src="https://salient.tailwindui.com/_next/static/media/tuple.74eb0ae0.svg" /></li>
+                        <li className="flex"><img alt="StaticKit" loading="lazy" width="127" height="48" decoding="async" data-nimg="1"  src="https://salient.tailwindui.com/_next/static/media/statickit.d7937794.svg" /></li>
                                 </ul>
                             </li>
                             <li>
                                 <ul role="list" className="flex flex-col items-center gap-y-8 sm:flex-row sm:gap-x-12 sm:gap-y-0">
-                                    {/* <li className="flex"><img alt="Mirage" loading="lazy" width="138" height="48" decoding="async" data-nimg="1" style="color:transparent" src="/_next/static/media/mirage.18d2ec4e.svg" /></li>
-                        <li className="flex"><img alt="Laravel" loading="lazy" width="136" height="48" decoding="async" data-nimg="1" style="color:transparent" src="/_next/static/media/laravel.7deed17e.svg" /></li>
-                        <li className="flex"><img alt="Statamic" loading="lazy" width="147" height="48" decoding="async" data-nimg="1" style="color:transparent" src="/_next/static/media/statamic.6da5ebfb.svg" /></li> */}
+                                    <li className="flex"><img alt="Mirage" loading="lazy" width="138" height="48" decoding="async" data-nimg="1"  src="https://salient.tailwindui.com/_next/static/media/mirage.18d2ec4e.svg" /></li>
+                        <li className="flex"><img alt="Laravel" loading="lazy" width="136" height="48" decoding="async" data-nimg="1"   src="https://salient.tailwindui.com/_next/static/media/laravel.7deed17e.svg" /></li>
+                        <li className="flex"><img alt="Statamic" loading="lazy" width="147" height="48" decoding="async" data-nimg="1"   src="https://salient.tailwindui.com/_next/static/media/statamic.6da5ebfb.svg" /></li>
                                 </ul>
                             </li>
                         </ul>
                     </div>
                 </div>
+
+                <section id="features" aria-label="Features for running your books" className="relative overflow-hidden bg-blue-600 pb-28 pt-20 sm:py-32">
+                    <img alt="" loading="lazy" width="2245" height="1636" decoding="async" data-nimg="1" className="absolute left-1/2 top-1/2 max-w-none translate-x-[-44%] translate-y-[-42%]"   src="/_next/static/media/background-features.5f7a9ac9.jpg" />
+                    <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
+                            <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">Collaborative </h2>
+                            <p className="mt-6 text-lg tracking-tight text-blue-100">Well everything you need if you aren’t that picky about minor details like tax compliance.</p>
+                        </div>
+                        <div className="mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0">
+                            <div className="-mx-4 flex overflow-x-auto pb-4 sm:mx-0 sm:overflow-visible sm:pb-0 lg:col-span-5">
+                                <div className="relative z-10 flex gap-x-4 whitespace-nowrap px-4 sm:mx-auto sm:px-0 lg:mx-0 lg:block lg:gap-x-0 lg:gap-y-1 lg:whitespace-normal" role="tablist" aria-orientation="vertical">
+                                    <div className="group relative rounded-full bg-white px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:bg-white/10 lg:p-6 lg:ring-1 lg:ring-inset lg:ring-white/10">
+                                        <h3>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-600 lg:text-white" id="headlessui-tabs-tab-:R2ba9m:" role="tab" type="button" aria-selected="true" tabindex="0" data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-:Rda9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Payroll</button>
+                                        </h3>
+                                        <p className="mt-2 hidden text-sm text-white lg:block">Keep track of everyone's salaries and whether or not they've been paid. Direct deposit not supported.</p>
+                                    </div>
+                                    <div className="group relative rounded-full px-4 py-1 hover:bg-white/10 lg:rounded-l-xl lg:rounded-r-none lg:p-6 lg:hover:bg-white/5">
+                                        <h3>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R2ja9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rla9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Claim expenses</button>
+                                        </h3>
+                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">All of your receipts organized into one place, as long as you don't mind typing in the data by hand.</p>
+                                    </div>
+                                    <div className="group relative rounded-full px-4 py-1 hover:bg-white/10 lg:rounded-l-xl lg:rounded-r-none lg:p-6 lg:hover:bg-white/5">
+                                        <h3>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R2ra9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rta9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>VAT handling</button>
+                                        </h3>
+                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">We only sell our software to companies who don't deal with VAT at all, so technically we do all the VAT stuff they need.</p>
+                                    </div>
+                                    <div className="group relative rounded-full px-4 py-1 hover:bg-white/10 lg:rounded-l-xl lg:rounded-r-none lg:p-6 lg:hover:bg-white/5">
+                                        <h3>
+                                            <button className="font-display [&amp;:not(:focus-visible)]:focus:outline-none text-lg text-blue-100 hover:text-white lg:text-white" id="headlessui-tabs-tab-:R33a9m:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:R15a9m:"><span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>Reporting</button>
+                                        </h3>
+                                        <p className="mt-2 hidden text-sm text-blue-100 group-hover:text-white lg:block">Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="lg:col-span-7">
+                                <div id="headlessui-tabs-panel-:Rda9m:" role="tabpanel" tabindex="0" data-headlessui-state="selected" aria-labelledby="headlessui-tabs-tab-:R2ba9m:">
+                                    <div className="relative sm:px-6 lg:hidden">
+                                        <div className="absolute -inset-x-4 bottom-[-4.25rem] top-[-6.5rem] bg-white/10 ring-1 ring-inset ring-white/10 sm:inset-x-0 sm:rounded-t-xl"></div>
+                                        <p className="relative mx-auto max-w-2xl text-base text-white sm:text-center">Keep track of everyone's salaries and whether or not they've been paid. Direct deposit not supported.</p>
+                                    </div>
+                                    <div className="mt-10 w-[45rem] overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 lg:w-[67.8125rem]"><img alt="" fetchpriority="high" width="2174" height="1464" decoding="async" data-nimg="1" className="w-full"   sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpayroll.517af4e7.png&amp;w=3840&amp;q=75" /></div>
+                                </div>
+                                <div id="headlessui-tabs-panel-:Rla9m:" role="tabpanel" tabindex="-1" hidden="" style={{display:'none'}}  data-headlessui-state="" aria-labelledby="headlessui-tabs-tab-:R2ja9m:">
+                                    <div className="relative sm:px-6 lg:hidden">
+                                        <div className="absolute -inset-x-4 bottom-[-4.25rem] top-[-6.5rem] bg-white/10 ring-1 ring-inset ring-white/10 sm:inset-x-0 sm:rounded-t-xl"></div>
+                                        <p className="relative mx-auto max-w-2xl text-base text-white sm:text-center">All of your receipts organized into one place, as long as you don't mind typing in the data by hand.</p>
+                                    </div>
+                                    <div className="mt-10 w-[45rem] overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 lg:w-[67.8125rem]"><img alt="" fetchpriority="high" width="2174" height="1464" decoding="async" data-nimg="1" className="w-full"   sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fexpenses.3f331919.png&amp;w=3840&amp;q=75" /></div>
+                                </div>
+                                <div id="headlessui-tabs-panel-:Rta9m:" role="tabpanel" tabindex="-1" hidden="" style={{display:'none'}}  data-headlessui-state="" aria-labelledby="headlessui-tabs-tab-:R2ra9m:">
+                                    <div className="relative sm:px-6 lg:hidden">
+                                        <div className="absolute -inset-x-4 bottom-[-4.25rem] top-[-6.5rem] bg-white/10 ring-1 ring-inset ring-white/10 sm:inset-x-0 sm:rounded-t-xl"></div>
+                                        <p className="relative mx-auto max-w-2xl text-base text-white sm:text-center">We only sell our software to companies who don't deal with VAT at all, so technically we do all the VAT stuff they need.</p>
+                                    </div>
+                                    <div className="mt-10 w-[45rem] overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 lg:w-[67.8125rem]"><img alt="" fetchpriority="high" width="2174" height="1464" decoding="async" data-nimg="1" className="w-full"   sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvat-returns.7402820f.png&amp;w=3840&amp;q=75" /></div>
+                                </div>
+                                <div id="headlessui-tabs-panel-:R15a9m:" role="tabpanel" tabindex="-1" hidden="" style={{display:'none'}}  data-headlessui-state="" aria-labelledby="headlessui-tabs-tab-:R33a9m:">
+                                    <div className="relative sm:px-6 lg:hidden">
+                                        <div className="absolute -inset-x-4 bottom-[-4.25rem] top-[-6.5rem] bg-white/10 ring-1 ring-inset ring-white/10 sm:inset-x-0 sm:rounded-t-xl"></div>
+                                        <p className="relative mx-auto max-w-2xl text-base text-white sm:text-center">Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.</p>
+                                    </div>
+                                    <div className="mt-10 w-[45rem] overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 lg:w-[67.8125rem]"><img alt="" fetchpriority="high" width="2174" height="1464" decoding="async" data-nimg="1" className="w-full"   sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Freporting.2ad6f065.png&amp;w=3840&amp;q=75" /></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="secondary-features" aria-label="Features for simplifying everyday business tasks" className="pb-14 pt-20 sm:pb-20 sm:pt-32 lg:pb-32">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="mx-auto max-w-2xl md:text-center">
+                            <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">Simplify everyday business tasks.</h2>
+                            <p className="mt-4 text-lg tracking-tight text-slate-700">Because you’d probably be a little confused if we suggested you complicate your everyday business tasks instead.</p>
+                        </div>
+                        <div className="-mx-4 mt-20 flex flex-col gap-y-10 overflow-hidden px-4 sm:-mx-6 sm:px-6 lg:hidden">
+                            <div>
+                                <div className="mx-auto max-w-2xl">
+                                    <div className="w-9 rounded-lg bg-blue-600">
+                                        <svg aria-hidden="true" className="h-9 w-9" fill="none">
+                                            <defs>
+                                                <linearGradient id=":R2mdm:" x1="11.5" y1="18" x2="36" y2="15.5" gradientUnits="userSpaceOnUse">
+                                                    <stop offset=".194" stop-color="#fff"></stop>
+                                                    <stop offset="1" stop-color="#6692F1"></stop>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="m30 15-4 5-4-11-4 18-4-11-4 7-4-5" stroke="url(#:R2mdm:)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 className="mt-6 text-sm font-medium text-blue-600">Reporting</h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">Stay on top of things with always up-to-date reporting features.</p>
+                                    <p className="mt-4 text-sm text-slate-600">We talked about reporting in the section above but we needed three items here, so mentioning it one more time for posterity.</p>
+                                </div>
+                                <div className="relative mt-10 pb-10">
+                                    <div className="absolute -inset-x-4 bottom-0 top-8 bg-slate-200 sm:-inset-x-6"></div>
+                                    <div className="relative mx-auto w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10"><img alt="" loading="lazy" width="1688" height="856" decoding="async" data-nimg="1" className="w-full" style={{color:'transparent'}} sizes="52.75rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=16&amp;q=75 16w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=32&amp;q=75 32w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=48&amp;q=75 48w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=64&amp;q=75 64w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=96&amp;q=75 96w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=128&amp;q=75 128w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=256&amp;q=75 256w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=384&amp;q=75 384w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=3840&amp;q=75" /></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="mx-auto max-w-2xl">
+                                    <div className="w-9 rounded-lg bg-blue-600">
+                                        <svg aria-hidden="true" className="h-9 w-9" fill="none">
+                                            <path opacity=".5" d="M8 17a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z" fill="#fff"></path>
+                                            <path opacity=".3" d="M8 24a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z" fill="#fff"></path>
+                                            <path d="M8 10a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z" fill="#fff"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 className="mt-6 text-sm font-medium text-blue-600">Inventory</h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">Never lose track of what’s in stock with accurate inventory tracking.</p>
+                                    <p className="mt-4 text-sm text-slate-600">We don’t offer this as part of our software but that statement is inarguably true. Accurate inventory tracking would help you for sure.</p>
+                                </div>
+                                <div className="relative mt-10 pb-10">
+                                    <div className="absolute -inset-x-4 bottom-0 top-8 bg-slate-200 sm:-inset-x-6"></div>
+                                    <div className="relative mx-auto w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10"><img alt="" loading="lazy" width="1688" height="856" decoding="async" data-nimg="1" className="w-full" style={{color:'transparent'}} sizes="52.75rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=16&amp;q=75 16w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=32&amp;q=75 32w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=48&amp;q=75 48w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=64&amp;q=75 64w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=96&amp;q=75 96w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=128&amp;q=75 128w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=256&amp;q=75 256w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=384&amp;q=75 384w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=3840&amp;q=75" /></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="mx-auto max-w-2xl">
+                                    <div className="w-9 rounded-lg bg-blue-600">
+                                        <svg aria-hidden="true" className="h-9 w-9" fill="none">
+                                            <path opacity=".5" d="M25.778 25.778c.39.39 1.027.393 1.384-.028A11.952 11.952 0 0 0 30 18c0-6.627-5.373-12-12-12S6 11.373 6 18c0 2.954 1.067 5.659 2.838 7.75.357.421.993.419 1.384.028.39-.39.386-1.02.036-1.448A9.959 9.959 0 0 1 8 18c0-5.523 4.477-10 10-10s10 4.477 10 10a9.959 9.959 0 0 1-2.258 6.33c-.35.427-.354 1.058.036 1.448Z" fill="#fff"></path>
+                                            <path d="M12 28.395V28a6 6 0 0 1 12 0v.395A11.945 11.945 0 0 1 18 30c-2.186 0-4.235-.584-6-1.605ZM21 16.5c0-1.933-.5-3.5-3-3.5s-3 1.567-3 3.5 1.343 3.5 3 3.5 3-1.567 3-3.5Z" fill="#fff"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 className="mt-6 text-sm font-medium text-blue-600">Contacts</h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">Organize all of your contacts, service providers, and invoices in one place.</p>
+                                    <p className="mt-4 text-sm text-slate-600">This also isn’t actually a feature, it’s just some friendly advice. We definitely recommend that you do this, you’ll feel really organized and professional.</p>
+                                </div>
+                                <div className="relative mt-10 pb-10">
+                                    <div className="absolute -inset-x-4 bottom-0 top-8 bg-slate-200 sm:-inset-x-6"></div>
+                                    <div className="relative mx-auto w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10"><img alt="" loading="lazy" width="1688" height="856" decoding="async" data-nimg="1" className="w-full" style={{color:'transparent'}} sizes="52.75rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=16&amp;q=75 16w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=32&amp;q=75 32w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=48&amp;q=75 48w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=64&amp;q=75 64w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=96&amp;q=75 96w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=128&amp;q=75 128w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=256&amp;q=75 256w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=384&amp;q=75 384w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=3840&amp;q=75" /></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="hidden lg:mt-20 lg:block">
+                            <div className="grid grid-cols-3 gap-x-8" role="tablist" aria-orientation="horizontal">
+                                <div className="relative">
+                                    <div className="w-9 rounded-lg bg-blue-600">
+                                        <svg aria-hidden="true" className="h-9 w-9" fill="none">
+                                            <defs>
+                                                <linearGradient id=":Rardm:" x1="11.5" y1="18" x2="36" y2="15.5" gradientUnits="userSpaceOnUse">
+                                                    <stop offset=".194" stop-color="#fff"></stop>
+                                                    <stop offset="1" stop-color="#6692F1"></stop>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="m30 15-4 5-4-11-4 18-4-11-4 7-4-5" stroke="url(#:Rardm:)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 className="mt-6 text-sm font-medium text-blue-600">
+                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rirdm:" role="tab" type="button" aria-selected="true" tabindex="0" data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-:Rbbdm:"><span className="absolute inset-0"></span>Reporting</button>
+                                    </h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">Stay on top of things with always up-to-date reporting features.</p>
+                                    <p className="mt-4 text-sm text-slate-600">We talked about reporting in the section above but we needed three items here, so mentioning it one more time for posterity.</p>
+                                </div>
+                                <div className="relative opacity-75 hover:opacity-100">
+                                    <div className="w-9 rounded-lg bg-slate-500">
+                                        <svg aria-hidden="true" className="h-9 w-9" fill="none">
+                                            <path opacity=".5" d="M8 17a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z" fill="#fff"></path>
+                                            <path opacity=".3" d="M8 24a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z" fill="#fff"></path>
+                                            <path d="M8 10a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z" fill="#fff"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 className="mt-6 text-sm font-medium text-slate-600">
+                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rkrdm:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rjbdm:"><span className="absolute inset-0"></span>Inventory</button>
+                                    </h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">Never lose track of what’s in stock with accurate inventory tracking.</p>
+                                    <p className="mt-4 text-sm text-slate-600">We don’t offer this as part of our software but that statement is inarguably true. Accurate inventory tracking would help you for sure.</p>
+                                </div>
+                                <div className="relative opacity-75 hover:opacity-100">
+                                    <div className="w-9 rounded-lg bg-slate-500">
+                                        <svg aria-hidden="true" className="h-9 w-9" fill="none">
+                                            <path opacity=".5" d="M25.778 25.778c.39.39 1.027.393 1.384-.028A11.952 11.952 0 0 0 30 18c0-6.627-5.373-12-12-12S6 11.373 6 18c0 2.954 1.067 5.659 2.838 7.75.357.421.993.419 1.384.028.39-.39.386-1.02.036-1.448A9.959 9.959 0 0 1 8 18c0-5.523 4.477-10 10-10s10 4.477 10 10a9.959 9.959 0 0 1-2.258 6.33c-.35.427-.354 1.058.036 1.448Z" fill="#fff"></path>
+                                            <path d="M12 28.395V28a6 6 0 0 1 12 0v.395A11.945 11.945 0 0 1 18 30c-2.186 0-4.235-.584-6-1.605ZM21 16.5c0-1.933-.5-3.5-3-3.5s-3 1.567-3 3.5 1.343 3.5 3 3.5 3-1.567 3-3.5Z" fill="#fff"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 className="mt-6 text-sm font-medium text-slate-600">
+                                        <button className="[&amp;:not(:focus-visible)]:focus:outline-none" id="headlessui-tabs-tab-:Rmrdm:" role="tab" type="button" aria-selected="false" tabindex="-1" data-headlessui-state="" aria-controls="headlessui-tabs-panel-:Rrbdm:"><span className="absolute inset-0"></span>Contacts</button>
+                                    </h3>
+                                    <p className="font-display mt-2 text-xl text-slate-900">Organize all of your contacts, service providers, and invoices in one place.</p>
+                                    <p className="mt-4 text-sm text-slate-600">This also isn’t actually a feature, it’s just some friendly advice. We definitely recommend that you do this, you’ll feel really organized and professional.</p>
+                                </div>
+                            </div>
+                            <div className="rounded-4xl relative mt-20 overflow-hidden bg-slate-200 px-14 py-16 xl:px-16">
+                                <div className="-mx-5 flex">
+                                    <div className="[&amp;:not(:focus-visible)]:focus:outline-none px-5 transition duration-500 ease-in-out" style={{transform:'translateX(-0%)'}} aria-hidden="false" id="headlessui-tabs-panel-:Rbbdm:" role="tabpanel" tabindex="0" data-headlessui-state="selected" aria-labelledby="headlessui-tabs-tab-:Rirdm:">
+                                        <div className="w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10"><img alt="" loading="lazy" width="1688" height="856" decoding="async" data-nimg="1" className="w-full" style={{color:'transparent'}} sizes="52.75rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=16&amp;q=75 16w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=32&amp;q=75 32w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=48&amp;q=75 48w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=64&amp;q=75 64w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=96&amp;q=75 96w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=128&amp;q=75 128w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=256&amp;q=75 256w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=384&amp;q=75 384w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofit-loss.2a2f85d5.png&amp;w=3840&amp;q=75" /></div>
+                                    </div>
+                                    <div className="[&amp;:not(:focus-visible)]:focus:outline-none px-5 opacity-60 transition duration-500 ease-in-out" style={{transform:'translateX(-0%)'}} aria-hidden="true" id="headlessui-tabs-panel-:Rjbdm:" role="tabpanel" tabindex="-1" data-headlessui-state="" aria-labelledby="headlessui-tabs-tab-:Rkrdm:">
+                                        <div className="w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10"><img alt="" loading="lazy" width="1688" height="856" decoding="async" data-nimg="1" className="w-full" style={{color:'transparent'}} sizes="52.75rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=16&amp;q=75 16w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=32&amp;q=75 32w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=48&amp;q=75 48w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=64&amp;q=75 64w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=96&amp;q=75 96w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=128&amp;q=75 128w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=256&amp;q=75 256w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=384&amp;q=75 384w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Finventory.14ec7758.png&amp;w=3840&amp;q=75" /></div>
+                                    </div>
+                                    <div className="[&amp;:not(:focus-visible)]:focus:outline-none px-5 opacity-60 transition duration-500 ease-in-out" style={{transform:'translateX(-0%)'}} aria-hidden="true" id="headlessui-tabs-panel-:Rrbdm:" role="tabpanel" tabindex="-1" data-headlessui-state="" aria-labelledby="headlessui-tabs-tab-:Rmrdm:">
+                                        <div className="w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-slate-900/5 ring-1 ring-slate-500/10"><img alt="" loading="lazy" width="1688" height="856" decoding="async" data-nimg="1" className="w-full" style={{color:'transparent'}} sizes="52.75rem" srcset="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=16&amp;q=75 16w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=32&amp;q=75 32w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=48&amp;q=75 48w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=64&amp;q=75 64w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=96&amp;q=75 96w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=128&amp;q=75 128w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=256&amp;q=75 256w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=384&amp;q=75 384w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=640&amp;q=75 640w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=750&amp;q=75 750w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=828&amp;q=75 828w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=1080&amp;q=75 1080w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=1200&amp;q=75 1200w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=1920&amp;q=75 1920w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=2048&amp;q=75 2048w, https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=3840&amp;q=75 3840w" src="https://salient.tailwindui.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcontacts.a61dce95.png&amp;w=3840&amp;q=75" /></div>
+                                    </div>
+                                </div>
+                                <div className="rounded-4xl pointer-events-none absolute inset-0 ring-1 ring-inset ring-slate-900/10"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="get-started-today" className="relative overflow-hidden bg-blue-600 py-32">
+                    <img alt="" loading="lazy" width="2347" height="1244" decoding="async" data-nimg="1" className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2" style={{color:'transparent'}} src="https://salient.tailwindui.com/_next/static/media/background-call-to-action.6a5a5672.jpg" />
+                    <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="mx-auto max-w-lg text-center">
+                            <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">Get started today</h2>
+                            <p className="mt-4 text-lg tracking-tight text-white">It’s time to take control of your books. Buy our software so you can feel like you’re doing something productive.</p>
+                            <a className="group mt-10 inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-blue-50 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:bg-blue-200 active:text-slate-600" href="/register">Get 6 months free</a>
+                        </div>
+                    </div>
+                </section>
             </main>
+            <footer className="bg-slate-50">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="py-16 flex flex-col items-center  ">
+                        <img src={HTWLogo} alt='Image_Description' className=" w-30" />  
+                        
+                        <nav className="mt-10 text-sm" aria-label="quick links">
+                            <div className="-my-1 flex justify-center gap-x-6">
+                                <a className="inline-block rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900" href="/#features">Features</a>
+                                <a className="inline-block rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900" href="/#testimonials">Platform</a>
+                                {/* <a className="inline-block rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900" href="/#pricing">Case study</a> */}
+                            </div>
+                        </nav>
+                    </div>
+                    <div className="flex flex-col items-center border-t border-slate-400/10 py-10 sm:flex-row-reverse sm:justify-between">
+                        <div className="flex gap-x-6">
+                            <a className="group" aria-label="TaxPal on Twitter" target="_blank" href="https://hoonartek.com/privacy-policy-cookies/">
+                                Privacy Policy
+                            </a>
+                            <a className="group" aria-label="TaxPal on GitHub" target="_blank" href="https://hoonartek.com/terms-conditions/">
+                                Terms and Conditions
+                            </a>
+                        </div>
+                        <p className="mt-6 text-sm text-slate-500 sm:mt-0">
+                            Copyright ©
+                            2023 
+                            Hoonar Tekwurks Private Ltd.
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     )
 };
