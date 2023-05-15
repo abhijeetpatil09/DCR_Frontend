@@ -2,7 +2,9 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 
 import LandingPage from "./components/CommonComponent/LandingPage";
-import Login from "./components/Login";
+import Login from "./components/CommonComponent/Login";
+import Register from "./components/CommonComponent/Register";
+
 import Queryform from "./components/Queryform";
 import Querystatus from "./components/Querystatus";
 import Sidebar from "./components/CommonComponent/Sidebar";
@@ -22,6 +24,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
           <Route
             path="*"
             element={
