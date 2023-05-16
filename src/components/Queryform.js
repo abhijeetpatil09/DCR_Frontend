@@ -11,36 +11,11 @@ import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
 
-const timestamp = Date.now();
-const dateObj = new Date(timestamp);
-
-const year = dateObj.getFullYear();
-const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-const day = dateObj.getDate().toString().padStart(2, "0");
-const hours = dateObj.getHours().toString().padStart(2, "0");
-const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-const seconds = dateObj.getSeconds().toString().padStart(2, "0");
-
-const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-console.log(formattedDate);
-
 const initialState = {
   Query_Names: "",
   Provider_Name: "",
   Column_Names: "",
   Consumer_Name: "",
-  RunId: formattedDate,
-};
-
-const dependentOptions = {
-  hoonartek: [
-    { value: "age_band", label: "Age Band" },
-    { value: "status", label: "Status" },
-  ],
-  htmedia: [
-    { value: "cohort_name", label: "COHORT NAME" },
-    { value: "cdp_sh_fname", label: "CDP SH FNAME" },
-  ],
 };
 
 // var snowflake = require('snowflake-sdk');
@@ -69,8 +44,6 @@ const Queryform = () => {
   const TableData = state && state.ConsumerForm && state.ConsumerForm.TableData;
   const reqId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
 
-  const [selectedProvider, setSelectedProvider] = useState("");
-
   const [formData, setFormData] = useState(initialState);
   const [requestId, setRequestId] = useState("");
   const [tableHead, setTableHead] = useState([]);
@@ -84,20 +57,13 @@ const Queryform = () => {
   const [submit, setSubmit] = useState(false);
 
   useEffect(() => {
-    if (submit) {
-      fetchcsvTableData();
-    }
+    setInterval(() => {
+      if (submit) {
+        fetchcsvTableData();
+      }
+    }, 60000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submit]);
-
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     if (submit) {
-  //       fetchcsvTableData(
-  //         formData["Query_Names"] + "_" + formData["RunId"] + ".csv"
-  //       );
-  //     }
-  //   }, 60000);
-  // }, [submit]);
 
   useEffect(() => {
     setRequestId(reqId);
@@ -154,9 +120,9 @@ const Queryform = () => {
           if (response?.data) {
             console.log("response?.data", response?.data);
             let col_name = response?.data?.data[0]?.DIMENSIONS?.split("|");
-            col_name=col_name?.map((item) => {
-              return item?.split(".")[1]
-            })
+            col_name = col_name?.map((item) => {
+              return item?.split(".")[1];
+            });
             console.log("col_name", col_name);
 
             setColumns(col_name);
@@ -164,14 +130,13 @@ const Queryform = () => {
         })
         .catch((error) => console.log(error));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [databaseName, formData["Query_Names"]]);
-
 
   const handleSelectProvider = (event) => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
-      RunId: Date.now(),
     });
     setTemplateList([]);
     getDatabaseName(event.target.value);
@@ -181,7 +146,6 @@ const Queryform = () => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
-      RunId: Date.now(),
     });
   };
 
@@ -207,19 +171,7 @@ const Queryform = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-      RunId: Date.now(),
     });
-    console.log(formData);
-  };
-
-  const handleProviderChange = (e) => {
-    setSelectedProvider(e.target.value);
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-      RunId: Date.now(),
-    });
-    console.log(formData);
   };
 
   const handleSelectChange = (event) => {
@@ -231,24 +183,15 @@ const Queryform = () => {
     setFormData({
       ...formData,
       [event.target.name]: selectedOptionsString,
-      RunId: Date.now(),
     });
-    console.log(formData);
     // setSelectedColumns(selectedOptions);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    console.log(formData);
-    console.log(document.getElementsByName("Query_Names")[0]);
+    formData.RunId = Date.now();
 
-    // formData.Query_Names = document.getElementsByName('Query_Names')[0].selectedOptions[0].value
-    // formData.Provider_Name = document.getElementsByName('Provider_Name')[0].selectedOptions[0].value
-    // // formData.Column_Names = document.getElementsByName('Column_Names')[0].selectedOptions[0].value
-    // formData.Consumer_Name = document.getElementsByName('Consumer_Name')[0].selectedOptions[0].value
-    setFormData({ ...formData, RunId: Date.now() });
-    console.log(formData);
     const keys = Object.keys(formData);
     let csv = keys.join(",") + "\n";
     for (const obj of [formData]) {
@@ -256,8 +199,8 @@ const Queryform = () => {
       csv += values.join(",") + "\n";
     }
 
-    console.log(csv);
     const blob = new Blob([csv], { type: "text/csv" });
+
     // const url = URL.createObjectURL(blob);
     // const link = document.createElement('a');
     // link.href = url;
@@ -317,69 +260,53 @@ const Queryform = () => {
   };
 
   const fetchTable = (data, runId) => {
-    let head = data?.Body.toString("utf-8")?.split("\n")[0]?.split('",');
-    head = head?.map((item) => {
-      if (item?.includes('"')) {
-        return item?.replaceAll('"', "");
-      }
-      return item;
-    });
-
-    let array = [];
-    for (let i = 0; i < 999; i++) {
-      let row = data?.Body?.toString("utf-8")?.split("\n")[i + 1]?.split(",");
-      row = row?.map((item) => {
-        if (item?.includes('"')) {
-          return item?.replaceAll('"', "");
-        }
-        return item;
+    let head = []; 
+    let row = [];
+    if(data?.length > 0) {
+      head = data && Object.keys(data[0]);
+      data?.map((obj) => {
+        console.log("obj", obj)
+        return row.push(head?.map((key) => obj[key]));
       });
-      if (row) {
-        array.push(row);
-      }
-    }
+    } 
     dispatch(
       actions.ConsumerQueryForm({
         RequestId: runId,
-        TableData: { head: head, rows: array },
+        TableData: { head: head, rows: row },
       })
     );
   };
 
   const fetchcsvTableData = async () => {
-    axios.get('http://127.0.0.1:5000/data_fetcher', {
-      params: {
-        query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${formData["Query_Names"]}_${formData["RunId"]};`
-      }
-    }).then(response => {
-      console.log("response ", response)
-     });
-
-    // try {
-    //   const data = await s3
-    //     .getObject({
-    //       Bucket: "dcr-poc",
-    //       Key: "query_result_tables/" + formData["RunId"] + "/" + key,
-    //       // Key: `query_result_tables/${run_id}/${file_name}`,
-    //     })
-    //     .promise();
-    //   fetchTable(data, formData["RunId"]);
-    // } catch (err) {
-    //   console.error(err);
-    // }
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${formData["Query_Names"]}_${formData["RunId"]} limit 1000;`,
+        },
+      })
+      .then((response) => {
+        if(response?.data?.data) {
+          setSubmit(false);
+          fetchTable(response?.data?.data, formData["RunId"]);
+        }
+      })
+      .catch((error) => console.log(error));
   };
-  // select * from DCR_SAMP_CONSUMER1.PUBLIC.CUSTOMER_ENRICHMENT_1681122386300;
-  // select * from $db_name.public.$templaet_name_$runid limit 1000;
 
   return (
     <div className="flex flex-col  ">
       <h3 className="mt-4 text-xl font-bold text-deep-navy">Consumer query</h3>
       <div className="flex flex-row  gap-3  w-full">
         <div className="flex flex-col flex-shrink h-auto">
-          <form className="border border-gray-400 rounded my-4 px-4 py-2   w-80 max-w-xs" name="myForm" onSubmit={handleSubmit}>
-            <span className="text-sm mb-4 font-light text-coal">Query request</span>
+          <form
+            className="border border-gray-400 rounded my-4 px-4 py-2   w-80 max-w-xs"
+            name="myForm"
+            onSubmit={handleSubmit}
+          >
+            <span className="text-sm mb-4 font-light text-coal">
+              Query request
+            </span>
             <div>
-
               <div className="mt-2 pb-2 flex flex-col">
                 <label>Provider Name</label>
                 <select
@@ -477,10 +404,10 @@ const Queryform = () => {
                   required
                   onChange={handleSelectChange}
                 >
-                  {selectedProvider &&
-                    dependentOptions[selectedProvider].map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
+                  {colunms &&
+                    colunms.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
                       </option>
                     ))}
                 </select>
@@ -499,7 +426,7 @@ const Queryform = () => {
                     <option value="htmedia">HT Media</option>
                   )}
                   {user["name"] === "Hoonartek" && (
-                    <option value="hoonartek">Hoonartek</option>
+                    <option value="Hoonartek">Hoonartek</option>
                   )}
                   {user["name"] === "admin" && (
                     <option value="htmedia">HT Media</option>
@@ -512,9 +439,10 @@ const Queryform = () => {
               <div className="flex justify-end">
                 <button
                   className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-
                   type="submit"
-                >Submit query</button>
+                >
+                  Submit query
+                </button>
               </div>
             </div>
           </form>
