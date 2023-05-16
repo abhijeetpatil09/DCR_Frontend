@@ -47,27 +47,48 @@ const Publisherform = () => {
     RunId: formattedDate,
     File_Name: "",
     Match_Attribute: "",
+    Match_Attribute_Value: "",
   };
 
   const [formData, setFormData] = useState(initialState);
-  const [csvData, setCsvData] = useState(["-", "-", "-"]);
   const [disableButton, setDisableButton] = useState(false);
   const [gender, setGender] = useState("male");
-  const [age, setAge] = useState("");
+  // const [age, setAge] = useState("");
 
   const [requestId, setRequestId] = useState("");
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
 
   const [submit, setSubmit] = useState(false);
-
+  
+  const [inputValue, setInputValue] = useState("");
+  const [inputError, setInputError] = useState(null);
+  
   useEffect(() => {
     if (submit) {
       fetchcsvTableData(
         formData["Query_Name"] + "_" + formData["RunId"] + ".csv"
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submit]);
+
+  // useEffect for set match attribute values..
+  useEffect(() => {
+    if(formData['Match_Attribute'] === 'gender') {
+      setFormData({
+        ...formData,
+        "Match_Attribute_Value": gender,
+        RunId: Date.now(),
+      });
+    } else if(formData['Match_Attribute'] === 'age') {
+      setFormData({
+        ...formData,
+        "Match_Attribute_Value": inputValue,
+        RunId: Date.now(),
+      });
+    }
+  }, [formData, gender, inputValue]);
 
   useEffect(() => {
     setRequestId(reqId);
@@ -83,8 +104,9 @@ const Publisherform = () => {
       [e.target.name]: e.target.value,
       RunId: Date.now(),
     });
-    console.log(formData);
   };
+
+  console.log("formData", formData);
 
   const handleFileInput = (event) => {
     event.preventDefault();
@@ -92,36 +114,39 @@ const Publisherform = () => {
     var file = fileInput.files[0];
     console.log(file.name);
     setFormData({ ...formData, File_Name: file.name, RunId: Date.now() });
-    console.log(formData);
   };
 
-  const handleSelectChange = (event) => {
-    const selectedOptions = Array.from(event.target.selectedOptions).map(
-      (option) => option.value
-    );
-    const delimiter = "&";
-    const selectedOptionsString = `#${selectedOptions.join(delimiter)}#`;
-    setFormData({
-      ...formData,
-      [event.target.name]: selectedOptionsString,
-      RunId: Date.now(),
-    });
-    console.log(formData);
-    // setSelectedColumns(selectedOptions);
-  };
+  // const handleSelectChange = (event) => {
+  //   const selectedOptions = Array.from(event.target.selectedOptions).map(
+  //     (option) => option.value
+  //   );
+  //   const delimiter = "&";
+  //   const selectedOptionsString = `#${selectedOptions.join(delimiter)}#`;
+  //   setFormData({
+  //     ...formData,
+  //     [event.target.name]: selectedOptionsString,
+  //     RunId: Date.now(),
+  //   });
+  //   // setSelectedColumns(selectedOptions);
+  // };
 
-  function isValidInput(inputString) {
+  const isValidInput = (inputString) => {
     const regex = /^[0-9][0-9,-]*[0-9]$/; // regex pattern to match only comma, hyphen, and numeric values and start and end with numeric values
     return regex.test(inputString); // returns true if inputString matches the regex pattern, false otherwise
   }
 
-  const [inputValue, setInputValue] = useState("");
-  const [inputError, setInputError] = useState(null);
-
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      "Match_Attribute_Value": inputValue,
+      RunId: Date.now(),
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue]);
+  
   function handleInputChange(event) {
     const newValue = event.target.value;
     if (isValidInput(newValue)) {
-      console.log("valid Input");
       setInputValue(newValue);
       setInputError(null);
     } else {
@@ -130,7 +155,7 @@ const Publisherform = () => {
       );
       console.log("invalid Input");
     }
-  }
+  };
 
   const sendEmail = () => {
     // create reusable transporter object using the default SMTP transport
@@ -174,10 +199,7 @@ const Publisherform = () => {
       setDisableButton(false);
     }, 110000);
 
-    console.log(formData);
-
     setFormData({ ...formData, RunId: Date.now() });
-    console.log(formData);
     const keys = Object.keys(formData);
     let csv = keys.join(",") + "\n";
     for (const obj of [formData]) {
@@ -354,7 +376,7 @@ const Publisherform = () => {
                     className="w-full"
                   >
                     <option value="">Please select</option>
-                    <option value="emailid">Email</option>
+                    <option value="email">Email</option>
                     <option value="phone">Phone</option>
                     <option value="MAID">MAID-WIP</option>
                   </select>
