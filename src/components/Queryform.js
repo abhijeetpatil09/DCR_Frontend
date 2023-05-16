@@ -79,26 +79,25 @@ const Queryform = () => {
   const [providerList, setProviderList] = useState([]);
   const [templateList, setTemplateList] = useState("");
   const [databaseName, setDatabaseName] = useState("");
+  const [colunms, setColumns] = useState([]);
 
   const [submit, setSubmit] = useState(false);
 
   useEffect(() => {
     if (submit) {
-      fetchcsvTableData(
-        formData["Query_Names"] + "_" + formData["RunId"] + ".csv"
-      );
+      fetchcsvTableData();
     }
   }, [submit]);
 
-  useEffect(() => {
-    // setInterval(() => {
-    //   if (submit) {
-    //     fetchcsvTableData(
-    //       formData["Query_Names"] + "_" + formData["RunId"] + ".csv"
-    //     );
-    //   }
-    // }, 100);
-  }, [submit]);
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     if (submit) {
+  //       fetchcsvTableData(
+  //         formData["Query_Names"] + "_" + formData["RunId"] + ".csv"
+  //       );
+  //     }
+  //   }, 60000);
+  // }, [submit]);
 
   useEffect(() => {
     setRequestId(reqId);
@@ -135,13 +134,38 @@ const Queryform = () => {
         })
         .then((response) => {
           if (response?.data) {
-            console.log("response?.data", response?.data);
+            console.log("Template list", response?.data);
             setTemplateList(response.data.data);
           }
         })
         .catch((error) => console.log(error));
     }
   }, [databaseName]);
+
+  useEffect(() => {
+    if (databaseName !== "" && formData["Query_Names"] !== "") {
+      axios
+        .get("http://127.0.0.1:5000/data_fetcher", {
+          params: {
+            query: `select dimensions from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Names"]}';`,
+          },
+        })
+        .then((response) => {
+          if (response?.data) {
+            console.log("response?.data", response?.data);
+            let col_name = response?.data?.data[0]?.DIMENSIONS?.split("|");
+            col_name=col_name?.map((item) => {
+              return item?.split(".")[1]
+            })
+            console.log("col_name", col_name);
+
+            setColumns(col_name);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [databaseName, formData["Query_Names"]]);
+
 
   const handleSelectProvider = (event) => {
     setFormData({
@@ -259,16 +283,14 @@ const Queryform = () => {
     //     else console.log(data);
     // });
 
-    // s3.putObject(params, (err, data) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     console.log(`File uploaded successfully. ETag: ${data.ETag}`);
-    //     alert("Request has been submitted successfully");
-    //     setTableRows([]);
-    //     setTableHead([]);
-    //   }
-    // });
+    s3.putObject(params, (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(`File uploaded successfully. ETag: ${data.ETag}`);
+        alert("Request has been submitted successfully");
+      }
+    });
 
     // connection.execute({
     //     sqlText: `CREATE OR REPLACE STAGE my_stage;`
@@ -324,27 +346,29 @@ const Queryform = () => {
     );
   };
 
-  const fetchcsvTableData = async (key) => {
-    let run_id = "1691891590798";
-    // let run_id =  '1681891590569';
+  const fetchcsvTableData = async () => {
+    axios.get('http://127.0.0.1:5000/data_fetcher', {
+      params: {
+        query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${formData["Query_Names"]}_${formData["RunId"]};`
+      }
+    }).then(response => {
+      console.log("response ", response)
+     });
 
-    let file_name = "customer_enrichment_1691891590798.csv";
-    // let file_name = 'customer_enrichment_1681891590569.csv';
-
-    try {
-      const data = await s3
-        .getObject({
-          Bucket: "dcr-poc",
-          // Key: "query_result_tables/" + formData["RunId"] + "/" + key,
-          Key: `query_result_tables/${run_id}/${file_name}`,
-        })
-        .promise();
-      fetchTable(data, run_id);
-    } catch (err) {
-      console.error(err);
-    }
+    // try {
+    //   const data = await s3
+    //     .getObject({
+    //       Bucket: "dcr-poc",
+    //       Key: "query_result_tables/" + formData["RunId"] + "/" + key,
+    //       // Key: `query_result_tables/${run_id}/${file_name}`,
+    //     })
+    //     .promise();
+    //   fetchTable(data, formData["RunId"]);
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
-
+  // select * from DCR_SAMP_CONSUMER1.PUBLIC.CUSTOMER_ENRICHMENT_1681122386300;
   // select * from $db_name.public.$templaet_name_$runid limit 1000;
 
   return (

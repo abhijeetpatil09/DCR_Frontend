@@ -53,6 +53,7 @@ const Publisherform = () => {
   const [csvData, setCsvData] = useState(["-", "-", "-"]);
   const [disableButton, setDisableButton] = useState(false);
   const [gender, setGender] = useState("male");
+  const [age, setAge] = useState("");
 
   const [requestId, setRequestId] = useState("");
   const [tableHead, setTableHead] = useState([]);
@@ -70,7 +71,7 @@ const Publisherform = () => {
 
   useEffect(() => {
     setRequestId(reqId);
-    if (TableData) {
+    if(TableData) {
       setTableHead(TableData?.head || []);
       setTableRows(TableData?.rows || []);
     }
@@ -210,13 +211,13 @@ const Publisherform = () => {
       // ACL: 'private',
     };
 
-    // s3.putObject(params, (err, data) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     console.log(`File uploaded successfully. ETag: ${data.ETag}`);
-    //   }
-    // });
+    s3.putObject(params, (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(`File uploaded successfully. ETag: ${data.ETag}`);
+      }
+    });
 
     var inputFile = document.getElementById("myFileInput");
 
@@ -228,14 +229,13 @@ const Publisherform = () => {
       // ACL: 'private',
     };
 
-    // s3.putObject(params2, (err, data) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     console.log(`File uploaded successfully. ETag: ${data.ETag}`);
-    //     setCsvData(["-", "-", "-"]);
-    //   }
-    // });
+    s3.putObject(params2, (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(`File uploaded successfully. ETag: ${data.ETag}`);
+      }
+    });
 
     const formData2 = new FormData();
     formData2.append("file", inputFile.files[0]);
@@ -288,21 +288,16 @@ const Publisherform = () => {
         array.push(row);
       }
     }
-    dispatch(actions.PublisherForm({ RequestId: runId, TableData: { head: head, rows: array } }))
+    dispatch(actions.PublisherForm({ RequestId: runId, TableData : { head: head, rows: array } }))
   };
 
   const fetchcsvTableData = async (key) => {
     // let run_id = '1691891590797';  
-    // let run_id = '1691891590796';
-    let run_id = "1681891590569";
-
-
-
+    let run_id =  '1691891590796';
 
     // let file_name = 'advertiser_match_1691891590797.csv';
-    // let file_name = 'advertiser_match_1691891590796.csv';
-    let file_name = "customer_enrichment_1681891590569.csv";
-    
+    let file_name = 'advertiser_match_1691891590796.csv';
+
     try {
       const data = await s3
         .getObject({
@@ -311,7 +306,7 @@ const Publisherform = () => {
           Key: `query_result_tables/${run_id}/${file_name}`,
         })
         .promise();
-      fetchTable(data, run_id);
+        fetchTable(data, run_id);
     } catch (err) {
       console.error(err);
     }
