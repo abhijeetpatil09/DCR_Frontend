@@ -12,7 +12,7 @@ import "./styles.css";
 import "./pure-react.css";
 
 const initialState = {
-  Query_Names: "",
+  Query_Name: "",
   Provider_Name: "",
   Column_Names: "",
   Consumer_Name: "",
@@ -42,10 +42,11 @@ const Queryform = () => {
 
   const user = state && state.user;
   const TableData = state && state.ConsumerForm && state.ConsumerForm.TableData;
-  const reqId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
+  const requestId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
+  const queryName =
+    state && state.PublisherForm && state.ConsumerForm.QueryName;
 
   const [formData, setFormData] = useState(initialState);
-  const [requestId, setRequestId] = useState("");
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
 
@@ -53,25 +54,33 @@ const Queryform = () => {
   const [templateList, setTemplateList] = useState("");
   const [databaseName, setDatabaseName] = useState("");
   const [colunms, setColumns] = useState([]);
-
-  const [submit, setSubmit] = useState(false);
+  const [fetchData, setFetchData] = useState(false);
+  let [stopAPICall, setStopAPICall] = useState(1);
 
   useEffect(() => {
-    setInterval(() => {
-      if (submit) {
+    console.log("Consumer stopAPICall", stopAPICall);
+
+    if (
+      stopAPICall !== 0 &&
+      requestId &&
+      requestId !== "" &&
+      queryName &&
+      queryName !== ""
+    ) {
+      setFetchData(true);
+      setTimeout(() => {
         fetchcsvTableData();
-      }
-    }, 60000);
+      }, 30000);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submit]);
+  }, [requestId, queryName, stopAPICall]);
 
   useEffect(() => {
-    setRequestId(reqId);
     if (TableData) {
       setTableHead(TableData?.head || []);
       setTableRows(TableData?.rows || []);
     }
-  }, [TableData, reqId]);
+  }, [TableData]);
 
   useEffect(() => {
     axios
@@ -109,11 +118,11 @@ const Queryform = () => {
   }, [databaseName]);
 
   useEffect(() => {
-    if (databaseName !== "" && formData["Query_Names"] !== "") {
+    if (databaseName !== "" && formData["Query_Name"] !== "") {
       axios
         .get("http://127.0.0.1:5000/data_fetcher", {
           params: {
-            query: `select dimensions from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Names"]}';`,
+            query: `select dimensions from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Name"]}';`,
           },
         })
         .then((response) => {
@@ -131,7 +140,7 @@ const Queryform = () => {
         .catch((error) => console.log(error));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [databaseName, formData["Query_Names"]]);
+  }, [databaseName, formData["Query_Name"]]);
 
   const handleSelectProvider = (event) => {
     setFormData({
@@ -189,6 +198,7 @@ const Queryform = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setStopAPICall(1);
 
     formData.RunId = Date.now();
 
@@ -213,7 +223,7 @@ const Queryform = () => {
       Bucket: "dcr-poc",
       Key:
         "query_request/" +
-        formData["Query_Names"] +
+        formData["Query_Name"] +
         "_" +
         formData["RunId"] +
         ".csv",
@@ -256,23 +266,27 @@ const Queryform = () => {
     //       });
     //     }
     //   });
-    setSubmit(true);
+    dispatch(
+      actions.ConsumerQueryForm({
+        QueryName: formData?.Query_Name,
+        RequestId: formData?.RunId,
+      })
+    );
   };
 
   const fetchTable = (data, runId) => {
-    let head = []; 
+    let head = [];
     let row = [];
-    if(data?.length > 0) {
+    if (data?.length > 0) {
       head = data && Object.keys(data[0]);
       data?.map((obj) => {
-        console.log("obj", obj)
         return row.push(head?.map((key) => obj[key]));
       });
-    } 
+    }
     dispatch(
       actions.ConsumerQueryForm({
         RequestId: runId,
-        TableData: { head: head, rows: row },
+        TableData: { head: head, rows: row, reqId: requestId },
       })
     );
   };
@@ -281,16 +295,20 @@ const Queryform = () => {
     axios
       .get("http://127.0.0.1:5000/data_fetcher", {
         params: {
-          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${formData["Query_Names"]}_${formData["RunId"]} limit 1000;`,
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${requestId} limit 1000;`,
         },
       })
       .then((response) => {
-        if(response?.data?.data) {
-          setSubmit(false);
-          fetchTable(response?.data?.data, formData["RunId"]);
+        if (response?.data?.data) {
+          setStopAPICall(0);
+          fetchTable(response?.data?.data, requestId);
+          setFetchData(false);
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        setStopAPICall(++stopAPICall);
+        console.log("In API catch", error);
+      });
   };
 
   return (
@@ -335,8 +353,8 @@ const Queryform = () => {
                 <select
                   id="selectedTemp"
                   required
-                  name="Query_Names"
-                  value={formData["Query_Names"]}
+                  name="Query_Name"
+                  value={formData["Query_Name"]}
                   className="w-full"
                   onChange={handleSelectedTemp}
                 >
@@ -358,7 +376,7 @@ const Queryform = () => {
                 Query
                 Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
                 <select
-                  name="Query_Names"
+                  name="Query_Name"
                   onChange={handleCustomerFormData}
                   required
                   className="my-select"
@@ -447,11 +465,15 @@ const Queryform = () => {
             </div>
           </form>
         </div>
-        <div className=" flex flex-grow">
-          {tableHead?.length > 0 && tableRows?.length > 0 ? (
-            <Table id={requestId} head={tableHead} rows={tableRows} />
-          ) : null}
-        </div>
+        {!fetchData ? (
+          <div className=" flex flex-grow">
+            {tableHead?.length > 0 && tableRows?.length > 0 ? (
+              <Table id={requestId} head={tableHead} rows={tableRows} />
+            ) : null}
+          </div>
+        ) : (
+          <div className=" flex flex-grow mt-4"> We are fetching the data... </div>
+        )}
       </div>
     </div>
   );

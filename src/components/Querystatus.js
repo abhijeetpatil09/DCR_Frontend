@@ -62,7 +62,7 @@ const Querystatus = () => {
                     <td>{item.TEMPLATE_NAME}</td>
                     <td>{item.PROVIDER_NAME}</td>
                     <td>{item.COLOUMNS}</td>
-                    <td>{item.STATUS}</td>
+                    <td>{item.STATUS === 'true' ? 'Approved' : 'Rejected'}</td>
                     <td>{new Date().toLocaleString()}</td>
                     <td>
                       <button

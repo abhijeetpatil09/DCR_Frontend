@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AWS from "aws-sdk";
-// import nodemailer from 'nodemailer';
-// import JSZip from "jszip";
+import axios from "axios";
+
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
@@ -11,18 +11,6 @@ import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
 
-const timestamp = Date.now();
-const dateObj = new Date(timestamp);
-
-const year = dateObj.getFullYear();
-const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-const day = dateObj.getDate().toString().padStart(2, "0");
-const hours = dateObj.getHours().toString().padStart(2, "0");
-const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-const seconds = dateObj.getSeconds().toString().padStart(2, "0");
-
-const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
   secretAccessKey: "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",
@@ -31,131 +19,100 @@ const s3 = new AWS.S3({
   // region: 'ap-south-1',
 });
 
+const initialState = {
+  Query_Name: "",
+  Provider_Name: "",
+  Column_Names: "",
+  Consumer_Name: "",
+  File_Name: "",
+  Match_Attribute: "",
+  Match_Attribute_Value: "",
+};
+
 const Publisherform = () => {
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const user = state && state.user;
-  const TableData = state && state.PublisherForm && state.PublisherForm.TableData;
-  const reqId = state && state.PublisherForm && state.PublisherForm.RequestId;
+  const TableData =
+    state && state.PublisherForm && state.PublisherForm.TableData;
+  const requestId =
+    state && state.PublisherForm && state.PublisherForm.RequestId;
+  const queryName = state && state.PublisherForm && state.PublisherForm.QueryName;
 
-  const initialState = {
-    Query_Name: "",
-    Provider_Name: user && user["name"],
-    Column_Names: "",
-    Consumer_Name: user && user["name"],
-    RunId: formattedDate,
-    File_Name: "",
-    Match_Attribute: "",
-    Match_Attribute_Value: "",
-  };
+  const [formData, setFormData] = useState({
+    ...initialState,
+    Provider_Name: user?.name,
+    Consumer_Name: user?.name,
+  });
 
-  const [formData, setFormData] = useState(initialState);
-  const [disableButton, setDisableButton] = useState(false);
   const [gender, setGender] = useState("male");
-  // const [age, setAge] = useState("");
+  const [age, setAge] = useState("age_0_6");
 
-  const [requestId, setRequestId] = useState("");
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
+  const [fetchData, setFetchData] = useState(false);
 
-  const [submit, setSubmit] = useState(false);
-  
-  const [inputValue, setInputValue] = useState("");
-  const [inputError, setInputError] = useState(null);
-  
+  let [stopAPICall, setStopAPICall] = useState(1);
+
   useEffect(() => {
-    if (submit) {
-      fetchcsvTableData(
-        formData["Query_Name"] + "_" + formData["RunId"] + ".csv"
-      );
+    console.log("Publisher stopAPICall", stopAPICall);
+
+    if (stopAPICall !== 0 && requestId && requestId !== "" && queryName && queryName !== "") {
+      setFetchData(true);
+      setTimeout(() => {
+        fetchcsvTableData();
+      }, 30000);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submit]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestId, queryName, stopAPICall]);
 
   // useEffect for set match attribute values..
   useEffect(() => {
-    if(formData['Match_Attribute'] === 'gender') {
+    if (formData["Match_Attribute"] === "gender") {
       setFormData({
         ...formData,
-        "Match_Attribute_Value": gender,
-        RunId: Date.now(),
+        Match_Attribute_Value: gender,
       });
-    } else if(formData['Match_Attribute'] === 'age') {
+    } else if (formData["Match_Attribute"] === "age") {
       setFormData({
         ...formData,
-        "Match_Attribute_Value": inputValue,
-        RunId: Date.now(),
+        Match_Attribute_Value: age,
+      });
+    } else if (formData["Match_Attribute"] === "overall") {
+      setFormData({
+        ...formData,
+        Match_Attribute_Value: 'overall',
       });
     }
-  }, [formData, gender, inputValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [age, formData?.Match_Attribute, gender]);
 
   useEffect(() => {
-    setRequestId(reqId);
-    if(TableData) {
+    if (TableData) {
       setTableHead(TableData?.head || []);
       setTableRows(TableData?.rows || []);
     }
-  }, [TableData, reqId]);
+  }, [TableData]);
 
   const handleCustomerFormData = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-      RunId: Date.now(),
     });
   };
-
-  console.log("formData", formData);
 
   const handleFileInput = (event) => {
     event.preventDefault();
     var fileInput = document.getElementById("myFileInput");
     var file = fileInput.files[0];
-    console.log(file.name);
-    setFormData({ ...formData, File_Name: file.name, RunId: Date.now() });
+    setFormData({ ...formData, File_Name: file.name });
   };
 
-  // const handleSelectChange = (event) => {
-  //   const selectedOptions = Array.from(event.target.selectedOptions).map(
-  //     (option) => option.value
-  //   );
-  //   const delimiter = "&";
-  //   const selectedOptionsString = `#${selectedOptions.join(delimiter)}#`;
-  //   setFormData({
-  //     ...formData,
-  //     [event.target.name]: selectedOptionsString,
-  //     RunId: Date.now(),
-  //   });
-  //   // setSelectedColumns(selectedOptions);
+  // const isValidInput = (inputString) => {
+  //   const regex = /^[0-9][0-9,-]*[0-9]$/; // regex pattern to match only comma, hyphen, and numeric values and start and end with numeric values
+  //   return regex.test(inputString); // returns true if inputString matches the regex pattern, false otherwise
   // };
-
-  const isValidInput = (inputString) => {
-    const regex = /^[0-9][0-9,-]*[0-9]$/; // regex pattern to match only comma, hyphen, and numeric values and start and end with numeric values
-    return regex.test(inputString); // returns true if inputString matches the regex pattern, false otherwise
-  }
-
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      "Match_Attribute_Value": inputValue,
-      RunId: Date.now(),
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue]);
-  
-  function handleInputChange(event) {
-    const newValue = event.target.value;
-    if (isValidInput(newValue)) {
-      setInputValue(newValue);
-      setInputError(null);
-    } else {
-      setInputError(
-        "Input must contain only comma, hyphen, and numeric values and start and end with a numeric value"
-      );
-      console.log("invalid Input");
-    }
-  };
 
   const sendEmail = () => {
     // create reusable transporter object using the default SMTP transport
@@ -189,17 +146,11 @@ const Publisherform = () => {
   };
 
   const handleSubmit = (event) => {
-    setSubmit(true);
-
     event.preventDefault();
+    setStopAPICall(1);
 
-    setDisableButton(true);
+    formData.RunId = Date.now();
 
-    setTimeout(() => {
-      setDisableButton(false);
-    }, 110000);
-
-    setFormData({ ...formData, RunId: Date.now() });
     const keys = Object.keys(formData);
     let csv = keys.join(",") + "\n";
     for (const obj of [formData]) {
@@ -262,95 +213,101 @@ const Publisherform = () => {
     const formData2 = new FormData();
     formData2.append("file", inputFile.files[0]);
 
-    fetch("http://localhost:5000/upload", {
-      method: "POST",
-      body: formData2,
-    })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    // fetch("http://localhost:5000/upload", {
+    //   method: "POST",
+    //   body: formData2,
+    // })
+    //   .then((response) => {
+    //     console.log("response upload", response);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
 
     const formData3 = new FormData();
     formData3.append("file", file1);
 
-    fetch("http://localhost:4040/upload2", {
-      method: "POST",
-      body: formData3,
-    })
+    // try {
+    //   fetch("http://localhost:4040/upload2", {
+    //     method: "POST",
+    //     body: formData3,
+    //   })
+    //     .then((response) => {
+    //       console.log(response);
+    //     })
+    //     .catch((error) => {
+    //       console.error(error);
+    //     });
+    // } catch {
+    //   console.log("Error in Upload 2")
+    // }
+
+    dispatch(
+      actions.PublisherForm({
+        QueryName: formData?.Query_Name,
+        RequestId: formData?.RunId,
+      })
+    );
+  };
+
+  const fetchTable = (data, requestId) => {
+    let head = [];
+    let row = [];
+    if (data?.length > 0) {
+      head = data && Object.keys(data[0]);
+      data?.map((obj) => {
+        return row.push(head?.map((key) => obj[key]));
+      });
+    }
+    dispatch(
+      actions.PublisherForm({
+        TableData: { head: head, rows: row, reqId: requestId },
+      })
+    );
+  };
+
+  const fetchcsvTableData = async () => {
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${requestId} limit 1000;`,
+        },
+      })
       .then((response) => {
-        console.log(response);
+        if (response?.data?.data) {
+          fetchTable(response?.data?.data, requestId);
+          setStopAPICall(0);
+          setFetchData(false);
+        }
       })
       .catch((error) => {
-        console.error(error);
+        setStopAPICall(++stopAPICall);
+        console.log("In API catch", error)
       });
   };
-
-  const fetchTable = (data, runId) => {
-    let head = data?.Body.toString("utf-8")?.split("\n")[0]?.split('",');
-    head = head?.map((item) => {
-      if (item?.includes('"')) {
-        return item?.replaceAll('"', "");
-      }
-      return item;
-    });
-
-    let array = [];
-    for (let i = 0; i < 999; i++) {
-      let row = data?.Body?.toString("utf-8")?.split("\n")[i + 1]?.split(",");
-      row = row?.map((item) => {
-        if (item?.includes('"')) {
-          return item?.replaceAll('"', "");
-        }
-        return item;
-      });
-      if (row) {
-        array.push(row);
-      }
-    }
-    dispatch(actions.PublisherForm({ RequestId: runId, TableData : { head: head, rows: array } }))
-  };
-
-  const fetchcsvTableData = async (key) => {
-    // let run_id = '1691891590797';  
-    let run_id =  '1691891590796';
-
-    // let file_name = 'advertiser_match_1691891590797.csv';
-    let file_name = 'advertiser_match_1691891590796.csv';
-
-    try {
-      const data = await s3
-        .getObject({
-          Bucket: "dcr-poc",
-          // Key: "query_result_tables/" + formData["RunId"] + "/" + key,
-          Key: `query_result_tables/${run_id}/${file_name}`,
-        })
-        .promise();
-        fetchTable(data, run_id);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
 
   return (
     <div className="flex flex-col  ">
       <h3 className="mt-4 text-xl font-bold text-deep-navy">Publisher query</h3>
       <div className="flex flex-row  gap-3  w-full">
         <div className="flex flex-col flex-shrink h-auto">
-          <form className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto  w-80 max-w-xs" name="myForm" onSubmit={handleSubmit}>
-            <span className="text-sm mb-4 font-light text-coal">Advertiser record match</span>
+          <form
+            className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto  w-80 max-w-xs"
+            name="myForm"
+            onSubmit={handleSubmit}
+          >
+            <span className="text-sm mb-4 font-light text-coal">
+              Advertiser record match
+            </span>
             <div>
               <div className=" mt-2 pb-2 flex flex-col">
                 <label>Query Name</label>
                 <select
-                    name="Query_Name"
-                    onChange={handleCustomerFormData}
-                    required
-                    className="w-full"
-                  >
+                  name="Query_Name"
+                  onChange={handleCustomerFormData}
+                  required
+                  className="w-full"
+                >
                   <option value="">Please select</option>
                   <option value="advertiser_match">Advertiser Match</option>
                 </select>
@@ -359,49 +316,45 @@ const Publisherform = () => {
               <div className="mt-2 pb-21 flex flex-col">
                 <label>Upload File</label>
                 <input
-                    className="w-full "
-                    type="file"
-                    id="myFileInput"
-                    onChange={handleFileInput}
-                    required
-                  />
+                  className="w-full "
+                  type="file"
+                  id="myFileInput"
+                  onChange={handleFileInput}
+                  required
+                />
               </div>
 
               <div className="mt-2 pb-21 flex flex-col">
                 <label>Identifier Type</label>
                 <select
-                    name="Column_Names"
-                    onChange={handleCustomerFormData}
-                    required
-                    className="w-full"
-                  >
-                    <option value="">Please select</option>
-                    <option value="email">Email</option>
-                    <option value="phone">Phone</option>
-                    <option value="MAID">MAID-WIP</option>
-                  </select>
+                  name="Column_Names"
+                  onChange={handleCustomerFormData}
+                  required
+                  className="w-full"
+                >
+                  <option value="">Please select</option>
+                  <option value="email">Email</option>
+                  <option value="phone">Phone</option>
+                  <option value="MAID">MAID-WIP</option>
+                </select>
               </div>
 
               <div className="mt-2 pb-21 flex flex-col">
-                <label>
-                  Match Attribute
-                
-                </label>
+                <label>Match Attribute</label>
                 <select
-                    name="Match_Attribute"
-                    onChange={handleCustomerFormData}
-                    required
-                    className="w-full"
-                  >
-                    <option value="">Please select</option>
-                    <option value="overall">Overall</option>
-                    <option value="age">Age</option>
-                    <option value="gender">Gender</option>
-                    <option value="phone">Phone</option>
-                  </select>
+                  name="Match_Attribute"
+                  onChange={handleCustomerFormData}
+                  required
+                  className="w-full"
+                >
+                  <option value="">Please select</option>
+                  <option value="overall">Overall</option>
+                  <option value="age">Age</option>
+                  <option value="gender">Gender</option>
+                </select>
                 {formData["Match_Attribute"] === "gender" && (
                   <div className="mt-2 pb-21 flex flex-col">
-                    Select Gender  
+                    Select Gender
                     <label>
                       <input
                         type="radio"
@@ -418,82 +371,81 @@ const Publisherform = () => {
                         checked={gender === "female"}
                         onChange={(e) => setGender(e.target.value)}
                       />
-                        <span className="pl-2">Female</span>
+                      <span className="pl-2">Female</span>
                     </label>
                   </div>
                 )}
                 {formData["Match_Attribute"] === "age" && (
                   <div className="mt-2 pb-21 flex flex-col">
-                    <label>Enter Age </label>
-                    <input
-                        type="text"
-                        onChange={handleInputChange}
-                        required
-                        className="w-full"
-                        placeholder="e.g. 25,14,30,28"
-                      ></input>
-                      {/* <span className="mt-2">
-                        * Please enter comma seperated values eg: 25,14,30,28
-                      </span> */}
-                      {inputError && (
-                        <div className="text-red-500">
-                          {inputError}
-                        </div>
-                      )}
-                  </div>
-                )}
-                {formData["Match_Attribute"] === "phone" && (
-                  <div className="mt-2 pb-21 flex flex-col">
-                    <label>Phone No</label>
-                    <input
-                        type="text"
-                        required
-                        className="w-full"
+                    Select Age
+                    <label>
+                      <input
+                        type="radio"
+                        value="age_0_6"
+                        checked={age === "age_0_6"}
+                        onChange={(e) => setAge(e.target.value)}
                       />
+                      <span className="pl-2">0-6</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="age_7_16"
+                        checked={age === "age_7_16"}
+                        onChange={(e) => setAge(e.target.value)}
+                      />
+                      <span className="pl-2">7-16</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="age_17_25"
+                        checked={age === "age_17_25"}
+                        onChange={(e) => setAge(e.target.value)}
+                      />
+                      <span className="pl-2">17-25</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="age_26_40"
+                        checked={age === "age_26_40"}
+                        onChange={(e) => setAge(e.target.value)}
+                      />
+                      <span className="pl-2">26-40</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="age_41_above"
+                        checked={age === "age_41_above"}
+                        onChange={(e) => setAge(e.target.value)}
+                      />
+                      <span className="pl-2">41-above</span>
+                    </label>
                   </div>
                 )}
               </div>
               <div className="flex justify-end">
                 <button
                   className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-
                   type="submit"
-                >Submit query</button>
+                >
+                  Submit query
+                </button>
               </div>
             </div>
           </form>
         </div>
-        {/* <div className="homecenter">
-        <h4 style={{ marginLeft: "130px" }}>Output Console:</h4>
-
-        <table style={{ marginLeft: "130px", marginBottom: "10px" }}>
-          <thead>
-            <tr>
-              <th>Request ID</th>
-              <th>Advertiser Records Count</th>
-              <th>Record Match</th>
-              <th>Percentage Match</th>
-              <th>Run Ad. Campaign</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{requestId}</td>
-              <td>{csvData[0]}</td>
-              <td>{csvData[1]}</td>
-              <td>{csvData[2]}</td>
-              <td>
-                <button onClick={() => sendEmail()}>Push to FB-WIP</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div> */}
-        <div className=" flex flex-1 overflow-scroll">
-          {tableHead?.length > 0 && tableRows?.length > 0 ? (
-            <Table   id={requestId} head={tableHead} rows={tableRows} />
-          ) : null}
-        </div>
+        {!fetchData ? (
+          <div className=" flex flex-grow">
+            {tableHead?.length > 0 && tableRows?.length > 0 ? (
+              <Table id={requestId} head={tableHead} rows={tableRows} />
+            ) : null}
+          </div>
+        ) : (
+          <div className=" flex flex-grow mt-4"> We are fetching the data... </div>
+        )}
       </div>
     </div>
   );
