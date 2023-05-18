@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AWS from "aws-sdk";
 import axios from "axios";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -39,7 +39,8 @@ const Publisherform = () => {
     state && state.PublisherForm && state.PublisherForm.TableData;
   const requestId =
     state && state.PublisherForm && state.PublisherForm.RequestId;
-  const queryName = state && state.PublisherForm && state.PublisherForm.QueryName;
+  const queryName =
+    state && state.PublisherForm && state.PublisherForm.QueryName;
 
   const [formData, setFormData] = useState({
     ...initialState,
@@ -59,7 +60,13 @@ const Publisherform = () => {
   useEffect(() => {
     console.log("Publisher stopAPICall", stopAPICall);
 
-    if (stopAPICall !== 0 && requestId && requestId !== "" && queryName && queryName !== "") {
+    if (
+      stopAPICall !== 0 &&
+      requestId &&
+      requestId !== "" &&
+      queryName &&
+      queryName !== ""
+    ) {
       setFetchData(true);
       setTimeout(() => {
         fetchcsvTableData();
@@ -83,7 +90,7 @@ const Publisherform = () => {
     } else if (formData["Match_Attribute"] === "overall") {
       setFormData({
         ...formData,
-        Match_Attribute_Value: 'overall',
+        Match_Attribute_Value: "overall",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -205,17 +212,33 @@ const Publisherform = () => {
 
     s3.putObject(params2, (err, data) => {
       if (err) {
-        toast.error('We are facing some error in your request...');
+        console.log("err", err);
       } else {
-        toast.success('Request has been submitted successfully...');
-        dispatch(
-          actions.PublisherForm({
-            QueryName: formData?.Query_Name,
-            RequestId: formData?.RunId,
-          })
-        );
+        console.log("data", data);
       }
     });
+
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
+        },
+      })
+      .then((response) => {
+        if(response) {
+          toast.success(`Request has been submitted successfully. Request Id: ${formData?.RunId}`);
+          dispatch(
+            actions.PublisherForm({
+              QueryName: formData?.Query_Name,
+              RequestId: formData?.RunId,
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(`We are facing some error in your request. Request Id: ${formData?.RunId}`);
+      });
 
     const formData2 = new FormData();
     formData2.append("file", inputFile.files[0]);
@@ -283,7 +306,7 @@ const Publisherform = () => {
       })
       .catch((error) => {
         setStopAPICall(++stopAPICall);
-        console.log("In API catch", error)
+        console.log("In API catch", error);
       });
   };
 
@@ -445,7 +468,10 @@ const Publisherform = () => {
             ) : null}
           </div>
         ) : (
-          <span className="text-deep-navy flex flex-grow mt-4">We are fetching the data you requested: Request Id - <strong>{requestId}</strong></span>
+          <span className="text-deep-navy flex flex-grow mt-4">
+            We are fetching the data you requested: Request Id -{" "}
+            <strong>{requestId}</strong>
+          </span>
         )}
       </div>
     </div>

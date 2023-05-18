@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AWS from "aws-sdk";
 import axios from "axios";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -239,17 +239,32 @@ const Queryform = () => {
 
     s3.putObject(params, (err, data) => {
       if (err) {
-        toast.error('We are facing some error in your request...');
+        console.log("err", err);
       } else {
-        toast.success('Request has been submitted successfully...');
-        dispatch(
-          actions.ConsumerQueryForm({
-            QueryName: formData?.Query_Name,
-            RequestId: formData?.RunId,
-          })
-        );
+        console.log("data", data);
       }
     });
+
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}');`,
+        },
+      }).then((response) => {
+        if(response) {
+          toast.success(`Request has been submitted successfully. Request Id: ${formData?.RunId}`);
+          dispatch(
+            actions.ConsumerQueryForm({
+              QueryName: formData?.Query_Name,
+              RequestId: formData?.RunId,
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(`We are facing some error in your request. Request Id: ${formData?.RunId}`);
+      });
 
     // connection.execute({
     //     sqlText: `CREATE OR REPLACE STAGE my_stage;`
@@ -272,7 +287,6 @@ const Queryform = () => {
     //       });
     //     }
     //   });
-    
   };
 
   const fetchTable = (data, runId) => {
@@ -474,7 +488,10 @@ const Queryform = () => {
             ) : null}
           </div>
         ) : (
-          <span className="text-deep-navy flex flex-grow mt-4">We are fetching the data you requested: Request Id - <strong>{requestId}</strong></span>
+          <span className="text-deep-navy flex flex-grow mt-4">
+            We are fetching the data you requested: Request Id -{" "}
+            <strong>{requestId}</strong>
+          </span>
         )}
       </div>
     </div>
