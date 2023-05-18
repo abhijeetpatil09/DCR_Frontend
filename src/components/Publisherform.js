@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AWS from "aws-sdk";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -204,9 +205,15 @@ const Publisherform = () => {
 
     s3.putObject(params2, (err, data) => {
       if (err) {
-        console.log(err);
+        toast.error('We are facing some error in your request...');
       } else {
-        console.log(`File uploaded successfully. ETag: ${data.ETag}`);
+        toast.success('Request has been submitted successfully...');
+        dispatch(
+          actions.PublisherForm({
+            QueryName: formData?.Query_Name,
+            RequestId: formData?.RunId,
+          })
+        );
       }
     });
 
@@ -241,13 +248,6 @@ const Publisherform = () => {
     // } catch {
     //   console.log("Error in Upload 2")
     // }
-
-    dispatch(
-      actions.PublisherForm({
-        QueryName: formData?.Query_Name,
-        RequestId: formData?.RunId,
-      })
-    );
   };
 
   const fetchTable = (data, requestId) => {
@@ -278,6 +278,7 @@ const Publisherform = () => {
           fetchTable(response?.data?.data, requestId);
           setStopAPICall(0);
           setFetchData(false);
+          toast.success(`Data fetched successfully. Request Id: ${requestId}`);
         }
       })
       .catch((error) => {
@@ -444,7 +445,7 @@ const Publisherform = () => {
             ) : null}
           </div>
         ) : (
-          <div className=" flex flex-grow mt-4"> We are fetching the data... </div>
+          <span className="text-deep-navy flex flex-grow mt-4">We are fetching the data you requested: Request Id - <strong>{requestId}</strong></span>
         )}
       </div>
     </div>
