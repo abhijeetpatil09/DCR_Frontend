@@ -312,10 +312,10 @@ const LandingPage = () => {
                     </div>
                     <div className="flex flex-col items-center border-t border-slate-400/10 py-10 sm:flex-row-reverse sm:justify-between">
                         <div className="flex gap-x-6">
-                            <a className="group" aria-label="TaxPal on Twitter" target="_blank" href="https://hoonartek.com/privacy-policy-cookies/">
+                            <a className="group" aria-label="TaxPal on Twitter" target="_blank" href="/privacy-policy">
                                 Privacy Policy
                             </a>
-                            <a className="group" aria-label="TaxPal on GitHub" target="_blank" href="https://hoonartek.com/terms-conditions/">
+                            <a className="group" aria-label="TaxPal on GitHub" target="_blank" href="/terms-and-conditions">
                                 Terms and Conditions
                             </a>
                         </div>
