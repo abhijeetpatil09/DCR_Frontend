@@ -236,26 +236,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// const database = [
-//   {
-//     username: "admin",
-//     password: "admin",
-//     role:["Consumer","Publisher","Provider"]
-//   },
-//   {
-//     username: "provider",
-//     password: "provider",
-//     role:["Consumer","Provider"]
-//   },
-//   {
-//     username: "Hoonartek",
-//     password: "Hoonartek",
-//     role:["Consumer","Publisher"]
-//   },
-//   {
-//     username: "HTmedia",
-//     password: "HTmedia",
-//     role:["Consumer"]
-//   }
-// ];
