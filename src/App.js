@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import LandingPage from "./components/CommonComponent/LandingPage";
 import Login from "./components/CommonComponent/Login";
 import Register from "./components/CommonComponent/Register";
+import QueryResultTable from './components/CommonComponent/Table';
 
 import Queryform from "./components/Queryform";
 import Querystatus from "./components/Querystatus";
@@ -13,6 +14,8 @@ import Home from "./components/Home";
 import S3fileupload from "./components/S3fileupload";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Publisherform from "./components/Publisherform";
+import PrivacyPolicy from "./components/CommonComponent/PrivacyPolicy";
+import TermsAndConditions from "./components/CommonComponent/TermsAndConditions";
 
 // import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,6 +28,8 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
           <Route
             path="*"
@@ -37,6 +42,7 @@ function App() {
                   <Route path="/requestinfo" element={<Requestinfo />} />
                   <Route path="/publisherform" element={<Publisherform />} />
                   <Route path="/s3fileupload" element={<S3fileupload />} />
+                  <Route path="/query-result-table" element={<QueryResultTable />} />
                 </Routes>
               </Sidebar>
             }

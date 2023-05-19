@@ -21,6 +21,9 @@ const rootReducer = (state, action) => {
     if (action.type === 'LOGOUT_USER') {
         storage.removeItem('persist:root');
         state = undefined;
+    } else if (action.type === 'LOGIN_REQUEST') {
+        state.ConsumerForm = {};
+        state.PublisherForm = {};
     }
     return AppRootReducer(state, action);
 };

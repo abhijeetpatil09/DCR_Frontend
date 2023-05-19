@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AWS from "aws-sdk";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -11,36 +12,11 @@ import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
 
-const timestamp = Date.now();
-const dateObj = new Date(timestamp);
-
-const year = dateObj.getFullYear();
-const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-const day = dateObj.getDate().toString().padStart(2, "0");
-const hours = dateObj.getHours().toString().padStart(2, "0");
-const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-const seconds = dateObj.getSeconds().toString().padStart(2, "0");
-
-const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-console.log(formattedDate);
-
 const initialState = {
-  Query_Names: "",
+  Query_Name: "",
   Provider_Name: "",
   Column_Names: "",
   Consumer_Name: "",
-  RunId: formattedDate,
-};
-
-const dependentOptions = {
-  hoonartek: [
-    { value: "age_band", label: "Age Band" },
-    { value: "status", label: "Status" },
-  ],
-  htmedia: [
-    { value: "cohort_name", label: "COHORT NAME" },
-    { value: "cdp_sh_fname", label: "CDP SH FNAME" },
-  ],
 };
 
 // var snowflake = require('snowflake-sdk');
@@ -67,46 +43,45 @@ const Queryform = () => {
 
   const user = state && state.user;
   const TableData = state && state.ConsumerForm && state.ConsumerForm.TableData;
-  const reqId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
-
-  const [selectedProvider, setSelectedProvider] = useState("");
+  const requestId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
+  const queryName =
+    state && state.PublisherForm && state.ConsumerForm.QueryName;
 
   const [formData, setFormData] = useState(initialState);
-  const [requestId, setRequestId] = useState("");
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
 
   const [providerList, setProviderList] = useState([]);
   const [templateList, setTemplateList] = useState("");
   const [databaseName, setDatabaseName] = useState("");
-
-  const [submit, setSubmit] = useState(false);
+  const [colunms, setColumns] = useState([]);
+  const [fetchData, setFetchData] = useState(false);
+  let [stopAPICall, setStopAPICall] = useState(1);
 
   useEffect(() => {
-    if (submit) {
-      fetchcsvTableData(
-        formData["Query_Names"] + "_" + formData["RunId"] + ".csv"
-      );
+    console.log("Consumer stopAPICall", stopAPICall);
+
+    if (
+      stopAPICall !== 0 &&
+      requestId &&
+      requestId !== "" &&
+      queryName &&
+      queryName !== ""
+    ) {
+      setFetchData(true);
+      setTimeout(() => {
+        fetchcsvTableData();
+      }, 30000);
     }
-  }, [submit]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestId, queryName, stopAPICall]);
 
   useEffect(() => {
-    // setInterval(() => {
-    //   if (submit) {
-    //     fetchcsvTableData(
-    //       formData["Query_Names"] + "_" + formData["RunId"] + ".csv"
-    //     );
-    //   }
-    // }, 100);
-  }, [submit]);
-
-  useEffect(() => {
-    setRequestId(reqId);
     if (TableData) {
       setTableHead(TableData?.head || []);
       setTableRows(TableData?.rows || []);
     }
-  }, [TableData, reqId]);
+  }, [TableData]);
 
   useEffect(() => {
     axios
@@ -135,7 +110,7 @@ const Queryform = () => {
         })
         .then((response) => {
           if (response?.data) {
-            console.log("response?.data", response?.data);
+            console.log("Template list", response?.data);
             setTemplateList(response.data.data);
           }
         })
@@ -143,11 +118,35 @@ const Queryform = () => {
     }
   }, [databaseName]);
 
+  useEffect(() => {
+    if (databaseName !== "" && formData["Query_Name"] !== "") {
+      axios
+        .get("http://127.0.0.1:5000/data_fetcher", {
+          params: {
+            query: `select dimensions from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Name"]}';`,
+          },
+        })
+        .then((response) => {
+          if (response?.data) {
+            console.log("response?.data", response?.data);
+            let col_name = response?.data?.data[0]?.DIMENSIONS?.split("|");
+            col_name = col_name?.map((item) => {
+              return item?.split(".")[1];
+            });
+            console.log("col_name", col_name);
+
+            setColumns(col_name);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [databaseName, formData["Query_Name"]]);
+
   const handleSelectProvider = (event) => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
-      RunId: Date.now(),
     });
     setTemplateList([]);
     getDatabaseName(event.target.value);
@@ -157,7 +156,6 @@ const Queryform = () => {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
-      RunId: Date.now(),
     });
   };
 
@@ -183,19 +181,7 @@ const Queryform = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-      RunId: Date.now(),
     });
-    console.log(formData);
-  };
-
-  const handleProviderChange = (e) => {
-    setSelectedProvider(e.target.value);
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-      RunId: Date.now(),
-    });
-    console.log(formData);
   };
 
   const handleSelectChange = (event) => {
@@ -207,24 +193,16 @@ const Queryform = () => {
     setFormData({
       ...formData,
       [event.target.name]: selectedOptionsString,
-      RunId: Date.now(),
     });
-    console.log(formData);
     // setSelectedColumns(selectedOptions);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setStopAPICall(1);
 
-    console.log(formData);
-    console.log(document.getElementsByName("Query_Names")[0]);
+    formData.RunId = Date.now();
 
-    // formData.Query_Names = document.getElementsByName('Query_Names')[0].selectedOptions[0].value
-    // formData.Provider_Name = document.getElementsByName('Provider_Name')[0].selectedOptions[0].value
-    // // formData.Column_Names = document.getElementsByName('Column_Names')[0].selectedOptions[0].value
-    // formData.Consumer_Name = document.getElementsByName('Consumer_Name')[0].selectedOptions[0].value
-    setFormData({ ...formData, RunId: Date.now() });
-    console.log(formData);
     const keys = Object.keys(formData);
     let csv = keys.join(",") + "\n";
     for (const obj of [formData]) {
@@ -232,8 +210,8 @@ const Queryform = () => {
       csv += values.join(",") + "\n";
     }
 
-    console.log(csv);
     const blob = new Blob([csv], { type: "text/csv" });
+
     // const url = URL.createObjectURL(blob);
     // const link = document.createElement('a');
     // link.href = url;
@@ -246,7 +224,7 @@ const Queryform = () => {
       Bucket: "dcr-poc",
       Key:
         "query_request/" +
-        formData["Query_Names"] +
+        formData["Query_Name"] +
         "_" +
         formData["RunId"] +
         ".csv",
@@ -259,16 +237,34 @@ const Queryform = () => {
     //     else console.log(data);
     // });
 
-    // s3.putObject(params, (err, data) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     console.log(`File uploaded successfully. ETag: ${data.ETag}`);
-    //     alert("Request has been submitted successfully");
-    //     setTableRows([]);
-    //     setTableHead([]);
-    //   }
-    // });
+    s3.putObject(params, (err, data) => {
+      if (err) {
+        console.log("err", err);
+      } else {
+        console.log("data", data);
+      }
+    });
+
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}');`,
+        },
+      }).then((response) => {
+        if(response) {
+          toast.success(`Request has been submitted successfully. Request Id: ${formData?.RunId}`);
+          dispatch(
+            actions.ConsumerQueryForm({
+              QueryName: formData?.Query_Name,
+              RequestId: formData?.RunId,
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(`We are facing some error in your request. Request Id: ${formData?.RunId}`);
+      });
 
     // connection.execute({
     //     sqlText: `CREATE OR REPLACE STAGE my_stage;`
@@ -291,71 +287,60 @@ const Queryform = () => {
     //       });
     //     }
     //   });
-    setSubmit(true);
   };
 
   const fetchTable = (data, runId) => {
-    let head = data?.Body.toString("utf-8")?.split("\n")[0]?.split('",');
-    head = head?.map((item) => {
-      if (item?.includes('"')) {
-        return item?.replaceAll('"', "");
-      }
-      return item;
-    });
-
-    let array = [];
-    for (let i = 0; i < 999; i++) {
-      let row = data?.Body?.toString("utf-8")?.split("\n")[i + 1]?.split(",");
-      row = row?.map((item) => {
-        if (item?.includes('"')) {
-          return item?.replaceAll('"', "");
-        }
-        return item;
+    let head = [];
+    let row = [];
+    if (data?.length > 0) {
+      head = data && Object.keys(data[0]);
+      data?.map((obj) => {
+        return row.push(head?.map((key) => obj[key]));
       });
-      if (row) {
-        array.push(row);
-      }
     }
     dispatch(
       actions.ConsumerQueryForm({
         RequestId: runId,
-        TableData: { head: head, rows: array },
+        TableData: { head: head, rows: row, reqId: requestId },
       })
     );
   };
 
-  const fetchcsvTableData = async (key) => {
-    let run_id = "1691891590798";
-    // let run_id =  '1681891590569';
-
-    let file_name = "customer_enrichment_1691891590798.csv";
-    // let file_name = 'customer_enrichment_1681891590569.csv';
-
-    try {
-      const data = await s3
-        .getObject({
-          Bucket: "dcr-poc",
-          // Key: "query_result_tables/" + formData["RunId"] + "/" + key,
-          Key: `query_result_tables/${run_id}/${file_name}`,
-        })
-        .promise();
-      fetchTable(data, run_id);
-    } catch (err) {
-      console.error(err);
-    }
+  const fetchcsvTableData = async () => {
+    axios
+      .get("http://127.0.0.1:5000/data_fetcher", {
+        params: {
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${requestId} limit 1000;`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          setStopAPICall(0);
+          fetchTable(response?.data?.data, requestId);
+          setFetchData(false);
+          toast.success(`Data fetched successfully. Request Id: ${requestId}`);
+        }
+      })
+      .catch((error) => {
+        setStopAPICall(++stopAPICall);
+        console.log("In API catch", error);
+      });
   };
-
-  // select * from $db_name.public.$templaet_name_$runid limit 1000;
 
   return (
     <div className="flex flex-col  ">
       <h3 className="mt-4 text-xl font-bold text-deep-navy">Consumer query</h3>
       <div className="flex flex-row  gap-3  w-full">
         <div className="flex flex-col flex-shrink h-auto">
-          <form className="border border-gray-400 rounded my-4 px-4 py-2   w-80 max-w-xs" name="myForm" onSubmit={handleSubmit}>
-            <span className="text-sm mb-4 font-light text-coal">Query request</span>
+          <form
+            className="border border-gray-400 rounded my-4 px-4 py-2   w-80 max-w-xs"
+            name="myForm"
+            onSubmit={handleSubmit}
+          >
+            <span className="text-sm mb-4 font-light text-coal">
+              Query request
+            </span>
             <div>
-
               <div className="mt-2 pb-2 flex flex-col">
                 <label>Provider Name</label>
                 <select
@@ -384,8 +369,8 @@ const Queryform = () => {
                 <select
                   id="selectedTemp"
                   required
-                  name="Query_Names"
-                  value={formData["Query_Names"]}
+                  name="Query_Name"
+                  value={formData["Query_Name"]}
                   className="w-full"
                   onChange={handleSelectedTemp}
                 >
@@ -407,7 +392,7 @@ const Queryform = () => {
                 Query
                 Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
                 <select
-                  name="Query_Names"
+                  name="Query_Name"
                   onChange={handleCustomerFormData}
                   required
                   className="my-select"
@@ -453,10 +438,10 @@ const Queryform = () => {
                   required
                   onChange={handleSelectChange}
                 >
-                  {selectedProvider &&
-                    dependentOptions[selectedProvider].map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
+                  {colunms &&
+                    colunms.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
                       </option>
                     ))}
                 </select>
@@ -475,7 +460,7 @@ const Queryform = () => {
                     <option value="htmedia">HT Media</option>
                   )}
                   {user["name"] === "Hoonartek" && (
-                    <option value="hoonartek">Hoonartek</option>
+                    <option value="Hoonartek">Hoonartek</option>
                   )}
                   {user["name"] === "admin" && (
                     <option value="htmedia">HT Media</option>
@@ -488,18 +473,26 @@ const Queryform = () => {
               <div className="flex justify-end">
                 <button
                   className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-
                   type="submit"
-                >Submit query</button>
+                >
+                  Submit query
+                </button>
               </div>
             </div>
           </form>
         </div>
-        <div className=" flex flex-grow">
-          {tableHead?.length > 0 && tableRows?.length > 0 ? (
-            <Table id={requestId} head={tableHead} rows={tableRows} />
-          ) : null}
-        </div>
+        {!fetchData ? (
+          <div className=" flex flex-grow">
+            {tableHead?.length > 0 && tableRows?.length > 0 ? (
+              <Table id={requestId} head={tableHead} rows={tableRows} />
+            ) : null}
+          </div>
+        ) : (
+          <span className="text-deep-navy flex flex-grow mt-4">
+            We are fetching the data you requested: Request Id -{" "}
+            <strong>{requestId}</strong>
+          </span>
+        )}
       </div>
     </div>
   );
