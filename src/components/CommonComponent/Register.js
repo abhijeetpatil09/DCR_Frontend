@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from '@mui/material';
 import * as actions from "../../redux/actions/index";
-
+import BgVideo from '../../Assets/loginbg.mp4';
+import BgVideoGreen from '../../Assets/loginbg_green.mp4';
 // import "./pure-react.css";
 // import "./styles.css";
 import AWS from "aws-sdk";
@@ -153,77 +154,120 @@ const Register = () => {
 
   // JSX code for login form
   const renderForm = (
-    <div className="space-y-6">
-      <div>
-        <label htmlFor="uname" className="block text-sm font-medium leading-6 text-gray-900">Username </label>
-        <div className="mt-2">
-          <input
-            id="uname"
-            type="text"
-            name="uname"
-            placeholder="Please enter a username. e.g. aditi_nair"
-            onChange={(e) => setUserName(e.target.value)}
-            required
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
-          />
+    <div className="flex flex-row">
+      <div className="flex flex-col w-1/2 px-2">
+        <div>
+          <label htmlFor="fullname" className="block text-sm font-medium leading-6 text-electric-green">Full name </label>
+          <div className="mt-2">
+            <input
+              id="fullname"
+              type="text"
+              name="fullname"
+              placeholder="e.g. Aditi Nair"
+              onChange={(e) => setUserName(e.target.value)}
+              required
+              className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+            />
+          </div>
+          {renderErrorMessage("fullname")}
         </div>
-        {renderErrorMessage("uname")}
-      </div>
-      <div>
-        <label htmlFor="pass" className="block text-sm font-medium leading-6 text-gray-900">
-          Password
-        </label>
         <div className="mt-2">
+          <label htmlFor="designation" className="block text-sm font-medium leading-6 text-electric-green">Designation</label>
+          <div className="mt-2">
+            <input
+              id="designation"
+              type="text"
+              name="designation"
+              placeholder="e.g. Associate"
+              onChange={(e) => setUserName(e.target.value)}
+              required
+              className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+            />
+          </div>
+          {renderErrorMessage("designation")}
+        </div>
+      </div>
+      <div className="flex flex-col w-1/2 border-l-2 border-electric-green px-2">
+        <div>
+          <label htmlFor="uname" className="block text-sm font-medium leading-6 text-gray-900">Username </label>
+          <div className="mt-2">
+            <input
+              id="uname"
+              type="text"
+              name="uname"
+              placeholder="Please enter a username. e.g. aditi_nair"
+              onChange={(e) => setUserName(e.target.value)}
+              required
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+            />
+          </div>
+          {renderErrorMessage("uname")}
+        </div>
+        <div>
+          <label htmlFor="pass" className="block text-sm font-medium leading-6 text-gray-900">
+            Password
+          </label>
+          <div className="mt-2">
 
-          <input
-            id="pass"
-            type="password"
-            name="pass"
-            placeholder="Please enter your password."
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
-          />
+            <input
+              id="pass"
+              type="password"
+              name="pass"
+              placeholder="Please enter your password."
+              required
+              onChange={(e) => setPassword(e.target.value)}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+            />
+          </div>
+          {renderErrorMessage("pass")}
         </div>
-        {renderErrorMessage("pass")}
-      </div>
-      <div>
-        <label htmlFor="pass" className="block text-sm font-medium leading-6 text-gray-900">
-          Confirm Password
-        </label>
-        <div className="mt-2">
+        <div>
+          <label htmlFor="pass" className="block text-sm font-medium leading-6 text-gray-900">
+            Confirm Password
+          </label>
+          <div className="mt-2">
 
-          <input
-            id="pass"
-            type="password"
-            name="pass"
-            placeholder="Please enter your password again."
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
-          />
+            <input
+              id="pass"
+              type="password"
+              name="pass"
+              placeholder="Please enter your password again."
+              required
+              onChange={(e) => setPassword(e.target.value)}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-deep-navy sm:text-sm sm:leading-6"
+            />
+          </div>
+          {renderErrorMessage("pass")}
         </div>
-        {renderErrorMessage("pass")}
-      </div>
-      <div>
-        <button 
-          onClick={handleSubmit}
-          className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-          >
-          {loading ? <CircularProgress style={{ width: '24px', height: '24px', color: '#FFFFFF' }} /> : "Submit"}
-        </button>
+        <div>
+          <button 
+            onClick={handleSubmit}
+            className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+            >
+            {loading ? <CircularProgress style={{ width: '24px', height: '24px', color: '#FFFFFF' }} /> : "Submit"}
+          </button>
+        </div>
       </div>
     </div>
   );
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-start px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-semibold  leading-9 tracking-tight text-deep-navy">
-          Sign in to your account
-        </h2>
+    <div className="flex flex-row  flex-1   justify-center items-center relative h-screen">
+      <div className="absolute overflow-hidden h-screen w-full z-10">
+        <video autoplay="autoplay" loop="true" muted
+            class="absolute z-10 w-auto min-w-full min-h-full max-w-none  backdrop-contrast-100 backdrop-blur-sm">
+            <source src={BgVideoGreen} type="video/mp4"/>
+            <source src={BgVideo} type="video/mp4"/>
+        </video>
       </div>
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="absolute overflow-hidden h-auto w-1/2 z-10 bg-deep-navy mx-auto top-11 p-10">
+        <div class=" flex flex-row items-center justify-center  ">
+            <span class=" text-white font-semi-bold  text-2xl  ">
+            <span class="text-electric-green text-4xl">D</span>ata<span class="text-electric-green text-4xl">X</span>change</span>
+        </div>
+        <h2 className=" mb-10 text-center text-md font-light   leading-9 tracking-tight text-electric-green">
+          Register yourself by giving us some basic details below.
+        </h2>
         {isSubmitted ? (
           <div>User is successfully logged in</div>
         ) : (
