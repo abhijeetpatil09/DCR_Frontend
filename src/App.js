@@ -14,6 +14,7 @@ import Home from "./components/Home";
 import S3fileupload from "./components/S3fileupload";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Publisherform from "./components/Publisherform";
+import TemplateFile from './components/TemplateFile';
 import PrivacyPolicy from "./components/CommonComponent/PrivacyPolicy";
 import TermsAndConditions from "./components/CommonComponent/TermsAndConditions";
 
@@ -42,6 +43,7 @@ function App() {
                   <Route path="/requestinfo" element={<Requestinfo />} />
                   <Route path="/publisherform" element={<Publisherform />} />
                   <Route path="/s3fileupload" element={<S3fileupload />} />
+                  <Route path="/provider-template-file" element={<TemplateFile />} />
                   <Route path="/query-result-table" element={<QueryResultTable />} />
                 </Routes>
               </Sidebar>

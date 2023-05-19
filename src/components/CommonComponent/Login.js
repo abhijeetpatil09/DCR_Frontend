@@ -1,9 +1,8 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import * as actions from "../../redux/actions/index";
 import BgVideo from "../../Assets/loginbg.mp4";

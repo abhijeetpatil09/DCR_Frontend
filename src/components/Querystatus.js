@@ -1,27 +1,28 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useSelector } from "react-redux";
+
 import "./styles.css";
-// import AWS from 'aws-sdk';
 import "./pure-react.css";
 
-
-
 const Querystatus = () => {
+  const state = useSelector((state) => state);
+  const user = state && state.user;
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/data_fetcher', {
+    axios.get(`http://127.0.0.1:5000/${user?.name}`, {
       params: {
         query: 'select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE;'
       }
     })
     .then(response => setData(response.data.data))
     .catch(error => console.log(error));
-  }, []);
+  }, [user?.name]);
 
   const downloadFile = (TEMPLATE_NAME, RUN_ID)  =>{
-    axios.get('http://127.0.0.1:5000/data_fetcher', {
+    axios.get(`http://127.0.0.1:5000/${user?.name}`, {
       responseType: 'arraybuffer',
       params: {
         query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${TEMPLATE_NAME}_${RUN_ID};`

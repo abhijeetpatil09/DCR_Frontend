@@ -85,7 +85,7 @@ const Queryform = () => {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:5000/data_fetcher", {
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
           query: "select provider from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS;",
         },
@@ -98,12 +98,12 @@ const Queryform = () => {
         }
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [user?.name]);
 
   useEffect(() => {
     if (databaseName !== "") {
       axios
-        .get("http://127.0.0.1:5000/data_fetcher", {
+        .get(`http://127.0.0.1:5000/${user?.name}`, {
           params: {
             query: `select template_name from ${databaseName}.CLEANROOM.TEMPLATES where template_name <> 'advertiser_match';`,
           },
@@ -116,12 +116,12 @@ const Queryform = () => {
         })
         .catch((error) => console.log(error));
     }
-  }, [databaseName]);
+  }, [databaseName, user?.name]);
 
   useEffect(() => {
     if (databaseName !== "" && formData["Query_Name"] !== "") {
       axios
-        .get("http://127.0.0.1:5000/data_fetcher", {
+        .get(`http://127.0.0.1:5000/${user?.name}`, {
           params: {
             query: `select dimensions from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Name"]}';`,
           },
@@ -161,7 +161,7 @@ const Queryform = () => {
 
   const getDatabaseName = (selectedProvider) => {
     axios
-      .get("http://127.0.0.1:5000/data_fetcher", {
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
           query: `select database from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS where provider = '${selectedProvider}';`,
         },
@@ -246,7 +246,7 @@ const Queryform = () => {
     });
 
     axios
-      .get("http://127.0.0.1:5000/data_fetcher", {
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
           query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}');`,
         },
@@ -308,7 +308,7 @@ const Queryform = () => {
 
   const fetchcsvTableData = async () => {
     axios
-      .get("http://127.0.0.1:5000/data_fetcher", {
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${requestId} limit 1000;`,
         },

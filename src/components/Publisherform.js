@@ -219,7 +219,7 @@ const Publisherform = () => {
     });
 
     axios
-      .get("http://127.0.0.1:5000/data_fetcher", {
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
           query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
         },
@@ -291,7 +291,7 @@ const Publisherform = () => {
 
   const fetchcsvTableData = async () => {
     axios
-      .get("http://127.0.0.1:5000/data_fetcher", {
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${requestId} limit 1000;`,
         },
