@@ -1861,6 +1861,11 @@ html {
   color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 
+.text-\[\#0000FF\]{
+  --tw-text-opacity: 1;
+  color: rgb(0 0 255 / var(--tw-text-opacity));
+}
+
 .underline{
   text-decoration-line: underline;
 }
