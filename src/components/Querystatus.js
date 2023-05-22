@@ -43,14 +43,14 @@ const Querystatus = () => {
   
   return (
     <div className=' '>
-       <h3 class="my-4 text-xl font-bold bg-white text-deep-navy">Query status</h3>
+       <h3 class="my-4 text-xl font-bold bg-white text-deep-navy">Query Status</h3>
          <table className='w-full' >
          <thead>
             <tr>
                 <th>Request ID</th>
-                <th>Template name</th>
-                <th>Provider name</th>
-                <th>Column names</th>
+                <th>Template Name</th>
+                <th>Provider Name</th>
+                <th>Column Names</th>
                 <th>Status</th>
                 <th>Last modified Date & Time</th>
                 <th>Download O/P file</th>

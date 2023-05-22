@@ -19,16 +19,6 @@ const initialState = {
   Consumer_Name: "",
 };
 
-// var snowflake = require('snowflake-sdk');
-// const connection = snowflake.createConnection({
-//   account: 'iw79253.ap-southeast-1',
-//   username: 'onkar97',
-//   password: 'Onkar@97',
-//   database: 'DCR_SAMP_CONSUMER',
-//   schema: 'public',
-//   warehouse: 'APP_WH'
-// });
-
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
   secretAccessKey: "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",
@@ -58,20 +48,22 @@ const Queryform = () => {
   const [fetchData, setFetchData] = useState(false);
   let [stopAPICall, setStopAPICall] = useState(1);
 
+  const [submit, setSubmit] = useState(false);
+
   useEffect(() => {
     console.log("Consumer stopAPICall", stopAPICall);
 
     if (
       stopAPICall !== 0 &&
-      requestId &&
-      requestId !== "" &&
+      formData?.RunId &&
+      formData?.RunId !== "" &&
       queryName &&
-      queryName !== ""
+      queryName !== "" && submit
     ) {
       setFetchData(true);
       setTimeout(() => {
         fetchcsvTableData();
-      }, 30000);
+      }, 10000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestId, queryName, stopAPICall]);
@@ -201,6 +193,8 @@ const Queryform = () => {
     event.preventDefault();
     setStopAPICall(1);
 
+    setSubmit(true);
+
     formData.RunId = Date.now();
 
     const keys = Object.keys(formData);
@@ -266,27 +260,37 @@ const Queryform = () => {
         toast.error(`We are facing some error in your request. Request Id: ${formData?.RunId}`);
       });
 
-    // connection.execute({
-    //     sqlText: `CREATE OR REPLACE STAGE my_stage;`
-    // });
+    setTimeout(() => {
+      // Execute the second Axios request after the delay
+      axios
+        .get(`http://127.0.0.1:5000/${user?.name}`, {
+          params: {
+            query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS();`,
+          },
+        })
+        .then((response) => {
+          if (response) {
+            toast.success(
+              `Executing....... Request Id: ${formData?.RunId}`
 
-    // connection.connect((err, conn) => {
-    //     if (err) {
-    //       console.error('Error connecting to Snowflake:', err);
-    //     } else {
-    //       conn.put({
-    //         localPath: blob,
-    //         remotePath: 'my_stage/',
-    //         sourceCompression: 'none'
-    //       }, (err, result) => {
-    //         if (err) {
-    //           console.error('Error uploading CSV file to Snowflake:', err);
-    //         } else {
-    //           console.log('CSV file uploaded successfully to Snowflake!');
-    //         }
-    //       });
-    //     }
-    //   });
+            );
+            dispatch(
+              actions.ConsumerQueryForm({
+                QueryName: formData?.Query_Name,
+                RequestId: formData?.RunId,
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(
+            `We are facing some error in your request. Request Id: ${formData?.RunId}`
+          );
+        });
+    }, 5000);
+
+
   };
 
   const fetchTable = (data, runId) => {
@@ -310,7 +314,7 @@ const Queryform = () => {
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
-          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${requestId} limit 1000;`,
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${formData?.RunId} limit 1000;`,
         },
       })
       .then((response) => {
@@ -456,14 +460,14 @@ const Queryform = () => {
                   className="w-full"
                 >
                   <option value="">--Select--</option>
-                  {user["name"] === "HTmedia" && (
-                    <option value="htmedia">HT Media</option>
+                  {user["name"] === "Hoonartekcons1" && (
+                    <option value="Hoonartek">Hoonartek</option>
                   )}
                   {user["name"] === "Hoonartek" && (
                     <option value="Hoonartek">Hoonartek</option>
                   )}
-                  {user["name"] === "admin" && (
-                    <option value="htmedia">HT Media</option>
+                  {user["name"] === "Hoonartekcons2" && (
+                    <option value="Hoonartek">Hoonartek</option>
                   )}
                   {user["name"] === "admin" && (
                     <option value="hoonartek">Hoonartek</option>
