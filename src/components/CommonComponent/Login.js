@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -37,21 +37,6 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const [attributes, setAttributes] = useState("");
-
-  // const params = {
-  //   Bucket: "dcr-poc",
-  //   Key: "consumer_attributes/consumer_attributes.csv",
-  // };
-
-  // s3.getObject(params, (err, data) => {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     console.log(data.Body.toString("utf-8").split("\n"));
-  //   }
-  // });
 
   const handleOnChange = (e) => {
     const inputName = e.target.name;
@@ -145,16 +130,6 @@ const Login = () => {
           console.log(error);
         });
     }
-
-    fetch("http://localhost:5000/upload", {
-      method: "GET",
-    })
-      .then((response) => {
-        setAttributes(response.status_code);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   };
 
   // JSX code for login form

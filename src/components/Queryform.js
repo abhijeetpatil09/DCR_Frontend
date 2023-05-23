@@ -246,7 +246,6 @@ const Queryform = () => {
         },
       }).then((response) => {
         if(response) {
-          toast.success(`Request has been submitted successfully. Request Id: ${formData?.RunId}`);
           dispatch(
             actions.ConsumerQueryForm({
               QueryName: formData?.Query_Name,
@@ -257,7 +256,6 @@ const Queryform = () => {
       })
       .catch((error) => {
         console.log(error);
-        toast.error(`We are facing some error in your request. Request Id: ${formData?.RunId}`);
       });
 
     setTimeout(() => {
@@ -270,10 +268,6 @@ const Queryform = () => {
         })
         .then((response) => {
           if (response) {
-            toast.success(
-              `Executing....... Request Id: ${formData?.RunId}`
-
-            );
             dispatch(
               actions.ConsumerQueryForm({
                 QueryName: formData?.Query_Name,
@@ -284,9 +278,6 @@ const Queryform = () => {
         })
         .catch((error) => {
           console.log(error);
-          toast.error(
-            `We are facing some error in your request. Request Id: ${formData?.RunId}`
-          );
         });
     }, 5000);
 

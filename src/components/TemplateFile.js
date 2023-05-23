@@ -59,17 +59,16 @@ const TemplateFile = () => {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
-        const rows = [];
-        const values = [];
+        setParsedData(results?.data);
 
+        const rows = [];
         // Iterating data to get column name and their values
         results?.data?.map((d) => {
-          rows.push(Object.keys(d));
-          values.push(Object.values(d));
+          return rows.push(Object.keys(d));
+          // values.push(Object.values(d));
         });
 
         // Parsed Data Response in array format
-        setParsedData(results?.data);
         setFileUploaded(true);
         handleValidFileValidations(rows);
       },
@@ -83,9 +82,8 @@ const TemplateFile = () => {
     } else {
 
       parsedData = parsedData?.map((item) => {
-        console.log("item", item)
         return {...item, tag: entryType};
-      })
+      });
 
       console.log("New Json", parsedData);
 
@@ -108,15 +106,11 @@ const TemplateFile = () => {
       //   },
       // }).then((response) => {
       //   if(response) {
-      //     toast.success(`Request has been submitted successfully.`);
       //   }
       // })
       // .catch((error) => {
       //   console.log(error);
-      //   toast.error(`We are facing some error in your request.`);
       // });
-
-      // insert into DEMO1.PUBLIC.PROVIDER(PROVIDER_NAME,ATTRIBUTE_NAME,CATEGORY,SUBCATEGORY,subcategory_description,TECHNAME) values ('provider4','table1','Demographic','Age','Age Group','age_group');
     }
   };
 
