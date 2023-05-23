@@ -1,31 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import AWS from 'aws-sdk';
-
+import React, { useState, useEffect } from "react";
+import AWS from "aws-sdk";
 
 import "./styles.css";
 
-
 const S3fileupload = () => {
-
-  
   const s3 = new AWS.S3();
 
   AWS.config.update({
-    accessKeyId: 'AKIA57AGVWXYVR36XIEC',
-    secretAccessKey: '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',
-    region: 'ap-south-1'
+    accessKeyId: "AKIA57AGVWXYVR36XIEC",
+    secretAccessKey: "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",
+    region: "ap-south-1",
   });
 
   const [files, setFiles] = useState([]);
 
-  const BUCKET_NAME = 'dcr-poc';
+  const BUCKET_NAME = "dcr-poc";
 
   const prefix = "query_request/";
 
   useEffect(() => {
-    
     const params = {
-      Bucket: BUCKET_NAME
+      Bucket: BUCKET_NAME,
     };
 
     s3.listObjectsV2(params, (err, data) => {
@@ -33,14 +28,18 @@ const S3fileupload = () => {
         console.error(err);
         return;
       }
-      setFiles(data.Contents.filter(file => file.Key.startsWith(prefix)).filter(file => file.Key !== prefix).sort((a, b) => b - a));
+      setFiles(
+        data.Contents.filter((file) => file.Key.startsWith(prefix))
+          .filter((file) => file.Key !== prefix)
+          .sort((a, b) => b - a)
+      );
     });
-  }, []);
+  });
 
   const downloadFile = (key) => {
     const params = {
       Bucket: BUCKET_NAME,
-      Key: key
+      Key: key,
     };
 
     s3.getObject(params, (err, data) => {
@@ -50,7 +49,7 @@ const S3fileupload = () => {
       }
 
       const url = URL.createObjectURL(new Blob([data.Body]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = key;
       document.body.appendChild(link);
@@ -59,9 +58,8 @@ const S3fileupload = () => {
     });
   };
 
-
   return (
-    <div className='app'>
+    <div className="app">
       <table>
         <thead>
           <tr>
@@ -85,7 +83,9 @@ const S3fileupload = () => {
                 </a>
               </td> */}
               <td>
-                <button onClick={() => downloadFile(file.Key)}>Download File</button>
+                <button onClick={() => downloadFile(file.Key)}>
+                  Download File
+                </button>
               </td>
             </tr>
           ))}
@@ -93,6 +93,6 @@ const S3fileupload = () => {
       </table>
     </div>
   );
-}
+};
 
-export default S3fileupload
+export default S3fileupload;

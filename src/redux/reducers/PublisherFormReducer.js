@@ -2,9 +2,9 @@ import * as actionType from '../actions/actionTypes';
 import { updateObject } from '../utility/utility';
 
 const initialState = {
-    QueryName: '',
     RequestId: '',
     TableData: {},
+    fetchData: false
 };
 
 const reducer = (state = initialState, action) => {

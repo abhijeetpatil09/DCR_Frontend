@@ -39,13 +39,12 @@ const Publisherform = () => {
     state && state.PublisherForm && state.PublisherForm.TableData;
   const requestId =
     state && state.PublisherForm && state.PublisherForm.RequestId;
-  const queryName =
-    state && state.PublisherForm && state.PublisherForm.QueryName;
+    const fetchData = state && state.PublisherForm && state.PublisherForm.fetchData;
 
   const [formData, setFormData] = useState({
     ...initialState,
     Provider_Name: user?.name,
-    Consumer_Name: 'Hoonartek',
+    Consumer_Name: "Hoonartek",
   });
 
   const [gender, setGender] = useState("male");
@@ -53,29 +52,8 @@ const Publisherform = () => {
 
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
-  const [fetchData, setFetchData] = useState(false);
 
-  let [stopAPICall, setStopAPICall] = useState(1);
-
-  const [submit, setSubmit] = useState(false);
-
-  useEffect(() => {
-    console.log("Publisher stopAPICall", stopAPICall);
-
-    if (
-      stopAPICall !== 0 &&
-      formData?.RunId &&
-      formData?.RunId !== "" &&
-      queryName &&
-      queryName !== "" && submit
-    ) {
-      setFetchData(true);
-      setTimeout(() => {
-        fetchcsvTableData();
-      }, 10000);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requestId, queryName, stopAPICall]);
+  const [byPassAPICalled, setByPassAPICalled] = useState(false);
 
   // useEffect for set match attribute values..
   useEffect(() => {
@@ -155,11 +133,47 @@ const Publisherform = () => {
     console.log("into send email method");
   };
 
+  const callByPassAPI = () => {
+    setByPassAPICalled(true);
+    setTimeout(() => {
+      axios
+        .get(`http://127.0.0.1:5000/${user?.name}`, {
+          params: {
+            query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS();`,
+          },
+        })
+        .then((response) => {
+          if (response) {
+            fetchcsvTableData();
+            setByPassAPICalled(false);
+          } else {
+            setByPassAPICalled(false);
+            dispatch(
+              actions.PublisherForm({
+                fetchData: false
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setByPassAPICalled(false);
+          dispatch(
+            actions.PublisherForm({
+              fetchData: false
+            })
+          );
+        });
+    }, 10000);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    setStopAPICall(1);
 
-    setSubmit(true);
+    if(byPassAPICalled) {
+      toast.success("We are fetching data. Please wait...");
+      return;
+    };
 
     formData.RunId = Date.now();
 
@@ -232,38 +246,16 @@ const Publisherform = () => {
         if (response) {
           dispatch(
             actions.PublisherForm({
-              QueryName: formData?.Query_Name,
               RequestId: formData?.RunId,
+              fetchData: true
             })
           );
+          callByPassAPI();
         }
       })
       .catch((error) => {
         console.log(error);
       });
-
-      setTimeout(() => {
-        // Execute the second Axios request after the delay
-        axios
-          .get(`http://127.0.0.1:5000/${user?.name}`, {
-            params: {
-              query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS();`,
-            },
-          })
-          .then((response) => {
-            if (response) {
-              dispatch(
-                actions.ConsumerQueryForm({
-                  QueryName: formData?.Query_Name,
-                  RequestId: formData?.RunId,
-                })
-              );
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }, 5000);
 
     const formData2 = new FormData();
     formData2.append("file", inputFile.files[0]);
@@ -298,7 +290,7 @@ const Publisherform = () => {
     // }
   };
 
-  const fetchTable = (data, requestId) => {
+  const fetchTable = (data) => {
     let head = [];
     let row = [];
     if (data?.length > 0) {
@@ -309,7 +301,8 @@ const Publisherform = () => {
     }
     dispatch(
       actions.PublisherForm({
-        TableData: { head: head, rows: row, reqId: requestId },
+        TableData: { head: head, rows: row },
+        fetchData: false
       })
     );
   };
@@ -318,19 +311,16 @@ const Publisherform = () => {
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
-          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${queryName}_${formData?.RunId} limit 1000;`,
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${formData?.Query_Name}_${formData?.RunId} limit 1000;`,
         },
       })
       .then((response) => {
         if (response?.data?.data) {
-          fetchTable(response?.data?.data, requestId);
-          setStopAPICall(0);
-          setFetchData(false);
-          toast.success(`Data fetched successfully. Request Id: ${requestId}`);
+          fetchTable(response?.data?.data);
+          toast.success(`Data fetched successfully. Request Id: ${formData?.RunId}`);
         }
       })
       .catch((error) => {
-        setStopAPICall(++stopAPICall);
         console.log("In API catch", error);
       });
   };

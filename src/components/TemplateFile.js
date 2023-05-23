@@ -81,11 +81,18 @@ const TemplateFile = () => {
       return;
     } else {
 
+      let obj = {};
+
+      obj.attributes = parsedData;
+      obj.tag = entryType;
+
       parsedData = parsedData?.map((item) => {
         return {...item, tag: entryType};
       });
 
       console.log("New Json", parsedData);
+      let result = JSON.stringify(parsedData);
+      console.log("result", result);
 
       // let values = [];
 
@@ -99,18 +106,19 @@ const TemplateFile = () => {
       // const joinedValues = `('${values.join("'),('")}')`;
       // console.log("joinedValues", joinedValues);
 
-      // axios
-      // .get(`http://127.0.0.1:5000/Brandone`, {
-      //   params: {
-      //     query: `insert into DEMO1.PUBLIC.PROVIDER(PROVIDER_NAME,ATTRIBUTE_NAME,CATEGORY,SUBCATEGORY,subcategory_description,TECHNAME) values ${joinedValues};`,
-      //   },
-      // }).then((response) => {
-      //   if(response) {
-      //   }
-      // })
-      // .catch((error) => {
-      //   console.log(error);
-      // });
+      axios
+      .get(`http://127.0.0.1:5000/Brandone`, {
+        params: {
+          // query: `insert into DEMO1.PUBLIC.PROVIDER(PROVIDER_NAME,ATTRIBUTE_NAME,CATEGORY,SUBCATEGORY,subcategory_description,TECHNAME) values ${joinedValues};`,
+          query: `insert into DEMO1.PUBLIC.PROV_TAB select parse_json('${result}');`
+        },
+      }).then((response) => {
+        if(response) {
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   };
 
