@@ -17,6 +17,7 @@ const initialState = {
   Provider_Name: "",
   Column_Names: "",
   Consumer_Name: "",
+  Attribute_Value: "",
 };
 
 const s3 = new AWS.S3({
@@ -254,7 +255,7 @@ const Queryform = () => {
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
-          query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}');`,
+          query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id, attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.Attribute_Value}');`,
         },
       })
       .then((response) => {
@@ -368,47 +369,6 @@ const Queryform = () => {
                 </select>
               </div>
 
-              {/* <div className="input-container">
-              <label>
-                Query
-                Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
-                <select
-                  name="Query_Name"
-                  onChange={handleCustomerFormData}
-                  required
-                  className="my-select"
-                >
-                  <option value="">--Select--</option>
-                  <option value="customer_overlap">Customer Overlap</option>
-                  <option value="customer_overlap_multiparty">
-                    Customer Overlap Multiparty
-                  </option>
-                  <option value="customer_enrichment">Customer Enrichment</option>
-                  <option value="customer_overlap_waterfall">
-                    Customer Overlap Waterfall
-                  </option>
-                  <option value="customer_overlap_multiparty_subscribers">
-                    Customer Overlap Multiparty Subscribers
-                  </option>
-                </select>
-              </label>
-            </div> */}
-
-              {/* <div className="input-container">
-              <label>
-                Provider Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;&nbsp;
-                <select
-                  name="Provider_Name"
-                  onChange={handleProviderChange}
-                  required
-                  className="my-select"
-                >
-                  <option value="">--Select--</option>
-                  <option value="htmedia">HT Media</option>
-                  <option value="hoonartek">Hoonartek</option>
-                </select>
-              </label>
-            </div> */}
 
               <div className="mt-2 pb-2 flex flex-col">
                 <label>Column name</label>
@@ -425,6 +385,21 @@ const Queryform = () => {
                         {option}
                       </option>
                     ))}
+                </select>
+              </div>
+
+              <div className="mt-2 pb-21 flex flex-col">
+                <label>Identifier Type</label>
+                <select
+                  name="Attribute_Value"
+                  onChange={handleCustomerFormData}
+                  required
+                  className="w-full"
+                >
+                  <option value="">Please select</option>
+                  <option value="email">Email</option>
+                  <option value="phone">Phone</option>
+                  <option value="MAID">MAID</option>
                 </select>
               </div>
 
