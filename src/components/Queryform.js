@@ -204,7 +204,7 @@ const Queryform = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (byPassAPICalled) {
-      toast.success("We are fetching data. Please wait...");
+      toast.error("We are fetching the data for current request. Please wait...");
       return;
     }
     formData.RunId = Date.now();

@@ -39,7 +39,8 @@ const Publisherform = () => {
     state && state.PublisherForm && state.PublisherForm.TableData;
   const requestId =
     state && state.PublisherForm && state.PublisherForm.RequestId;
-    const fetchData = state && state.PublisherForm && state.PublisherForm.fetchData;
+  const fetchData =
+    state && state.PublisherForm && state.PublisherForm.fetchData;
 
   const [formData, setFormData] = useState({
     ...initialState,
@@ -150,7 +151,7 @@ const Publisherform = () => {
             setByPassAPICalled(false);
             dispatch(
               actions.PublisherForm({
-                fetchData: false
+                fetchData: false,
               })
             );
           }
@@ -160,7 +161,7 @@ const Publisherform = () => {
           setByPassAPICalled(false);
           dispatch(
             actions.PublisherForm({
-              fetchData: false
+              fetchData: false,
             })
           );
         });
@@ -170,8 +171,8 @@ const Publisherform = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if(byPassAPICalled) {
-      toast.success("We are fetching data. Please wait...");
+    if (byPassAPICalled) {
+      toast.error("We are fetching the data for current request. Please wait...");
       return;
     };
 
@@ -247,7 +248,7 @@ const Publisherform = () => {
           dispatch(
             actions.PublisherForm({
               RequestId: formData?.RunId,
-              fetchData: true
+              fetchData: true,
             })
           );
           callByPassAPI();
@@ -302,7 +303,7 @@ const Publisherform = () => {
     dispatch(
       actions.PublisherForm({
         TableData: { head: head, rows: row },
-        fetchData: false
+        fetchData: false,
       })
     );
   };
@@ -317,7 +318,9 @@ const Publisherform = () => {
       .then((response) => {
         if (response?.data?.data) {
           fetchTable(response?.data?.data);
-          toast.success(`Data fetched successfully. Request Id: ${formData?.RunId}`);
+          toast.success(
+            `Data fetched successfully. Request Id: ${formData?.RunId}`
+          );
         }
       })
       .catch((error) => {
