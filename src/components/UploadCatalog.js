@@ -80,14 +80,13 @@ const TemplateFile = () => {
       setFileError("Please upload a file...");
       return;
     } else {
-
       let obj = {};
 
       obj.attributes = parsedData;
       obj.tag = entryType;
 
       parsedData = parsedData?.map((item) => {
-        return {...item, tag: entryType};
+        return { ...item, tag: entryType };
       });
 
       console.log("New Json", parsedData);
@@ -107,26 +106,25 @@ const TemplateFile = () => {
       // console.log("joinedValues", joinedValues);
 
       axios
-      .get(`http://127.0.0.1:5000/Brandone`, {
-        params: {
-          // query: `insert into DEMO1.PUBLIC.PROVIDER(PROVIDER_NAME,ATTRIBUTE_NAME,CATEGORY,SUBCATEGORY,subcategory_description,TECHNAME) values ${joinedValues};`,
-          query: `insert into DEMO1.PUBLIC.PROV_TAB select parse_json('${result}');`
-        },
-      }).then((response) => {
-        if(response) {
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        .get(`http://127.0.0.1:5000/Brandone`, {
+          params: {
+            // query: `insert into DEMO1.PUBLIC.PROVIDER(PROVIDER_NAME,ATTRIBUTE_NAME,CATEGORY,SUBCATEGORY,subcategory_description,TECHNAME) values ${joinedValues};`,
+            query: `insert into DEMO1.PUBLIC.PROV_TAB select parse_json('${result}');`,
+          },
+        })
+        .then((response) => {
+          if (response) {
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
   return (
     <div className="flex flex-col  ">
-      <h3 className="mt-4 text-xl font-bold text-deep-navy">
-        Provider Template File
-      </h3>
+      <h3 className="mt-4 text-xl font-bold text-deep-navy">Upload Catalog</h3>
 
       <div className="flex flex-row  gap-3  w-full">
         <div className="flex flex-col flex-shrink h-auto">
@@ -135,7 +133,7 @@ const TemplateFile = () => {
             name="myForm"
           >
             <span className="text-sm mb-4 font-light text-coal">
-              Template File
+              Upload Catalog
             </span>
             <div className=" mt-2 pb-2 flex flex-col">
               <label>Entry Type</label>

@@ -48,7 +48,7 @@ const Querystatus = () => {
 
   return (
     <div className=" ">
-      <h3 class="my-4 text-xl font-bold bg-white text-deep-navy">
+      <h3 className="my-4 text-xl font-bold bg-white text-deep-navy">
         Query Status
       </h3>
       <table className="w-full">
