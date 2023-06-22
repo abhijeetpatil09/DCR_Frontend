@@ -92,16 +92,16 @@ const Login = () => {
                 setErrors({ ...errors, password: "Invalid Password" });
               } else {
                 const userRole = [];
-                if (userData.PUBLISHER.toLowerCase() === "true") {
+                if (userData.PUBLISHER?.toLowerCase() === "true") {
                   userRole.push("Publisher");
                 }
-                if (userData.PROVIDER.toLowerCase() === "true") {
+                if (userData.PROVIDER?.toLowerCase() === "true") {
                   userRole.push("Provider");
                 }
-                if (userData.CONSUMER.toLowerCase() === "true") {
+                if (userData.CONSUMER?.toLowerCase() === "true") {
                   userRole.push("Consumer");
                 }
-                if (userData.CONSUMER_ADMIN.toLowerCase() === "true") {
+                if (userData.CONSUMER_ADMIN?.toLowerCase() === "true") {
                   userRole.push("Consumer_Admin");
                 }
                 setIsSubmitted(true);

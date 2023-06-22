@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+} from "@mui/material";
 import Paper from "@mui/material/Paper";
 
 const OutputTable = ({ id, head, rows }) => {
@@ -23,19 +25,44 @@ const OutputTable = ({ id, head, rows }) => {
   };
 
   return (
-    <Paper elevation={0}  className="w-full flex flex-col flex-grow">
-      <div className="flex flex-row justify-between my-2">
-        <h3 className="text-xl font-light text-deep-navy">Query result</h3>
-        <span className="text-deep-navy">Output Console: Request Id - <strong>{id}</strong></span>
-      </div>
-      {/* <h4  >
-        <p>Output Console: Request Id - &nbsp;</p>
-        <p style={{ color: 'red'}}></p>
-      </h4> */}
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} classes={{root:"w-100"}} aria-label="simple table">
+    <Paper elevation={0} className="w-full flex flex-col flex-grow">
+      {id ? (
+        <div className="flex flex-row justify-between px-1 py-3">
+          <h3 className="text-xl font-light text-deep-navy">Query result</h3>
+          <span className="text-deep-navy">
+            Output Console: Request Id - <strong>{id}</strong>
+          </span>
+        </div>
+      ) : (
+          <span className="text-deep-navy px-1 py-3">
+            <strong>Search Result</strong>
+          </span>
+      )}
+
+      <TableContainer>
+        <Table
+          sx={{ minWidth: 650, borderRadius: 0 }}
+          stickyHeader
+          size="small"
+          classes={{ root: "w-100" }}
+          aria-label="simple table"
+        >
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                "& th": {
+                  fontSize: "0.9rem",
+                  fontWeight: 900,
+                  color: "#0A2756",
+                  backgroundColor: "#e8effb",
+                  borderRadius: 0,
+                  borderTop: 1,
+                  borderRight: 1,
+                  borderColor: "#d6d3d1",
+                },
+                "& th:first-child": { borderLeft: 1, borderColor: "#d6d3d1" },
+              }}
+            >
               {head?.map((column, index) => {
                 return (
                   <TableCell key={index} align="center">
@@ -54,16 +81,17 @@ const OutputTable = ({ id, head, rows }) => {
                     <TableRow
                       key={index}
                       sx={{
-                        "&:last-child td, &:last-child th": { border: 0 },
+                        "& td:last-child": {
+                          borderRight: 1,
+                          borderColor: "#d6d3d1",
+                        },
+                        "& td": { borderLeft: 1, borderColor: "#d6d3d1", color: "#0A2756" },
                       }}
                     >
                       {item &&
                         item.map((row, idx) => {
                           return (
-                            <TableCell
-                              key={idx}
-                              align="center"
-                            >
+                            <TableCell key={idx} align="center">
                               {row}
                             </TableCell>
                           );

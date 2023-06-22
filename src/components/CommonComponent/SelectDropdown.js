@@ -64,7 +64,7 @@ const SelectDropdown = ({
         className={
           customClass
             ? customClass
-            : `customSelector w-[${width}px] border rounded-lg overflow-auto font-[montserrat] `
+            : `customSelector border overflow-auto border-gray-950`
         }
       >
         {data?.map((item, key) => {

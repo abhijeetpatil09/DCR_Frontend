@@ -7,7 +7,7 @@ const  Requestinfo = () => {
     return (
 
         <div className="flex flex-col">
-          <h3 class="my-4 text-xl font-bold text-deep-navy">Reports</h3>
+          <h3 className="my-4 text-xl font-bold text-deep-navy">Reports</h3>
              {/* <h2>Query Request Reports</h2> */}
             <table className='w-full'>
                 <thead>

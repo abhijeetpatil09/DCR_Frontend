@@ -62,13 +62,13 @@ const Sidebar = ({ children }) => {
           )}
         </div>
         {/* <div>
-          <h1 class="hoonartek-title">h</h1>
+          <h1 className="hoonartek-title">h</h1>
         </div> */}
         {/* <div>
           <img src={GroupMLogo} alt = 'Image_Description' width="100" height="40"/>
         </div> */}
         {/* <div>
-          <h1 class="hoonartek-title">nartek</h1>
+          <h1 className="hoonartek-title">nartek</h1>
         </div> */}
         <div className=" flex flex-row items-center  ">
           <span className=" text-deep-navy font-bold  text-2xl">
@@ -333,7 +333,7 @@ const Sidebar = ({ children }) => {
                       isOpened ? "" : "hidden"
                     } pl-5 uppercase font-semibold`}
                   >
-                    Upload Catalog
+                    Upload
                   </span>
                 </button>
               </li>
@@ -366,7 +366,7 @@ const Sidebar = ({ children }) => {
                       isOpened ? "" : "hidden"
                     } pl-5 uppercase font-semibold`}
                   >
-                    Search Catalog
+                    Search
                   </span>
                 </button>
               </li>

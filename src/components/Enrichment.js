@@ -3,10 +3,10 @@ import AWS from "aws-sdk";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import * as actions from "../redux/actions/index";
+import SelectDropdown from "./CommonComponent/SelectDropdown";
 
 import Table from "./CommonComponent/Table";
 import "./styles.css";
@@ -15,7 +15,7 @@ import "./pure-react.css";
 const initialState = {
   Query_Name: "",
   Provider_Name: "",
-  Column_Names: "",
+  Column_Names: [],
   Consumer_Name: "",
   Attribute_Value: "",
 };
@@ -28,7 +28,7 @@ const s3 = new AWS.S3({
   // region: 'ap-south-1',
 });
 
-const Queryform = () => {
+const Enrichment = () => {
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
 
@@ -44,7 +44,7 @@ const Queryform = () => {
   const [providerList, setProviderList] = useState([]);
   const [templateList, setTemplateList] = useState("");
   const [databaseName, setDatabaseName] = useState("");
-  const [colunms, setColumns] = useState([]);
+  const [columns, setColumns] = useState([]);
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
 
   useEffect(() => {
@@ -94,19 +94,22 @@ const Queryform = () => {
       axios
         .get(`http://127.0.0.1:5000/${user?.name}`, {
           params: {
-            query: `select dimensions from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Name"]}';`,
+            query: `select allowed_columns from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Name"]}';`,
           },
         })
         .then((response) => {
           if (response?.data) {
-            console.log("response?.data", response?.data);
-            let col_name = response?.data?.data[0]?.DIMENSIONS?.split("|");
+            let col_name = response?.data?.data[0]?.ALLOWED_COLUMNS?.split("|");
             col_name = col_name?.map((item) => {
               return item?.split(".")[1];
             });
-            console.log("col_name", col_name);
 
-            setColumns(col_name);
+            let temp = [];
+            temp.push({ value: "all", name: "All" });
+            col_name?.map((value) => {
+              return temp.push({ value: value, name: value });
+            });
+            setColumns(temp);
           }
         })
         .catch((error) => console.log(error));
@@ -155,17 +158,27 @@ const Queryform = () => {
     });
   };
 
-  const handleSelectChange = (event) => {
-    const selectedOptions = Array.from(event.target.selectedOptions).map(
-      (option) => option.value
-    );
-    const delimiter = "&";
-    const selectedOptionsString = `#${selectedOptions.join(delimiter)}#`;
-    setFormData({
-      ...formData,
-      [event.target.name]: selectedOptionsString,
-    });
-    // setSelectedColumns(selectedOptions);
+  const handleChange = (event, name) => {
+    const element = "all";
+    const index = event?.indexOf(element);
+
+    if (event?.includes("all")) {
+      let allSelect = columns?.map((obj) => {
+        return obj.value;
+      });
+      if (index !== -1) {
+        allSelect?.splice(index, 1);
+      }
+      setFormData({
+        ...formData,
+        [name]: allSelect,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: event,
+      });
+    }
   };
 
   const callByPassAPI = () => {
@@ -174,7 +187,7 @@ const Queryform = () => {
       axios
         .get(`http://127.0.0.1:5000/${user?.name}`, {
           params: {
-            query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS();`,
+            query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS_1();`,
           },
         })
         .then((response) => {
@@ -185,7 +198,7 @@ const Queryform = () => {
             setByPassAPICalled(false);
             dispatch(
               actions.ConsumerQueryForm({
-                fetchData: false
+                fetchData: false,
               })
             );
           }
@@ -195,7 +208,7 @@ const Queryform = () => {
           setByPassAPICalled(false);
           dispatch(
             actions.ConsumerQueryForm({
-              fetchData: false
+              fetchData: false,
             })
           );
         });
@@ -205,7 +218,9 @@ const Queryform = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (byPassAPICalled) {
-      toast.error("We are fetching the data for current request. Please wait...");
+      toast.error(
+        "We are fetching the data for current request. Please wait..."
+      );
       return;
     }
     formData.RunId = Date.now();
@@ -263,7 +278,7 @@ const Queryform = () => {
           dispatch(
             actions.ConsumerQueryForm({
               RequestId: formData?.RunId,
-              fetchData: true
+              fetchData: true,
             })
           );
           callByPassAPI();
@@ -286,7 +301,7 @@ const Queryform = () => {
     dispatch(
       actions.ConsumerQueryForm({
         TableData: { head: head, rows: row },
-        fetchData: false
+        fetchData: false,
       })
     );
   };
@@ -301,7 +316,9 @@ const Queryform = () => {
       .then((response) => {
         if (response?.data?.data) {
           fetchTable(response?.data?.data, formData?.RunId);
-          toast.success(`Data fetched successfully. Request Id: ${formData?.RunId}`);
+          toast.success(
+            `Data fetched successfully. Request Id: ${formData?.RunId}`
+          );
         }
       })
       .catch((error) => {
@@ -369,23 +386,18 @@ const Queryform = () => {
                 </select>
               </div>
 
-
               <div className="mt-2 pb-2 flex flex-col">
-                <label>Column name</label>
-                <select
-                  className="w-full"
-                  multiple
+                <SelectDropdown
+                  title="Columns"
+                  mode="multiple"
                   name="Column_Names"
-                  required
-                  onChange={handleSelectChange}
-                >
-                  {colunms &&
-                    colunms.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                </select>
+                  value={formData?.Column_Names}
+                  placeholder="Select Columns"
+                  data={columns}
+                  setValue={(e, value) => {
+                    handleChange(e, value);
+                  }}
+                />
               </div>
 
               <div className="mt-2 pb-21 flex flex-col">
@@ -454,4 +466,4 @@ const Queryform = () => {
   );
 };
 
-export default Queryform;
+export default Enrichment;

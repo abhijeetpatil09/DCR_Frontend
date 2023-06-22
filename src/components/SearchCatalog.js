@@ -1,24 +1,9 @@
-import React, { useState } from "react";
-import SelectDropdown from "./CommonComponent/SelectDropdown";
+import React, { useEffect, useState } from "react";
+import Table from "./CommonComponent/Table";
+import axios from "axios";
+import { CircularProgress } from "@mui/material";
 
-const categoryList = [
-  { value: "all", name: "All" },
-  { value: "category1", name: "Category 1" },
-  { value: "category2", name: "Category 2" },
-  { value: "category3", name: "Category 3" },
-];
-const subCategoryList = [
-  { value: "all", name: "All" },
-  { value: "sub_category1", name: "Sub Category 1" },
-  { value: "sub_category2", name: "Sub Category 2" },
-  { value: "sub_category3", name: "Sub Category 3" },
-];
-const providerList = [
-  { value: "all", name: "All" },
-  { value: "provider1", name: "Provider 1" },
-  { value: "provider2", name: "Provider 2" },
-  { value: "provider3", name: "Provider 3" },
-];
+import SelectDropdown from "./CommonComponent/SelectDropdown";
 
 const SearchCatalog = () => {
   const [selectedValues, setSelectedValues] = useState({
@@ -26,16 +11,113 @@ const SearchCatalog = () => {
     subCategory: [],
     provider: [],
   });
+  const [loader, setLoader] = useState(false);
 
+  const [categoryList, setCategoryList] = useState([]);
+  const [subCategoryList, setSubCategoryList] = useState([]);
+  const [providerList, setProviderList] = useState([]);
+
+  let [tableData, setTableData] = useState({
+    head: [
+      "Provider Name",
+      "Attribute Name",
+      "Category",
+      "Sub Category",
+      "Description",
+      "Entity Name",
+      "Tech Name",
+    ],
+    row: [],
+  });
   const [errors, setError] = useState({
     category: null,
     subCategory: null,
     provider: null,
   });
 
-  const handleChange = (event, name) => {
-    console.log("event", event, name);
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:5000/dataexadmin`, {
+        params: {
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.CATEGORY_LIST`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          const cat_list = [{ value: "all", name: "All" }];
+          response?.data?.data?.forEach((obj) => {
+            cat_list.push({ value: obj.CATEGORY, name: obj.CATEGORY });
+          });
+          setCategoryList(cat_list);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    axios
+      .get(`http://127.0.0.1:5000/dataexadmin`, {
+        params: {
+          query: `select * from DATAEXCHANGEDB.DATACATALOG.PROVIDER_NAME;`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          const prov_list = [{ value: "all", name: "All" }];
+          response?.data?.data?.forEach((obj) => {
+            prov_list.push({
+              value: obj.PROVIDER_NAME,
+              name: obj.PROVIDER_NAME,
+            });
+          });
+          setProviderList(prov_list);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
+  useEffect(() => {
+    if (selectedValues.category?.length > 0) {
+      const finalCategory = selectedValues?.category
+        ?.map((item, index) =>
+          item !== "all"
+            ? "Category = '" +
+              item +
+              (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+            : ""
+        )
+        .join("");
+      axios
+        .get(`http://127.0.0.1:5000/dataexadmin`, {
+          params: {
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST where (${finalCategory});`,
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            let data = response?.data?.data
+            if(data?.length > 0) {
+              const sub_cat_list = [{ value: "all", name: "All" }];
+              response?.data?.data?.forEach((obj) => {
+                sub_cat_list.push({
+                  value: obj.SUB_CATEGORY,
+                  name: obj.SUB_CATEGORY,
+                });
+              });
+              setSubCategoryList(sub_cat_list);
+            } else {
+              setSubCategoryList([]);
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [selectedValues.category]);
+
+  const handleChange = (event, name) => {
     if (name === "category") {
       setError({ ...errors, category: null });
     } else if (name === "subCategory") {
@@ -49,8 +131,9 @@ const SearchCatalog = () => {
     });
   };
 
-  // console.log("id", document.getElementById('catInput'))
   const handleSubmit = () => {
+    setLoader(true);
+
     if (selectedValues.category?.length === 0) {
       setError({ ...errors, category: "Please select Category" });
       return;
@@ -61,7 +144,88 @@ const SearchCatalog = () => {
       setError({ ...errors, provider: "Please select Provider" });
       return;
     }
-    console.log("selectedValues ==>", selectedValues);
+
+    const finalCategory = selectedValues?.category
+      ?.map((item, index) =>
+        item !== "all"
+          ? "Category = '" +
+            item +
+            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+          : ""
+      )
+      .join("");
+
+    const finalSubCategory = selectedValues?.subCategory
+      ?.map((item, index) =>
+        item !== "all"
+          ? "Sub_Category = '" +
+            item +
+            (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
+          : ""
+      )
+      .join("");
+
+    const finalProvider = selectedValues?.provider
+      ?.map((item, index) =>
+        item !== "all"
+          ? "Provider_Name = '" +
+            item +
+            (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
+          : ""
+      )
+      .join("");
+
+    let finalResult =
+      (finalCategory !== "" ? "(" + finalCategory + ")" : "") +
+      (finalSubCategory !== ""
+        ? (finalCategory !== "" ? " and " : "") + "(" + finalSubCategory + ")"
+        : "") +
+      (finalProvider !== ""
+        ? (finalCategory !== "" || finalSubCategory !== "" ? " and " : "") +
+          "(" +
+          finalProvider +
+          ")"
+        : "");
+
+    console.log("appendedString ==>", finalResult);
+
+    axios
+      .get(`http://127.0.0.1:5000/dataexadmin`, {
+        params: {
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${
+            finalResult !== "" ? `where ${finalResult}` : ""
+          } order by entity_name;`,
+        },
+      })
+      .then((response) => {
+        if (response?.data) {
+          let data = response?.data?.data;
+          let head = [
+            "PROVIDER_NAME",
+            "ATTRIBUTE_NAME",
+            "CATEGORY",
+            "SUB_CATEGORY",
+            "DESCRIPTION",
+            "ENTITY_NAME",
+            "TECH_NAME",
+          ];
+          let row = [];
+          data?.length > 0 &&
+            data?.map((obj) => {
+              return row.push(head?.map((key) => obj[key]));
+            });
+          setTableData({ ...tableData, row: row });
+          setLoader(false);
+        } else {
+          setTableData({ ...tableData, row: [] });
+          setLoader(false);
+        }
+      })
+      .catch((error) => {
+        setTableData({ ...tableData, row: [] });
+        setLoader(false);
+        console.log(error);
+      });
   };
 
   return (
@@ -77,8 +241,8 @@ const SearchCatalog = () => {
             <span className="text-sm mb-4 font-light text-coal">
               Search Catalog
             </span>
-            <div className=" mt-2 pb-2 flex flex-col">
-              <div className="w-full">
+            <div className="mt-4 pb-2 flex flex-col">
+              <div className="w-full mt-2">
                 <SelectDropdown
                   title="Select Category"
                   mode="multiple"
@@ -96,7 +260,7 @@ const SearchCatalog = () => {
                   </span>
                 ) : null}
               </div>
-              <div className="w-full">
+              <div className="w-full mt-2">
                 <SelectDropdown
                   title="Select Sub Category"
                   name="subCategory"
@@ -114,7 +278,7 @@ const SearchCatalog = () => {
                   </span>
                 ) : null}
               </div>
-              <div className="w-full">
+              <div className="w-full mt-2">
                 <SelectDropdown
                   title="Select Provider"
                   name="provider"
@@ -139,11 +303,20 @@ const SearchCatalog = () => {
                 type="submit"
                 onClick={handleSubmit}
               >
-                Search Request
+                {loader ? (
+                  <CircularProgress
+                    style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
+                  />
+                ) : (
+                  "Search Request"
+                )}
               </button>
             </div>
           </div>
         </div>
+        {tableData?.head?.length > 0 && tableData?.row?.length > 0 ? (
+          <Table head={tableData?.head} rows={tableData?.row} />
+        ) : null}
       </div>
     </div>
   );

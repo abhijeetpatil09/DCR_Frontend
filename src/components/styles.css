@@ -66,32 +66,31 @@ input[type="submit"]:hover {
 }
 
 /* Define the table structure */
-table {
-  border-collapse: collapse;
-  width: 80%;
+/* table {
+    border-collapse: collapse;
+    width: 80%;
 }
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+  
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
-
+   */
 /* Set the styles for the table */
-th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
+/* th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+} */
 
-td {
-  background-color: #fff;
-}
+/* td {
+    background-color: #fff;
+} */
 
 /* Style the individual table cells */
-td:nth-child(even) {
-  background-color: #f2f2f2;
-}
+/* td:nth-child(even) {
+    background-color: #f2f2f2;
+} */
 
 .appleft {
   /* background-color: azure; */
@@ -153,4 +152,12 @@ td:nth-child(even) {
   gap: 10px;
   border: 1px solid black;
   padding: 10px;
+}
+
+.ant-select-selection-placeholder {
+  color: black !important;
+}
+
+.ant-select-selector {
+  border: none !important;
 }

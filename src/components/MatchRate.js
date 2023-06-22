@@ -30,7 +30,7 @@ const initialState = {
   Match_Attribute_Value: "",
 };
 
-const Publisherform = () => {
+const MatchRate = () => {
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
 
@@ -103,44 +103,13 @@ const Publisherform = () => {
   //   return regex.test(inputString); // returns true if inputString matches the regex pattern, false otherwise
   // };
 
-  const sendEmail = () => {
-    // create reusable transporter object using the default SMTP transport
-    // let transporter = nodemailer.createTransport({
-    //     host: 'smtp.gmail.com',
-    //     port: 465,
-    //     secure: true, // true for 465, false for other ports
-    //     auth: {
-    //         user: 'atulkhot07@gmail.com', // your email address
-    //         pass: '9975334797' // your email password or app password if using 2-factor authentication
-    //     }
-    // });
-
-    // // setup email data with unicode symbols
-    // let mailOptions = {
-    //     from: '"Atul Khot" atulkhot07@gmail.com', // sender address
-    //     to: 'atulkhot07@example.com', // list of receivers
-    //     subject: 'Hello', // Subject line
-    //     text: 'Hello world?', // plain text body
-    //     // html: '<b>Hello world?</b>' // html body
-    // };
-
-    // // send mail with defined transport object
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //     if (error) {
-    //         return console.log(error);
-    //     }
-    //     console.log('Message sent: %s', info.messageId);
-    // });
-    console.log("into send email method");
-  };
-
   const callByPassAPI = () => {
     setByPassAPICalled(true);
     setTimeout(() => {
       axios
         .get(`http://127.0.0.1:5000/${user?.name}`, {
           params: {
-            query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS();`,
+            query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS_1();`,
           },
         })
         .then((response) => {
@@ -496,4 +465,4 @@ const Publisherform = () => {
   );
 };
 
-export default Publisherform;
+export default MatchRate;
