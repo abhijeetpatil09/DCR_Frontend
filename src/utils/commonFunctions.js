@@ -21,7 +21,8 @@ export const jsonToCsv = (jsonData) => {
 // Function for Handle the date as per DD-MM-YYYY format
 
 export const handleDate = (date) => {
-  const dateObj = new Date(date);
+
+  const dateObj = new Date(parseInt(date));
 
   const year = dateObj.getFullYear();
   const month = getMonthName(dateObj.getMonth());
@@ -72,3 +73,10 @@ export const downloadFileInCSV = (csvData, TEMPLATE_NAME, RUN_ID) => {
 export const calculatePercentage = (value, total) => {
   return Math.round((value * 100) / total);
 };
+
+/// To check the Object is empty or not...
+export const isObjectEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+};
+
+

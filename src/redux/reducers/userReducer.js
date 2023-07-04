@@ -4,6 +4,7 @@ import { updateObject } from '../utility/utility';
 const initialState = {
     name: '',
     role: [],
+    Consumer: '',
 };
 
 const reducer = (state = initialState, action) => {

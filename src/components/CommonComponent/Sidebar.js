@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,27 @@ const Sidebar = ({ children }) => {
   const user = state && state.user;
 
   const [isOpened, setIsOpened] = useState(false);
+  const [tab, setTab] = useState(0);
+
+  useEffect(() => {
+    const { pathname } = window.location;
+    if (pathname?.includes("home")) {
+      setTab(1);
+    } else if (pathname?.includes("publisherform")) {
+      setTab(2);
+    } else if (pathname?.includes("queryform")) {
+      setTab(3);
+    } else if (pathname?.includes("upload-catalog")) {
+      setTab(4);
+    } else if (pathname?.includes("search-catalog")) {
+      setTab(5);
+    } else if (pathname?.includes("admin-console")) {
+      setTab(6);
+    } else if (pathname?.includes("querystatus")) {
+      setTab(7);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.location.pathname]);
 
   const handleSignOut = () => {
     dispatch(actions.logoutUser());
@@ -35,11 +56,11 @@ const Sidebar = ({ children }) => {
         <div
           className={`${
             isOpened ? "bg-deep-navy" : "bg-white"
-          } flex flex-row items-center  mw-64`}
+          } flex flex-row items-center`}
         >
           <div
             className={`${
-              isOpened ? "" : "bg-deep-navy"
+              isOpened ? "" : "bg-deep-navy w-[72px]"
             } h-16 px-6 flex justify-start items-center  text-white focus:text-electric-green cursor-pointer`}
             onClick={() => setIsOpened(!isOpened)}
           >
@@ -61,15 +82,7 @@ const Sidebar = ({ children }) => {
             />
           )}
         </div>
-        {/* <div>
-          <h1 className="hoonartek-title">h</h1>
-        </div> */}
-        {/* <div>
-          <img src={GroupMLogo} alt = 'Image_Description' width="100" height="40"/>
-        </div> */}
-        {/* <div>
-          <h1 className="hoonartek-title">nartek</h1>
-        </div> */}
+
         <div className=" flex flex-row items-center  ">
           <span className=" text-deep-navy font-bold  text-2xl">
             <span className="text-electric-green text-4xl">D</span>ata
@@ -117,11 +130,14 @@ const Sidebar = ({ children }) => {
 
           <ul>
             {/* <!-- Items Section --> */}
-            <li className="hover:text-white">
+            <li
+              className={`${
+                tab === 1 ? "text-white" : "text-electric-green"
+              } hover:text-white transition ease-in-out duration-500`}
+            >
               <button
                 onClick={() => navigateTo("/home")}
-                className="h-16 px-6 flex flex justify-start items-center w-full
-            focus:text-electric-green"
+                className="h-16 px-6 flex flex justify-start items-center w-full"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -148,75 +164,15 @@ const Sidebar = ({ children }) => {
               </button>
             </li>
 
-            {user["role"] && user["role"].includes("Provider") && (
-              <li className="hover:text-white">
-                <button
-                  className="h-16 px-6 flex justify-start items-center w-full
-            focus:text-electric-green"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 stroke-2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                    />
-                  </svg>
-
-                  <span
-                    className={`${
-                      isOpened ? "" : "hidden"
-                    } pl-5 uppercase font-semibold`}
-                  >
-                    Upload{" "}
-                  </span>
-                </button>
-              </li>
-            )}
-            {user["role"] && user["role"].includes("Consumer") && (
-              <li className="hover:text-white">
-                <button
-                  onClick={() => navigateTo("/queryform")}
-                  className="h-16 px-6 flex  justify-start items-center w-full
-            focus:text-electric-green"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 stroke-2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                    />
-                  </svg>
-
-                  <span
-                    className={`${
-                      isOpened ? "" : "hidden"
-                    } pl-5 uppercase font-semibold`}
-                  >
-                    Enrichment
-                  </span>
-                </button>
-              </li>
-            )}
             {user["role"] && user["role"].includes("Publisher") && (
-              <li className="hover:text-white">
+              <li
+                className={`${
+                  tab === 2 ? "text-white" : "text-electric-green"
+                } hover:text-white transition ease-in-out duration-500`}
+              >
                 <button
                   onClick={() => navigateTo("/publisherform")}
-                  className="h-16 px-6 flex flex justify-start items-center w-full
-            focus:text-electric-green"
+                  className="h-16 px-6 flex flex justify-start items-center w-full"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -244,74 +200,51 @@ const Sidebar = ({ children }) => {
               </li>
             )}
 
-            <li className="hover:text-white">
-              <button
-                onClick={() => navigateTo("/querystatus")}
-                className="h-16 px-6 flex flex justify-start items-center w-full
-            focus:text-electric-green"
+            {user["role"] && user["role"].includes("Consumer") && (
+              <li
+                className={`${
+                  tab === 3 ? "text-white" : "text-electric-green"
+                } hover:text-white transition ease-in-out duration-500`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5 stroke-2"
+                <button
+                  onClick={() => navigateTo("/queryform")}
+                  className="h-16 px-6 flex  justify-start items-center w-full"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5 stroke-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                    />
+                  </svg>
 
-                <span
-                  className={`${
-                    isOpened ? "" : "hidden"
-                  } pl-5 uppercase font-semibold`}
-                >
-                  Status
-                </span>
-              </button>
-            </li>
-
-            <li className="hover:text-white">
-              <button
-                onClick={() => navigateTo("/requestinfo")}
-                className="h-16 px-6 flex flex justify-start items-center w-full
-            focus:text-electric-green"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5 stroke-2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-                  />
-                </svg>
-
-                <span
-                  className={`${
-                    isOpened ? "" : "hidden"
-                  } pl-5 uppercase font-semibold`}
-                >
-                  Requests
-                </span>
-              </button>
-            </li>
+                  <span
+                    className={`${
+                      isOpened ? "" : "hidden"
+                    } pl-5 uppercase font-semibold`}
+                  >
+                    Enrichment
+                  </span>
+                </button>
+              </li>
+            )}
 
             {user?.role && user?.role?.includes("Publisher") && (
-              <li className="hover:text-white">
+              <li
+                className={`${
+                  tab === 4 ? "text-white" : "text-electric-green"
+                } hover:text-white transition ease-in-out duration-500`}
+              >
                 <button
                   onClick={() => navigateTo("/upload-catalog")}
-                  className="h-16 px-6 flex flex justify-start items-center w-full
-            focus:text-electric-green"
+                  className="h-16 px-6 flex flex justify-start items-center w-full"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -340,11 +273,14 @@ const Sidebar = ({ children }) => {
             )}
 
             {user?.role && user?.role?.includes("Consumer") && (
-              <li className="hover:text-white">
+              <li
+                className={`${
+                  tab === 5 ? "text-white" : "text-electric-green"
+                } hover:text-white transition ease-in-out duration-500`}
+              >
                 <button
                   onClick={() => navigateTo("/search-catalog")}
-                  className="h-16 px-6 flex flex justify-start items-center w-full
-            focus:text-electric-green"
+                  className="h-16 px-6 flex flex justify-start items-center w-full"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -371,6 +307,39 @@ const Sidebar = ({ children }) => {
                 </button>
               </li>
             )}
+            <li
+              className={`${
+                tab === 7 ? "text-white" : "text-electric-green"
+              } hover:text-white transition ease-in-out duration-500`}
+            >
+              <button
+                onClick={() => navigateTo("/querystatus")}
+                className="h-16 px-6 flex flex justify-start items-center w-full"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5 stroke-2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+
+                <span
+                  className={`${
+                    isOpened ? "" : "hidden"
+                  } pl-5 uppercase font-semibold`}
+                >
+                  Status
+                </span>
+              </button>
+            </li>
           </ul>
         </aside>
         <main className="flex flex-col w-full ">

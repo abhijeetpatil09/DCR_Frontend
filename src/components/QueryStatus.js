@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { Box, Modal } from "@mui/material";
 
 import {
   Table,
@@ -12,9 +13,26 @@ import {
   TablePagination,
 } from "@mui/material";
 
-import { handleDate } from "../utils/commonFunctions";
+import {
+  jsonToCsv,
+  handleDate,
+  downloadFileInCSV,
+} from "../utils/commonFunctions";
+import CustomTable from "./CommonComponent/Table";
+
 import "./styles.css";
 import "./pure-react.css";
+
+const resultstyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "95%",
+  maxHeight: "90%",
+  bgcolor: "background.paper",
+  overflow: "scroll",
+};
 
 const QueryStatus = () => {
   const state = useSelector((state) => state);
@@ -24,11 +42,30 @@ const QueryStatus = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [viewTable, setViewTable] = useState({
+    head: [],
+    rows: [],
+    runId: "",
+  });
+
+  const [viewTemplate, setViewTemplate] = React.useState({
+    openModal: false,
+    queryName: "",
+  });
+
+  const handleResultModalClose = () =>
+    setViewTemplate({
+      ...viewTemplate,
+      openModal: false,
+      queryName: "",
+    });
+
   useEffect(() => {
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
-          query: "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE order by RUN_ID desc;",
+          query:
+            "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE order by RUN_ID desc;",
         },
       })
       .then((response) => setData(response.data.data))
@@ -45,26 +82,57 @@ const QueryStatus = () => {
   };
 
   const downloadFile = (TEMPLATE_NAME, RUN_ID) => {
+    TEMPLATE_NAME = TEMPLATE_NAME.replace(/\s/g, "_");
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
-        responseType: "arraybuffer",
+        responseType: "json",
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${TEMPLATE_NAME}_${RUN_ID};`,
         },
       })
       .then((response) => {
-        // Convert the response data to a CSV format
-        const csvData = new Blob([response.data], {
-          type: "text/csv;charset=utf-8;",
-        });
-        const csvUrl = URL.createObjectURL(csvData);
+        if (response?.data) {
+          const csvData = jsonToCsv(response?.data); // Create a Blob from the CSV data
+          downloadFileInCSV(csvData, TEMPLATE_NAME, RUN_ID);
+        } else {
+          console.log("File cannnot be downloaded...");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
-        const link = document.createElement("a");
-        link.setAttribute("href", csvUrl);
-        link.setAttribute("download", `${TEMPLATE_NAME}_${RUN_ID}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+  const fetchcsvTableData = async (templateName, runId) => {
+    templateName = templateName.replace(/\s/g, "_");
+    axios
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
+        params: {
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${templateName}_${runId} limit 1000;`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          let data = response?.data?.data;
+
+          let head = [];
+          let row = [];
+          if (data?.length > 0) {
+            head = data && Object.keys(data[0]);
+            data?.map((obj) => {
+              return row.push(head?.map((key) => obj[key]));
+            });
+          }
+          setViewTable({ head: head, rows: row, runId: runId });
+          setViewTemplate({
+            ...viewTemplate,
+            openModal: true,
+            queryName: templateName,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("In API catch", error);
       });
   };
 
@@ -95,7 +163,7 @@ const QueryStatus = () => {
                   borderRight: 1,
                   borderColor: "#d6d3d1",
                 },
-                "& th:first-child": { borderLeft: 1, borderColor: "#d6d3d1" },
+                "& th:first-of-type": { borderLeft: 1, borderColor: "#d6d3d1" },
               }}
             >
               <TableCell key={0} align="center">
@@ -114,10 +182,10 @@ const QueryStatus = () => {
                 Status
               </TableCell>
               <TableCell key={5} align="center">
-                Last modified Date & Time
+                Requested
               </TableCell>
               <TableCell key={6} align="center">
-                Download O/P file
+                Actions
               </TableCell>
             </TableRow>
           </TableHead>
@@ -134,7 +202,11 @@ const QueryStatus = () => {
                           borderRight: 1,
                           borderColor: "#d6d3d1",
                         },
-                        "& td": { borderLeft: 1, borderColor: "#d6d3d1", color: "#0A2756", },
+                        "& td": {
+                          borderLeft: 1,
+                          borderColor: "#d6d3d1",
+                          color: "#0A2756",
+                        },
                       }}
                     >
                       <TableCell align="center">{row.RUN_ID}</TableCell>
@@ -144,47 +216,93 @@ const QueryStatus = () => {
                       <TableCell align="center">
                         <span
                           className={`${
-                            row.STATUS === "true"
-                              ? "bg-green-300 text-deep-navy"
-                              : "bg-amaranth-300 text-deep-navy"
-                          }   py-1 px-3 rounded-full text-xs`}
+                            row.STATUS.toLowerCase() === "completed" ||
+                            row.STATUS.toLowerCase() === "true"
+                              ? "bg-green-300 text-deep-navy inline"
+                              : row.STATUS === "Failed" ||
+                                row.STATUS === "false"
+                              ? "bg-red-200 text-red-700 inline"
+                              : "bg-amaranth-300 text-deep-navy block h-[45px]"
+                          }  text-xs py-1 px-3 rounded-full  `}
                         >
-                          {row.STATUS === "true"
+                          {row.STATUS.toLowerCase() === "true"
                             ? "Approved"
-                            : row.STATUS === "false"
+                            : row.STATUS.toLowerCase() === "false"
                             ? "Rejected"
-                            : "In Progress"}
+                            : row.STATUS}
                         </span>
                       </TableCell>
                       <TableCell align="center">
                         {handleDate(row.RUN_ID)}
                       </TableCell>
                       <TableCell align="center">
-                        <button
-                          onClick={() =>
-                            downloadFile(row.TEMPLATE_NAME, row.RUN_ID)
-                          }
-                          className={`flex flex-row items-center justify-center ${
-                            row.STATUS === "true" ? "text-deep-navy" : 'text-amaranth-300'
-                          }`}
-                          disabled={row.STATUS === "false"}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6"
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() =>
+                              fetchcsvTableData(row.TEMPLATE_NAME, row.RUN_ID)
+                            }
+                            className={`${
+                              row.STATUS.toLowerCase() === "completed"
+                                ? "text-deep-navy"
+                                : "text-amaranth-300"
+                            } flex flex-row items-center px-2 justify-center`}
+                            disabled={row.STATUS.toLowerCase() !== "completed"}
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-                            />
-                          </svg>
-                          <span className="pl-2 underline">Download</span>
-                        </button>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                            <span className="pl-2 underline">View</span>
+                          </button>
+
+                          {(row.TEMPLATE_NAME === "CUSTOMER ENRICHMENT" ||
+                            row.TEMPLATE_NAME === "customer_enrichment") && (
+                            <button
+                              onClick={() =>
+                                downloadFile(row.TEMPLATE_NAME, row.RUN_ID)
+                              }
+                              className={`${
+                                row.STATUS.toLowerCase() === "completed"
+                                  ? "text-deep-navy"
+                                  : "text-amaranth-300"
+                              } flex flex-row items-center px-2 justify-center`}
+                              disabled={
+                                row.STATUS.toLowerCase() !== "completed"
+                              }
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                />
+                              </svg>
+                              <span className="pl-2 underline">Download</span>
+                            </button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -201,6 +319,45 @@ const QueryStatus = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      <Modal
+        open={viewTemplate.openModal}
+        onClose={handleResultModalClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={resultstyle}>
+          <div className=" flex flex-col flex-grow w-full">
+            <div className="flex flex-row items-center justify-between sticky z-30 py-2 px-4 top-0 w-full bg-deep-navy text-white">
+              <h3 className="font-bold text-white">Query result</h3>
+              <button onClick={handleResultModalClose}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                </svg>
+              </button>
+            </div>
+            <div className="px-4">
+              {viewTable.head?.length > 0 && viewTable.rows?.length > 0 ? (
+                <CustomTable
+                  id={viewTable.runId}
+                  head={viewTable.head}
+                  rows={viewTable.rows}
+                  pagination={
+                    viewTemplate.queryName === "ADVERTISER_MATCH"
+                      ? "none"
+                      : true
+                  }
+                />
+              ) : null}
+            </div>
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 };

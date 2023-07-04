@@ -12,14 +12,6 @@ import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
 
-const initialState = {
-  Query_Name: "",
-  Provider_Name: "",
-  Column_Names: [],
-  Consumer_Name: "",
-  Attribute_Value: "",
-};
-
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
   secretAccessKey: "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",
@@ -37,7 +29,14 @@ const Enrichment = () => {
   const requestId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
   const fetchData = state && state.ConsumerForm && state.ConsumerForm.fetchData;
 
-  const [formData, setFormData] = useState(initialState);
+  const [formData, setFormData] = useState({
+    Query_Name: "",
+    Provider_Name: "",
+    Column_Names: [],
+    Consumer_Name: user?.Consumer,
+    Attribute_Value: "",
+  });
+
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
 
@@ -415,29 +414,6 @@ const Enrichment = () => {
                 </select>
               </div>
 
-              <div className="mt-2 pb-2 flex flex-col">
-                <label>Consumer name</label>
-                <select
-                  name="Consumer_Name"
-                  onChange={handleCustomerFormData}
-                  required
-                  className="w-full"
-                >
-                  <option value="">--Select--</option>
-                  {user["name"] === "Hoonartekcons1" && (
-                    <option value="Hoonartek">Hoonartek</option>
-                  )}
-                  {user["name"] === "Hoonartek" && (
-                    <option value="Hoonartek">Hoonartek</option>
-                  )}
-                  {user["name"] === "Hoonartekcons2" && (
-                    <option value="Hoonartek">Hoonartek</option>
-                  )}
-                  {user["name"] === "admin" && (
-                    <option value="hoonartek">Hoonartek</option>
-                  )}
-                </select>
-              </div>
               <div className="flex justify-end">
                 <button
                   className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"

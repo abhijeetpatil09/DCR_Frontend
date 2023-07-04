@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -9,18 +9,7 @@ import * as actions from "../../redux/actions/index";
 import BgVideo from "../../Assets/loginbg.mp4";
 import BgVideoGreen from "../../Assets/loginbg_green.mp4";
 
-// import AWS from "aws-sdk";
-
-// const s3 = new AWS.S3({
-//   accessKeyId: "AKIA57AGVWXYVR36XIEC",
-//   secretAccessKey: "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",
-//   // signatureVersion: 'v4',
-//   region: "ap-south-1",
-//   // region: 'ap-south-1',
-// });
-
 const Login = () => {
-  //const blob = new Blob([data.Body.toString()], { type: 'text/csv' });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loginDetails, setLoginDetails] = useState({
@@ -54,11 +43,39 @@ const Login = () => {
       } else {
         setErrors({ ...errors, password: null });
       }
-    } 
+    }
     setLoginDetails({ ...loginDetails, [inputName]: inputValue });
   };
 
-  const handleSubmit = (event) => {
+  const getAllConsumers = async (userRole) => {
+    await axios
+      .get(`http://127.0.0.1:5000/${loginDetails?.userName}`, {
+        params: {
+          query: `select user from CONSUMER_ATTRIBUTES_VW where admin = 'true';`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          setIsSubmitted(true);
+
+          let data = response?.data?.data?.[0];
+          dispatch(
+            actions.loginRequest({
+              isLoggedIn: true,
+              name: loginDetails?.userName,
+              role: userRole,
+              Consumer: data?.USER,
+            })
+          );
+          navigate("/home");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleSubmit = async (event) => {
     //Prevent page reload
     event.preventDefault();
     if (loginDetails?.userName === "") {
@@ -68,17 +85,15 @@ const Login = () => {
       setErrors({ ...errors, password: "Please enter password" });
       return;
     }
-    
 
     if (loginDetails?.userName !== "") {
       setLoading(true);
-      axios
+      await axios
         .get(`http://127.0.0.1:5000/${loginDetails?.userName}`, {
           params: {
             query: `select * from DCR_PROVIDER2.CLEANROOM.CONSUMER_ATTRIBUTES_VW WHERE USER = '${loginDetails?.userName}';`,
           },
         })
-
         .then((response) => {
           if (response?.data?.data) {
             let data = response?.data?.data; // Find user login info
@@ -88,32 +103,33 @@ const Login = () => {
             // Compare user info
             if (userData) {
               if (userData.PASSWORD !== loginDetails?.password) {
-                // Invalid password
                 setErrors({ ...errors, password: "Invalid Password" });
+                setLoading(false);
               } else {
                 const userRole = [];
-                if (userData.PUBLISHER?.toLowerCase() === "true") {
+                if (userData?.PUBLISHER?.toLowerCase() === "true") {
                   userRole.push("Publisher");
                 }
-                if (userData.PROVIDER?.toLowerCase() === "true") {
+                if (userData?.PROVIDER?.toLowerCase() === "true") {
                   userRole.push("Provider");
                 }
-                if (userData.CONSUMER?.toLowerCase() === "true") {
+                if (userData?.CONSUMER?.toLowerCase() === "true") {
                   userRole.push("Consumer");
                 }
-                if (userData.CONSUMER_ADMIN?.toLowerCase() === "true") {
+                if (
+                  userData?.PROVIDER?.toLowerCase() === "true" &&
+                  userData?.ADMIN?.toLowerCase() === "true"
+                ) {
+                  userRole.push("Provider_Admin");
+                }
+
+                if (
+                  userData?.CONSUMER?.toLowerCase() === "true" &&
+                  userData?.ADMIN?.toLowerCase() === "true"
+                ) {
                   userRole.push("Consumer_Admin");
                 }
-                setIsSubmitted(true);
-
-                dispatch(
-                  actions.loginRequest({
-                    name: loginDetails?.userName,
-                    role: userRole,
-                  })
-                );
-                toast.success("Logged in sucessfully...");
-                navigate("/home");
+                getAllConsumers(userRole);
               }
             } else {
               // Username not found
@@ -126,6 +142,7 @@ const Login = () => {
           }
         })
         .catch((error) => {
+          setErrors({ ...errors, userName: "User name not found" });
           setLoading(false);
           console.log(error);
         });
@@ -190,7 +207,7 @@ const Login = () => {
               style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
             />
           ) : (
-            "Submit"
+            "Log In"
           )}
         </button>
       </div>

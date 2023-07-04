@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 
-const OutputTable = ({ id, head, rows }) => {
+const OutputTable = ({ id, head, rows, pagination }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -60,7 +60,7 @@ const OutputTable = ({ id, head, rows }) => {
                   borderRight: 1,
                   borderColor: "#d6d3d1",
                 },
-                "& th:first-child": { borderLeft: 1, borderColor: "#d6d3d1" },
+                "& th:first-of-type": { borderLeft: 1, borderColor: "#d6d3d1" },
               }}
             >
               {head?.map((column, index) => {
@@ -102,7 +102,7 @@ const OutputTable = ({ id, head, rows }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {pagination !== "none" ? ( <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50]}
         component="div"
         count={rows?.length}
@@ -110,7 +110,7 @@ const OutputTable = ({ id, head, rows }) => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      />): null}
     </Paper>
   );
 };
