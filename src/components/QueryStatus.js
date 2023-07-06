@@ -137,7 +137,7 @@ const QueryStatus = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full px-8">
       <h3 className="my-4 text-xl font-bold bg-white text-deep-navy">
         Query Status
       </h3>
@@ -219,10 +219,13 @@ const QueryStatus = () => {
                             row.STATUS.toLowerCase() === "completed" ||
                             row.STATUS.toLowerCase() === "true"
                               ? "bg-green-300 text-deep-navy inline"
-                              : row.STATUS === "Failed" ||
-                                row.STATUS === "false"
+                              : row.STATUS.toLowerCase() === "failed" ||
+                                row.STATUS.toLowerCase() === "false"
                               ? "bg-red-200 text-red-700 inline"
-                              : "bg-amaranth-300 text-deep-navy block h-[45px]"
+                              : row.STATUS.toLowerCase() ===
+                                "waiting for approval"
+                              ? "flex items-center h-[45px] bg-downriver-400 text-deep-navy"
+                              : "bg-downriver-400 text-deep-navy "
                           }  text-xs py-1 px-3 rounded-full  `}
                         >
                           {row.STATUS.toLowerCase() === "true"
@@ -244,7 +247,7 @@ const QueryStatus = () => {
                             className={`${
                               row.STATUS.toLowerCase() === "completed"
                                 ? "text-deep-navy"
-                                : "text-amaranth-300"
+                                : "text-downriver-400"
                             } flex flex-row items-center px-2 justify-center`}
                             disabled={row.STATUS.toLowerCase() !== "completed"}
                           >
@@ -279,7 +282,7 @@ const QueryStatus = () => {
                               className={`${
                                 row.STATUS.toLowerCase() === "completed"
                                   ? "text-deep-navy"
-                                  : "text-amaranth-300"
+                                  : "text-downriver-400"
                               } flex flex-row items-center px-2 justify-center`}
                               disabled={
                                 row.STATUS.toLowerCase() !== "completed"

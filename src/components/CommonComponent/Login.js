@@ -91,7 +91,7 @@ const Login = () => {
       await axios
         .get(`http://127.0.0.1:5000/${loginDetails?.userName}`, {
           params: {
-            query: `select * from DCR_PROVIDER2.CLEANROOM.CONSUMER_ATTRIBUTES_VW WHERE USER = '${loginDetails?.userName}';`,
+            query: `select * from CONSUMER_ATTRIBUTES_VW WHERE USER = '${loginDetails?.userName}';`,
           },
         })
         .then((response) => {

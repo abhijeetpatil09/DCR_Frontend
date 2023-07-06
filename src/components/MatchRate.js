@@ -309,7 +309,7 @@ const MatchRate = () => {
   };
 
   return (
-    <div className="flex flex-col  ">
+    <div className="flex flex-col px-5">
       <h3 className="mt-4 text-xl font-bold text-deep-navy">Publisher query</h3>
       <div className="flex flex-row  gap-3  w-full">
         <div className="flex flex-col flex-shrink h-auto">
