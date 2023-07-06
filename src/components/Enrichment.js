@@ -357,7 +357,6 @@ const Enrichment = () => {
         <div>
           <h3 className="text-xl font-bold text-deep-navy mr-2">Consumer query</h3>
           <p>Choose your provider to run a consumer query based on your parameters.</p>
-
         </div>
         {['right'].map((anchor) => (
           <React.Fragment key={anchor}>
@@ -484,7 +483,7 @@ const Enrichment = () => {
       </div>
 
       <img
-                className="absolute  w-96 z-0 bottom-1 opacity-90  right-2 text-amarant-400"
+                className="absolute  w-96 -z-50 bottom-1 opacity-90  right-2 text-amarant-400"
                 src={enrichment}
                 alt=""
               />
