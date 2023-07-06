@@ -336,7 +336,7 @@ const SearchCatalog = () => {
                 name="myForm"
               >
                 <div className="flex flex-row justify-between">
-                  <h3>Catalog filter</h3>
+                  <h3 className="text-xl font-semibold">Catalog filter</h3>
                   <button onClick={toggleDrawer('right', false)}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -346,11 +346,11 @@ const SearchCatalog = () => {
                 <div className="mt-4 pb-2 flex flex-col gap-3">
                   <div className="w-full mt-2">
                     <SelectDropdown
-                      title="Select Category"
+                      title="Select category"
                       mode="multiple"
                       name="category"
                       value={selectedValues?.category}
-                      placeholder="Select Category"
+                      placeholder="Please select"
                       data={categoryList}
                       setValue={(e, value) => {
                         handleChange(e, value);
@@ -364,11 +364,11 @@ const SearchCatalog = () => {
                   </div>
                   <div className="w-full mt-2">
                     <SelectDropdown
-                      title="Select Sub Category"
+                      title="Select Sub category"
                       name="subCategory"
                       mode="multiple"
                       value={selectedValues?.subCategory}
-                      placeholder="Select Sub Category"
+                      placeholder="Please select"
                       data={subCategoryList}
                       setValue={(e, value) => {
                         handleChange(e, value);
@@ -382,11 +382,11 @@ const SearchCatalog = () => {
                   </div>
                   <div className="w-full mt-2">
                     <SelectDropdown
-                      title="Select Provider"
+                      title="Select provider"
                       name="provider"
                       mode="multiple"
                       value={selectedValues?.provider}
-                      placeholder="Select Provider"
+                      placeholder="Please select"
                       data={providerList}
                       setValue={(e, value) => {
                         handleChange(e, value);
@@ -410,7 +410,7 @@ const SearchCatalog = () => {
                         style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
                       />
                     ) : (
-                      "Search Request"
+                      "Filter"
                     )}
                   </button>
                 </div>
@@ -487,12 +487,7 @@ const SearchCatalog = () => {
                   </tr>
                 ))}
              
-            {!data &&
-
-              <tr className="border-b border-gray-200 hover:bg-blue-50">
-                <td colSpan={8}> No Catalogues added yet.</td>
-              </tr>
-            }
+            
              
               
          
