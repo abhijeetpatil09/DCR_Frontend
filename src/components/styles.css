@@ -161,3 +161,20 @@ th, td {
 .ant-select-selector {
   border: none !important;
 }
+
+.ant-select-dropdown {
+  z-index: 20000;
+}
+
+.ant-select-selection-placeholder {
+  color: #0891b2 !important;
+}
+
+.ant-select-selector {
+  border: 1px solid #0891b2 !important;
+  background-color: transparent !important;
+}
+
+.ant-select-selection-search-input {
+  min-width: 0px !important;
+}
