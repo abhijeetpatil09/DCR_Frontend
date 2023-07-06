@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Table from "./CommonComponent/Table";
 import axios from "axios";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress, SwipeableDrawer } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Modal } from "@mui/material";
 
 import * as actions from "../redux/actions/index";
 import SelectDropdown from "./CommonComponent/SelectDropdown";
+import { Typography } from "antd";
 
 // Modal style
 const resultstyle = {
@@ -58,6 +59,28 @@ const SearchCatalog = () => {
     subCategory: null,
     provider: null,
   });
+
+
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+    search: false
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+
 
   useEffect(() => {
     axios
@@ -286,159 +309,198 @@ const SearchCatalog = () => {
 
 
   return (
-    <div className="flex flex-col">
-      <h3 className="mt-4 text-xl font-bold text-deep-navy">Search Catalog</h3>
+    <div className="flex flex-col w-full">
 
-      <div className="flex flex-row  gap-3  w-full">
-        <div className="flex flex-col flex-shrink h-auto">
-          <div
-            className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto  w-80 max-w-xs"
-            name="myForm"
+      <div className="flex flex-row items-center w-full mb-4">
+      <h3 className="text-xl font-bold text-deep-navy mr-4">All Catalogues</h3>
+
+      {['right'].map((anchor) => (
+        <React.Fragment key={anchor}>
+          <button 
+            className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green" 
+            onClick={toggleDrawer(anchor, true)}>
+            <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+            </svg>
+
+              Filter</button>
+          <SwipeableDrawer
+            anchor={anchor}
+            open={state[anchor]}
+            onClose={toggleDrawer(anchor, false)}
+            onOpen={toggleDrawer(anchor, true)}
           >
-            <span className="text-sm mb-4 font-light text-coal">
-              Search Catalog
-            </span>
-            <div className="mt-4 pb-2 flex flex-col">
-              <div className="w-full mt-2">
-                <SelectDropdown
-                  title="Select Category"
-                  mode="multiple"
-                  name="category"
-                  value={selectedValues?.category}
-                  placeholder="Select Category"
-                  data={categoryList}
-                  setValue={(e, value) => {
-                    handleChange(e, value);
-                  }}
-                />
-                {errors.category !== null ? (
-                  <span className="text-[#f44336] text-sm">
-                    {errors.category}
-                  </span>
-                ) : null}
-              </div>
-              <div className="w-full mt-2">
-                <SelectDropdown
-                  title="Select Sub Category"
-                  name="subCategory"
-                  mode="multiple"
-                  value={selectedValues?.subCategory}
-                  placeholder="Select Sub Category"
-                  data={subCategoryList}
-                  setValue={(e, value) => {
-                    handleChange(e, value);
-                  }}
-                />
-                {errors.subCategory !== null ? (
-                  <span className="text-[#f44336] text-sm">
-                    {errors.subCategory}
-                  </span>
-                ) : null}
-              </div>
-              <div className="w-full mt-2">
-                <SelectDropdown
-                  title="Select Provider"
-                  name="provider"
-                  mode="multiple"
-                  value={selectedValues?.provider}
-                  placeholder="Select Provider"
-                  data={providerList}
-                  setValue={(e, value) => {
-                    handleChange(e, value);
-                  }}
-                />
-                {errors.provider !== null ? (
-                  <span className="text-[#f44336] text-sm">
-                    {errors.provider}
-                  </span>
-                ) : null}
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <button
-                className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-                type="submit"
-                onClick={handleSubmit}
+            <div className="flex flex-col flex-shrink h-auto w-full">
+              <div
+                className=" border-0 border-gray-400  px-4 py-2 h-auto w-80 "
+                name="myForm"
               >
-                {loader ? (
-                  <CircularProgress
-                    style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
-                  />
-                ) : (
-                  "Search Request"
-                )}
-              </button>
+                <div className="flex flex-row justify-between">
+                  <h3>Catalog filter</h3>
+                  <button onClick={toggleDrawer('right', false)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="mt-4 pb-2 flex flex-col gap-3">
+                  <div className="w-full mt-2">
+                    <SelectDropdown
+                      title="Select Category"
+                      mode="multiple"
+                      name="category"
+                      value={selectedValues?.category}
+                      placeholder="Select Category"
+                      data={categoryList}
+                      setValue={(e, value) => {
+                        handleChange(e, value);
+                      }}
+                    />
+                    {errors.category !== null ? (
+                      <span className="text-[#f44336] text-sm">
+                        {errors.category}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="w-full mt-2">
+                    <SelectDropdown
+                      title="Select Sub Category"
+                      name="subCategory"
+                      mode="multiple"
+                      value={selectedValues?.subCategory}
+                      placeholder="Select Sub Category"
+                      data={subCategoryList}
+                      setValue={(e, value) => {
+                        handleChange(e, value);
+                      }}
+                    />
+                    {errors.subCategory !== null ? (
+                      <span className="text-[#f44336] text-sm">
+                        {errors.subCategory}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="w-full mt-2">
+                    <SelectDropdown
+                      title="Select Provider"
+                      name="provider"
+                      mode="multiple"
+                      value={selectedValues?.provider}
+                      placeholder="Select Provider"
+                      data={providerList}
+                      setValue={(e, value) => {
+                        handleChange(e, value);
+                      }}
+                    />
+                    {errors.provider !== null ? (
+                      <span className="text-[#f44336] text-sm">
+                        {errors.provider}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                    type="submit"
+                    onClick={handleSubmit}
+                  >
+                    {loader ? (
+                      <CircularProgress
+                        style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
+                      />
+                    ) : (
+                      "Search Request"
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col w-full px-5">
-          <h1 className=" mt-4 text-xl font-regular text-amaranth-600 pb-2 ">
-            Search Result
-          </h1>
-
-          <table className="table-auto w-full text-left text-sm">
-            <thead>
-              <tr className="bg-amaranth-50 text-amaranth-900 uppercase text-sm leading-normal border-t border-l ">
-                <th className="px-4 py-2 border-r">Provider Name</th>
-                <th className="px-4 py-2 border-r">Attribute Name</th>
-                <th className="px-4 py-2 border-r">Category</th>
-                <th className="px-4 py-2 border-r">Sub Category</th>
-                <th className="px-4 py-2 border-r">Description</th>
-                <th className="px-4 py-2 border-r">Entity Name</th>
-                <th className="px-4 py-2 border-r">Tech Name</th>
-                <th className="px-4 py-2 border-r">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-600 text-sm font-light">
-              {data.map((item, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-gray-200 hover:bg-amaranth-50"
-                >
-                  <td className="border px-4 py-2">{item.PROVIDER_NAME}</td>
-                  <td className="border px-4 py-2">{item.ATTRIBUTE_NAME}</td>
-                  <td className="border px-4 py-2">{item.CATEGORY}</td>
-                  <td className="border px-4 py-2">{item.SUB_CATEGORY}</td>
-                  <td className="border px-4 py-2">{item.DESCRIPTION}</td>
-                  <td className="border px-4 py-2">{item.ENTITY_NAME}</td>
-                  <td className="border px-4 py-2">{item.TECH_NAME}</td>
-                  <td className="border px-4 py-2">
-                    <div className="flex justify-between">
-                      <button
-                        onClick={() =>
-                          fetchcsvTableData(item.PROVIDER_NAME, item.ENTITY_NAME)
-                        }
-                        title="View"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-5 h-5"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          </SwipeableDrawer>
+        </React.Fragment>
+      ))}
       </div>
+
+
+      <div className="flex flex-col w-full">
+        {/* <h1 className=" mt-4 text-xl font-regular text-deep-navy pb-2 ">
+          Search Result
+        </h1> */}
+
+        <table className="table-auto w-full text-left text-sm">
+          <thead>
+            <tr className="bg-blue-50 text-deep-navy uppercase text-sm leading-normal border-t border-l ">
+              <th className="px-4 py-2 border-r">Provider Name</th>
+              <th className="px-4 py-2 border-r">Attribute Name</th>
+              <th className="px-4 py-2 border-r">Category</th>
+              <th className="px-4 py-2 border-r">Sub Category</th>
+              <th className="px-4 py-2 border-r">Description</th>
+              <th className="px-4 py-2 border-r">Entity Name</th>
+              <th className="px-4 py-2 border-r">Tech Name</th>
+              <th className="px-4 py-2 border-r">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-600 text-sm font-light">
+            {data && 
+                 data.map((item, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200 hover:bg-blue-50"
+                  >
+                    <td className="border px-4 py-2">{item.PROVIDER_NAME}</td>
+                    <td className="border px-4 py-2">{item.ATTRIBUTE_NAME}</td>
+                    <td className="border px-4 py-2">{item.CATEGORY}</td>
+                    <td className="border px-4 py-2">{item.SUB_CATEGORY}</td>
+                    <td className="border px-4 py-2">{item.DESCRIPTION}</td>
+                    <td className="border px-4 py-2">{item.ENTITY_NAME}</td>
+                    <td className="border px-4 py-2">{item.TECH_NAME}</td>
+                    <td className="border px-4 py-2">
+                      <div className="flex justify-between">
+                        <button
+                          onClick={() =>
+                            fetchcsvTableData(item.PROVIDER_NAME, item.ENTITY_NAME)
+                          }
+                          title="View"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+             
+            {!data &&
+
+              <tr className="border-b border-gray-200 hover:bg-blue-50">
+                <td colSpan={8}> No Catalogues added yet.</td>
+              </tr>
+            }
+             
+              
+         
+          </tbody>
+        </table>
+      </div>
+
+
       <Modal
         open={isResultModalOpen}
         onClose={handleResultModalClose}
@@ -470,7 +532,7 @@ const SearchCatalog = () => {
                   />
                 </>
               ) :
-                <div className = "py-8" >
+                <div className="py-8" >
                   <div className="text-center">
 
                     <CircularProgress
@@ -489,6 +551,7 @@ const SearchCatalog = () => {
           </div>
         </Box>
       </Modal>
+
     </div>
   );
 };
