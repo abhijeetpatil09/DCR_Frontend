@@ -51,7 +51,7 @@ const Login = () => {
     await axios
       .get(`http://127.0.0.1:5000/${loginDetails?.userName}`, {
         params: {
-          query: `select user from CONSUMER_ATTRIBUTES_VW where admin = 'true';`,
+          query: `select user from CONSUMER_ATTRIBUTES_VW where admin = 'TRUE';`,
         },
       })
       .then((response) => {
