@@ -11,6 +11,9 @@ import SelectDropdown from "./CommonComponent/SelectDropdown";
 import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
+import { Alert, SwipeableDrawer } from "@mui/material";
+import enrichment from "../Assets/Profiling_Isometric.svg"
+// import {AccessTimeIcon} from '@mui/icons-material/AccessTime';
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
@@ -21,6 +24,8 @@ const s3 = new AWS.S3({
 });
 
 const Enrichment = () => {
+
+
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
 
@@ -45,6 +50,27 @@ const Enrichment = () => {
   const [databaseName, setDatabaseName] = useState("");
   const [columns, setColumns] = useState([]);
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
+
+  const [Dstate, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+    search: false
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return;
+    }
+
+    setState({ ...Dstate, [anchor]: open });
+  };
+
 
   useEffect(() => {
     if (TableData) {
@@ -326,105 +352,144 @@ const Enrichment = () => {
   };
 
   return (
-    <div className="flex flex-col px-5">
-      <h3 className="mt-4 text-xl font-bold text-deep-navy">Consumer query</h3>
-      <div className="flex flex-row  gap-3  w-full">
-        <div className="flex flex-col flex-shrink h-auto">
-          <form
-            className="border border-gray-400 rounded my-4 px-4 py-2   w-80 max-w-xs"
-            name="myForm"
-            onSubmit={handleSubmit}
-          >
-            <span className="text-sm mb-4 font-light text-coal">
-              Query request
-            </span>
-            <div>
-              <div className="mt-2 pb-2 flex flex-col">
-                <label>Provider Name</label>
-                <select
-                  id="provider"
-                  name="Provider_Name"
-                  required
-                  className="w-full"
-                  value={formData["Provider_Name"]}
-                  onChange={handleSelectProvider}
-                >
-                  <option value="">Select a provider</option>
-                  {providerList?.length > 0 ? (
-                    providerList.map((item, index) => (
-                      <option key={index} value={item.PROVIDER}>
-                        {item.PROVIDER}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">Loading...</option>
-                  )}
-                </select>
-              </div>
+    <div className="flex flex-col w-full px-4">
+      <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
+        <div>
+          <h3 className="text-xl font-bold text-deep-navy mr-2">Consumer query</h3>
+          <p>Choose your provider to run a consumer query based on your parameters.</p>
 
-              <div className="mt-2 pb-2 flex flex-col">
-                <label>Query name </label>
-                <select
-                  id="selectedTemp"
-                  required
-                  name="Query_Name"
-                  value={formData["Query_Name"]}
-                  className="w-full"
-                  onChange={handleSelectedTemp}
-                >
-                  <option value="">Select a template</option>
-                  {templateList?.length > 0 ? (
-                    templateList.map((item, index) => (
-                      <option key={index} value={item.TEMPLATE_NAME}>
-                        {item.TEMPLATE_NAME}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">Loading...</option>
-                  )}
-                </select>
-              </div>
-
-              <div className="mt-2 pb-2 flex flex-col">
-                <SelectDropdown
-                  title="Columns"
-                  mode="multiple"
-                  name="Column_Names"
-                  value={formData?.Column_Names}
-                  placeholder="Select Columns"
-                  data={columns}
-                  setValue={(e, value) => {
-                    handleChange(e, value);
-                  }}
-                />
-              </div>
-
-              <div className="mt-2 pb-21 flex flex-col">
-                <label>Identifier Type</label>
-                <select
-                  name="Attribute_Value"
-                  onChange={handleCustomerFormData}
-                  required
-                  className="w-full"
-                >
-                  <option value="">Please select</option>
-                  <option value="email">Email</option>
-                  <option value="phone">Phone</option>
-                  <option value="MAID">MAID</option>
-                </select>
-              </div>
-
-              <div className="flex justify-end">
-                <button
-                  className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-                  type="submit"
-                >
-                  Submit query
-                </button>
-              </div>
-            </div>
-          </form>
         </div>
+        {['right'].map((anchor) => (
+          <React.Fragment key={anchor}>
+            <button
+              className="my-2 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+              onClick={toggleDrawer(anchor, true)}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+
+
+              Create new</button>
+            <SwipeableDrawer
+              anchor={anchor}
+              open={Dstate[anchor]}
+              onClose={toggleDrawer(anchor, false)}
+              onOpen={toggleDrawer(anchor, true)}
+            >
+              <div className="flex flex-col flex-shrink h-auto ">
+
+                <form
+                  className="  my-4 px-4 py-2   w-80 max-w-xs"
+                  name="myForm"
+                  onSubmit={handleSubmit}
+                >
+                  <div className="flex flex-row justify-between">
+                    <h3 className="text-xl font-semibold">New consumer query</h3>
+                    <button onClick={toggleDrawer('right', false)}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div>
+                    <div className="mt-2 pb-2 flex flex-col">
+                      <label>Provider name</label>
+                      <select
+                        id="provider"
+                        name="Provider_Name"
+                        required
+                        className="w-full"
+                        value={formData["Provider_Name"]}
+                        onChange={handleSelectProvider}
+                      >
+                        <option value="">Select a provider</option>
+                        {providerList?.length > 0 ? (
+                          providerList.map((item, index) => (
+                            <option key={index} value={item.PROVIDER}>
+                              {item.PROVIDER}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">Loading...</option>
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="mt-2 pb-2 flex flex-col">
+                      <label>Query name </label>
+                      <select
+                        id="selectedTemp"
+                        required
+                        name="Query_Name"
+                        value={formData["Query_Name"]}
+                        className="w-full"
+                        onChange={handleSelectedTemp}
+                      >
+                        <option value="">Select a template</option>
+                        {templateList?.length > 0 ? (
+                          templateList.map((item, index) => (
+                            <option key={index} value={item.TEMPLATE_NAME}>
+                              {item.TEMPLATE_NAME}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">Loading...</option>
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="mt-2 pb-2 flex flex-col">
+                      <SelectDropdown
+                        title="Columns"
+                        mode="multiple"
+                        name="Column_Names"
+                        value={formData?.Column_Names}
+                        placeholder="Select columns"
+                        data={columns}
+                        setValue={(e, value) => {
+                          handleChange(e, value);
+                        }}
+                      />
+                    </div>
+
+                    <div className="mt-2 pb-21 flex flex-col">
+                      <label>Identifier type</label>
+                      <select
+                        name="Attribute_Value"
+                        onChange={handleCustomerFormData}
+                        required
+                        className="w-full"
+                      >
+                        <option value="">Please select</option>
+                        <option value="email">Email</option>
+                        <option value="phone">Phone</option>
+                        <option value="MAID">MAID</option>
+                      </select>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button
+                        className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                        type="submit"
+                      >
+                        Submit query
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </SwipeableDrawer>
+          </React.Fragment>
+        ))}
+      </div>
+
+      <img
+                className="absolute  w-96 z-0 bottom-1 opacity-90  right-2 text-amarant-400"
+                src={enrichment}
+                alt=""
+              />
+      <div className="flex flex-row  gap-3  w-full">
+
         {!fetchData ? (
           <div className=" flex flex-grow">
             {tableHead?.length > 0 && tableRows?.length > 0 ? (
@@ -432,10 +497,14 @@ const Enrichment = () => {
             ) : null}
           </div>
         ) : (
-          <span className="text-deep-navy flex flex-grow mt-4">
-            We are fetching the data you requested: Request Id -{" "}
-            <strong>{requestId}</strong>
-          </span>
+
+          <Alert 
+            // icon={<AccessTimeIcon fontSize="inherit" />} 
+            severity="info"
+          >
+            We are fetching the data you requested: Request Id - <strong> {requestId}</strong>
+          </Alert>
+
         )}
       </div>
     </div>
