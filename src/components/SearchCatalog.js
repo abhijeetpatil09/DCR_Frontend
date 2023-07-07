@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Table from "./CommonComponent/Table";
 import axios from "axios";
-import { Button, CircularProgress, SwipeableDrawer } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { CircularProgress, SwipeableDrawer } from "@mui/material";
 import { Box, Modal } from "@mui/material";
 
-import * as actions from "../redux/actions/index";
 import SelectDropdown from "./CommonComponent/SelectDropdown";
-import { Typography } from "antd";
-import searchillustration from "../Assets/search_illustration.svg"
-
+import searchillustration from "../Assets/search_illustration.svg";
 
 // Modal style
 const resultstyle = {
@@ -23,7 +19,6 @@ const resultstyle = {
   overflow: "scroll",
 };
 
-
 const SearchCatalog = () => {
   const [selectedValues, setSelectedValues] = useState({
     category: [],
@@ -31,58 +26,61 @@ const SearchCatalog = () => {
     provider: [],
   });
   const [loader, setLoader] = useState(false);
-  const [data, setData] = useState([])
+  const [data, setData] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
   const [providerList, setProviderList] = useState([]);
-  const [viweTbale, setViewTable] = useState({
+  const [viewTable, setViewTable] = useState({
     head: [],
-    rows: []
-  })
+    rows: [],
+  });
   // result model
   const [isResultModalOpen, toggleResultModal] = React.useState(false);
   const handleResultModalOpen = () => toggleResultModal(true);
   const handleResultModalClose = () => toggleResultModal(false);
 
-  let [tableData, setTableData] = useState({
-    head: [
-      "Provider Name",
-      "Attribute Name",
-      "Category",
-      "Sub Category",
-      "Description",
-      "Entity Name",
-      "Tech Name",
-    ],
-    row: [],
-  });
   const [errors, setError] = useState({
     category: null,
     subCategory: null,
     provider: null,
   });
 
-
-  const [state, setState] = React.useState({
+  const [toggleDrawerPosition, setToggleDrawerPosition] = React.useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
-    search: false
+    search: false,
   });
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
       event &&
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
     ) {
       return;
     }
-
-    setState({ ...state, [anchor]: open });
+    setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
   };
 
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:5000/dataexadmin`, {
+        params: {
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER order by entity_name limit 10`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          let data = response?.data?.data;
+          setData(data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
     axios
@@ -132,20 +130,22 @@ const SearchCatalog = () => {
         ?.map((item, index) =>
           item !== "all"
             ? "Category = '" +
-            item +
-            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+              item +
+              (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
             : ""
         )
         .join("");
       axios
         .get(`http://127.0.0.1:5000/dataexadmin`, {
           params: {
-            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST where (${finalCategory});`,
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
+              finalCategory !== "" ? `where (${finalCategory})` : ""
+            };`,
           },
         })
         .then((response) => {
           if (response?.data?.data) {
-            let data = response?.data?.data
+            let data = response?.data?.data;
             if (data?.length > 0) {
               const sub_cat_list = [{ value: "all", name: "All" }];
               response?.data?.data?.forEach((obj) => {
@@ -180,7 +180,7 @@ const SearchCatalog = () => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (anchor) => {
     setLoader(true);
 
     if (selectedValues.category?.length === 0) {
@@ -198,8 +198,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Category = '" +
-          item +
-          (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -208,8 +208,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Sub_Category = '" +
-          item +
-          (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -218,8 +218,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Provider_Name = '" +
-          item +
-          (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -231,9 +231,9 @@ const SearchCatalog = () => {
         : "") +
       (finalProvider !== ""
         ? (finalCategory !== "" || finalSubCategory !== "" ? " and " : "") +
-        "(" +
-        finalProvider +
-        ")"
+          "(" +
+          finalProvider +
+          ")"
         : "");
 
     console.log("appendedString ==>", finalResult);
@@ -241,45 +241,29 @@ const SearchCatalog = () => {
     axios
       .get(`http://127.0.0.1:5000/dataexadmin`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${finalResult !== "" ? `where ${finalResult}` : ""
-            } order by entity_name;`,
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${
+            finalResult !== "" ? `where ${finalResult}` : ""
+          } order by entity_name;`,
         },
       })
       .then((response) => {
         if (response?.data) {
-          setData(response?.data?.data)
-          // let data = response?.data?.data;
-          // let head = [
-          //   "PROVIDER_NAME",
-          //   "ATTRIBUTE_NAME",
-          //   "CATEGORY",
-          //   "SUB_CATEGORY",
-          //   "DESCRIPTION",
-          //   "ENTITY_NAME",
-          //   "TECH_NAME",
-          // ];
-          // let row = [];
-          // data?.length > 0 &&
-          //   data?.map((obj) => {
-          //     return row.push(head?.map((key) => obj[key]));
-          //   });
-          // setTableData({ ...tableData, row: row });
+          setData(response?.data?.data);
           setLoader(false);
+          setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: false });
         } else {
-          setData(response?.data?.data)
-          // setTableData({ ...tableData, row: [] });
+          setData(response?.data?.data);
           setLoader(false);
         }
       })
       .catch((error) => {
-        // setTableData({ ...tableData, row: [] });
         setLoader(false);
         console.log(error);
       });
   };
 
   const fetchcsvTableData = async (providerName, entity) => {
-    setViewTable({ ...viweTbale, head: [], rows: [] });
+    setViewTable({ ...viewTable, head: [], rows: [] });
     handleResultModalOpen();
     axios
       .get(`http://127.0.0.1:5000/dataexadmin`, {
@@ -306,50 +290,76 @@ const SearchCatalog = () => {
         return row.push(head?.map((key) => obj[key]));
       });
     }
-    setViewTable({ ...viweTbale, head: head, rows: row })
+    setViewTable({ ...viewTable, head: head, rows: row });
   };
-
 
   return (
     <div className="flex flex-col w-full px-4">
-
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
-      <div>
-          <h3 className="text-xl font-bold text-deep-navy mr-2">All Catalogues</h3>
-          <p>Filter the catalog based on provider name, category and sub-category.</p>
+        <div>
+          <h3 className="text-xl font-bold text-deep-navy mr-2">
+            All Catalogues
+          </h3>
+          <p>
+            Filter the catalog based on provider name, category and
+            sub-category.
+          </p>
         </div>
- 
-        {['right'].map((anchor) => (
+
+        {["right"].map((anchor) => (
           <React.Fragment key={anchor}>
             <button
               className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-              onClick={toggleDrawer(anchor, true)}>
-              <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+              onClick={toggleDrawer(anchor, true)}
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                />
               </svg>
-
-              Filter</button>
+              Filter
+            </button>
             <SwipeableDrawer
               anchor={anchor}
-              open={state[anchor]}
+              open={toggleDrawerPosition[anchor]}
               onClose={toggleDrawer(anchor, false)}
               onOpen={toggleDrawer(anchor, true)}
-             >
+            >
               <div className="flex flex-col flex-shrink w-full h-full bg-deep-navy text-electric-green">
-              <img
-                className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
-                src={searchillustration}
-                alt=""
-              />
+                <img
+                  className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
+                  src={searchillustration}
+                  alt=""
+                />
                 <div
                   className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy"
                   name="myForm"
                 >
                   <div className="flex flex-row justify-between">
                     <h3 className="text-xl font-semibold">Catalog filter</h3>
-                    <button onClick={toggleDrawer('right', false)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    <button onClick={toggleDrawer("right", false)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -413,11 +423,15 @@ const SearchCatalog = () => {
                     <button
                       className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
                       type="submit"
-                      onClick={handleSubmit}
+                      onClick={() => handleSubmit(anchor)}
                     >
                       {loader ? (
                         <CircularProgress
-                          style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
+                          style={{
+                            width: "24px",
+                            height: "24px",
+                            color: "#FFFFFF",
+                          }}
                         />
                       ) : (
                         "Filter"
@@ -430,7 +444,6 @@ const SearchCatalog = () => {
           </React.Fragment>
         ))}
       </div>
-
 
       <div className="flex flex-col w-full">
         {/* <h1 className=" mt-4 text-xl font-regular text-deep-navy pb-2 ">
@@ -450,12 +463,12 @@ const SearchCatalog = () => {
               <th className="px-4 py-2 border-r">Actions</th>
             </tr>
           </thead>
-          <tbody className="text-gray-600 text-sm font-light">
+          <tbody className="text-deep-navy text-sm font-light">
             {data &&
               data.map((item, index) => (
                 <tr
                   key={index}
-                  className="border-b border-gray-200 hover:bg-blue-50"
+                  className="border-b border-gray-300 hover:bg-blue-50"
                 >
                   <td className="border px-4 py-2">{item.PROVIDER_NAME}</td>
                   <td className="border px-4 py-2">{item.ATTRIBUTE_NAME}</td>
@@ -468,7 +481,10 @@ const SearchCatalog = () => {
                     <div className="flex justify-between">
                       <button
                         onClick={() =>
-                          fetchcsvTableData(item.PROVIDER_NAME, item.ENTITY_NAME)
+                          fetchcsvTableData(
+                            item.PROVIDER_NAME,
+                            item.ENTITY_NAME
+                          )
                         }
                         title="View"
                       >
@@ -496,15 +512,9 @@ const SearchCatalog = () => {
                   </td>
                 </tr>
               ))}
-
-
-
-
-
           </tbody>
         </table>
       </div>
-
 
       <Modal
         open={isResultModalOpen}
@@ -513,7 +523,6 @@ const SearchCatalog = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={resultstyle}>
-
           <div className=" flex flex-col flex-grow w-full">
             <div className="flex flex-row items-center justify-between sticky z-30 py-2 px-4 top-0 w-full bg-amaranth-800 text-white">
               <h3 className="font-bold text-white">Query result</h3>
@@ -529,21 +538,20 @@ const SearchCatalog = () => {
               </button>
             </div>
             <div className="px-4">
-              {viweTbale?.head.length > 0 && viweTbale?.rows.length > 0 ? (
+              {viewTable?.head.length > 0 && viewTable?.rows.length > 0 ? (
                 <>
-                  <Table
-                    head={viweTbale?.head}
-                    rows={viweTbale?.rows}
-                  />
+                  <Table head={viewTable?.head} rows={viewTable?.rows} />
                 </>
-              ) :
-                <div className="py-8" >
+              ) : (
+                <div className="py-8">
                   <div className="text-center">
-
                     <CircularProgress
-                      style={{ width: "48px", height: "48px", color: "#a40d49" }}
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        color: "#a40d49",
+                      }}
                     />
-
                   </div>
                   <div className="text-center pt-4">
                     <span className="text-amaranth-900">
@@ -551,12 +559,11 @@ const SearchCatalog = () => {
                     </span>
                   </div>
                 </div>
-              }
+              )}
             </div>
           </div>
         </Box>
       </Modal>
-
     </div>
   );
 };

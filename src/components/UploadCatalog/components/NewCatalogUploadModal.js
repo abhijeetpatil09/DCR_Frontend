@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { Box, Modal } from "@mui/material";
 import CSVParse from "papaparse";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { CircularProgress } from "@mui/material";
 
 import DummyCatalog from "../../../Assets/CSVTemplates/Dummy_Catalog.csv";
 
@@ -14,10 +16,24 @@ const CSVFileColumns = [
   "Tech Name",
 ];
 
-const NewCatalogUpload = ({ entryType, user }) => {
+// Modal style
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "auto",
+  bgcolor: "background.paper",
+  p: 4,
+  borderRadius: 5,
+};
+
+const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
   let [parsedData, setParsedData] = useState([]);
   const [fileUploaded, setFileUploaded] = useState(false);
   const [fileError, setFileError] = useState("");
+
+  const [loader, setLoader] = useState(false);
 
   const downloadNewFile = () => {
     const link = document.createElement("a");
@@ -74,11 +90,12 @@ const NewCatalogUpload = ({ entryType, user }) => {
     } else if (fileError !== "") {
       return;
     } else {
+      setLoader(true);
       let EntityArray = [];
       let finalObject = {};
 
       parsedData = parsedData?.map((item) => {
-        return { ...item, tag: entryType };
+        return { ...item, tag: "insert" };
       });
 
       let entities = parsedData?.map((item) => {
@@ -126,6 +143,7 @@ const NewCatalogUpload = ({ entryType, user }) => {
         })
         .catch((error) => {
           console.log(error);
+          setLoader(false);
         });
     }
   };
@@ -139,73 +157,116 @@ const NewCatalogUpload = ({ entryType, user }) => {
       })
       .then((response) => {
         if (response) {
+          setLoader(false);
+          close();
           toast.success("File Uploaded successfully");
+          setNewCatUploaded(true);
         }
       })
       .catch((error) => {
+        setLoader(false);
+        close();
         console.log(error);
       });
   };
 
   return (
-    <div className="flex flex-row  gap-3  w-full">
-      <div className="flex flex-col flex-shrink h-auto">
-        <div
-          className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto w-[32rem] max-w-3xl"
-          name="myForm"
-        >
-          <div className="mt-2 pb-21 flex flex-col">
-            <label>Download New Template File</label>
-            <button
-              onClick={downloadNewFile}
-              className="flex flex-row text-[#0000FF]"
-            >
+    <Modal
+      open={open}
+      onClose={close}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box
+        sx={style}
+        className="bg-white bg-opacity-75 backdrop-filter backdrop-blur-lg "
+      >
+        <div className="flex flex-col gap-3  w-full">
+          <div className="flex flex-row items-center justify-between sticky z-30 py-2 px-4 top-0 w-full bg-deep-navy text-white">
+            <h3 className="font-bold text-white">Create New Catalog</h3>
+            <button onClick={close}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-5 h-5"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-                />
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
               </svg>
-              <span className="pl-2 underline">Download</span>
             </button>
           </div>
-
-          <div className="mt-2 pb-21 flex flex-col">
-            <label>Upload File</label>
-            <input
-              className="w-3/5 "
-              type="file"
-              id="myFileInput"
-              onChange={uploadFile}
-              required
-            />
-          </div>
-          {fileError !== "" ? (
-            <div className="mt-2 pb-21 flex flex-col text-sm text-[red]">
-              <label>{fileError}</label>
-            </div>
-          ) : null}
-          <div className="flex justify-center">
-            <button
-              className="my-2 flex w-3/5 justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-              type="submit"
-              onClick={handleSubmit}
+          <div className="flex flex-col flex-shrink h-auto">
+            <div
+              className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto w-[32rem] max-w-3xl"
+              name="myForm"
             >
-              Submit Request
-            </button>
+              <div className="mt-2 pb-21 flex flex-col">
+                <label>Download New Template File</label>
+                <button
+                  onClick={downloadNewFile}
+                  className="flex flex-row text-[#0000FF]"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                    />
+                  </svg>
+                  <span className="pl-2 underline">Download</span>
+                </button>
+              </div>
+
+              <div className="mt-2 pb-21 flex flex-col">
+                <label>Upload File</label>
+                <input
+                  className="w-3/5 "
+                  type="file"
+                  id="myFileInput"
+                  onChange={uploadFile}
+                  required
+                />
+              </div>
+              {fileError !== "" ? (
+                <div className="mt-2 pb-21 flex flex-col text-sm text-[red]">
+                  <label>{fileError}</label>
+                </div>
+              ) : null}
+              <div className="flex justify-center">
+                <button
+                  className="my-2 flex w-3/5 justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                  type="submit"
+                  onClick={handleSubmit}
+                >
+                  {loader ? (
+                    <CircularProgress
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        color: "#FFFFFF",
+                      }}
+                    />
+                  ) : (
+                    "Submit Catalog"
+                  )}
+                </button>
+              </div>
+            </div>
+            <div className="text-red-600 text-sm">
+              * Please do not perform any format changes in the template!!!
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Box>
+    </Modal>
   );
 };
 
-export default NewCatalogUpload;
+export default NewCatalogUploadModal;

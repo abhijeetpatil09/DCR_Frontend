@@ -31,7 +31,7 @@ const UpdateCatalog = ({ user }) => {
         .get(`http://127.0.0.1:5000/dataexadmin`, {
           params: {
             query:
-              "select distinct entity_name from DATAEXCHANGEDB.DATACATALOG.PROVIDER;",
+              `select distinct entity_name from DATAEXCHANGEDB.DATACATALOG.PROVIDER where provider_name = ${user?.name};`,
           },
         })
         .then((response) => {

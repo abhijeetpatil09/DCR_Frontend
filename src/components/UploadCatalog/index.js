@@ -1,51 +1,99 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import NewCatalogUpload from "./components/NewCatalogUpload";
-import UpdateCatalog from "./components/UpdateCatalog";
+import axios from "axios";
+
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+import NewCatalogUploadModal from "./components/NewCatalogUploadModal";
+// import UpdateCatalog from "./components/UpdateCatalog";
+
+// import { catalogUpdate } from "../../utils/data";
+
+import UpdateAttributeTable from "./components/UpdateAttributeTable";
 
 const UploadCatalog = () => {
   const state = useSelector((state) => state);
   const user = state && state.user;
-  const [entryType, setEntryType] = useState("");
+  const [entityList, setEntityList] = useState([]);
 
-  const handleChangeSelect = (e) => {
-    setEntryType(e.target.value);
+  const [newCatUploaded, setNewCatUploaded] = useState(false);
+
+  const [newCatalogModal, setNewCatalogModal] = useState(false);
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
   };
 
-  return (
-    <div className="flex flex-col  ">
-      <h3 className="mt-4 text-xl font-bold text-deep-navy">Upload Catalog</h3>
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:5000/dataexadmin`, {
+        params: {
+          query: `select distinct entity_name from DATAEXCHANGEDB.DATACATALOG.PROVIDER where PROVIDER_NAME = '${user?.name}' order by entity_name`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          const data = response?.data?.data;
+          let result = data?.map((item) => item.ENTITY_NAME);
+          setEntityList(result);
+        } else {
+          setEntityList([]);
+        }
+      })
+      .catch((error) => console.log(error));
+  }, [user?.name, newCatUploaded]);
 
-      <div className="flex flex-row  gap-3 w-full">
-        <div className="flex flex-col flex-shrink h-auto">
-          <div
-            className=" border border-gray-400 rounded mt-4 px-4 py-2 h-auto w-80 max-w-sm"
-            name="myForm"
-          >
-            <span className="text-sm mb-4 font-light text-coal">
-              Upload Catalog
-            </span>
-            <div className=" mt-2 pb-2 flex flex-col">
-              <label>Entry Type</label>
-              <select
-                name="entry_type"
-                onChange={handleChangeSelect}
-                required
-                className="w-full"
+  return (
+    <div className="flex flex-col px-5">
+      <div className="flex justify-between items-center pt-4">
+        <h3 className="text-xl text-deep-navy font-bold">Upload Catalog</h3>
+        <button
+          className="text-white bg-deep-navy px-4 py-2 rounded-md"
+          onClick={() => setNewCatalogModal(!newCatalogModal)}
+        >
+          New Catalog Entry
+        </button>
+      </div>
+
+      <div className="mt-4 rounded-md">
+        {entityList?.map((key) => {
+          return (
+            <Accordion expanded={expanded === key} onChange={handleChange(key)}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1bh-content"
+                id="panel1bh-header"
+                className={expanded === key ? "bg-downriver-300 rounded-md": "bg-slate-200 rounded-md"}
               >
-                <option value="">Please select</option>
-                <option value="insert">New Catalog Entry</option>
-                <option value="update">Update Catalog</option>
-              </select>
-            </div>
-          </div>
-        </div>
+                <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                  {key}
+                </Typography>
+              </AccordionSummary>
+              {expanded === key && (
+                <AccordionDetails>
+                  <UpdateAttributeTable selectedKey={expanded} user={user} />
+                </AccordionDetails>
+              )}
+            </Accordion>
+          );
+        })}
       </div>
-      <div>
-        {entryType === "insert" && <NewCatalogUpload entryType={entryType} user={user} />}
-        {entryType === "update" && <UpdateCatalog user={user} />}
-      </div>
+
+      {newCatalogModal && (
+        <NewCatalogUploadModal
+          open={newCatalogModal}
+          setNewCatUploaded={setNewCatUploaded}
+          close={() => setNewCatalogModal(!newCatalogModal)}
+          user={user}
+        />
+      )}
     </div>
   );
 };

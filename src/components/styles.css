@@ -178,3 +178,29 @@ th, td {
 .ant-select-selection-search-input {
   min-width: 0px !important;
 }
+
+.MuiDataGrid-columnHeaders {
+  background-color: #d4f0ff !important;
+}
+
+.MuiInputBase-root-MuiDataGrid-editInputCell input {
+  padding: 0px 8px !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-cell.MuiDataGrid-cell--editing:focus-within {
+  outline: none !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-cell.MuiDataGrid-cell--editing input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.MuiDataGrid-footerContainer {
+  display: none !important;
+}
+/* 
+.MuiDataGrid-root .MuiDataGrid-cell--textLeft {
+  justify-content: center !important;
+} */

@@ -55,11 +55,9 @@ const Sidebar = ({ children }) => {
       <aside
         className={`${
           isOpened ? "w-64 drawer" : ""
-        }   flex flex-col items-start bg-deep-navy text-electric-green shadow h-[calc(100vh)] sticky top-0`}
+        } z-50 flex flex-col items-start bg-deep-navy text-electric-green shadow h-[calc(100vh)] sticky top-0`}
       >
-        <div
-          className="flex flex-row items-center border-b border-blue-300 h-20"
-        >
+        <div className="flex flex-row items-center h-20">
           <div
             className={`${
               isOpened ? "" : "bg-deep-navy w-[72px]"
@@ -202,14 +200,14 @@ const Sidebar = ({ children }) => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={1.5}
+                  stroke-width="1.5"
                   stroke="currentColor"
-                  className="w-6 h-6"
+                  class="w-6 h-6"
                 >
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
                   />
                 </svg>
 
@@ -238,14 +236,14 @@ const Sidebar = ({ children }) => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={1.5}
+                  stroke-width="1.5"
                   stroke="currentColor"
-                  className="w-6 h-6"
+                  class="w-6 h-6"
                 >
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                   />
                 </svg>
 
@@ -297,7 +295,7 @@ const Sidebar = ({ children }) => {
 
       <div className="flex flex-col flex-grow w-full  overflow-hidden mb-8">
         {/* HEADER */}
-        <div className="sticky top-0 z-50 flex flex-row justify-between items-center bg-white drop-shadow-sm h-20">
+        <div className="sticky top-0 z-30 flex flex-row justify-between items-center bg-white drop-shadow-sm h-20">
           <div>
             {!isOpened && (
               <img
@@ -344,10 +342,10 @@ const Sidebar = ({ children }) => {
           </div>
         </div>
         <div className="bg-blue-100 w-full right-0 h-10 flex flex-row items-center justify-end text-xs fixed bottom-0 px-10 py-2 z-30 border-l border-gray-100">
-            &copy; 2023 Hoonar Tekwurks Private Ltd.
-          </div>
+          &copy; 2023 Hoonar Tekwurks Private Ltd.
+        </div>
         {/* CONTAINER */}
-        <main className="flex flex-col w-full overflow-auto h-full">
+        <main className="flex flex-col w-full overflow-auto h-full mb-4">
           <div className="w-full h-full">{children}</div>
         </main>
       </div>
