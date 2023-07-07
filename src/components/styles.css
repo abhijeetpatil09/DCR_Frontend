@@ -167,12 +167,13 @@ th, td {
 }
 
 .ant-select-selection-placeholder {
-  color: #0891b2 !important;
+  color: #08f0a9 !important;
 }
 
 .ant-select-selector {
-  border: 1px solid #0891b2 !important;
+  border: 1px solid #08f0a9 !important;
   background-color: transparent !important;
+  height: 40px;
 }
 
 .ant-select-selection-search-input {

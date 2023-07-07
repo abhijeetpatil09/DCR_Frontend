@@ -14,6 +14,7 @@ import "./pure-react.css";
 import { Alert, SwipeableDrawer } from "@mui/material";
 import enrichment from "../Assets/Profiling_Isometric.svg"
 // import {AccessTimeIcon} from '@mui/icons-material/AccessTime';
+import searchillustration from "../Assets/Target audience _Two Color.svg"
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
@@ -375,10 +376,14 @@ const Enrichment = () => {
               onClose={toggleDrawer(anchor, false)}
               onOpen={toggleDrawer(anchor, true)}
             >
-              <div className="flex flex-col flex-shrink h-auto ">
-
+              <div className="flex flex-col flex-shrink h-full w-full  bg-deep-navy text-electric-green">
+              <img
+                className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
+                src={searchillustration}
+                alt=""
+              />  
                 <form
-                  className="  my-4 px-4 py-2   w-80 max-w-xs"
+                  className="  my-4 px-4 py-2 h-full w-96  bg-deep-navy"
                   name="myForm"
                   onSubmit={handleSubmit}
                 >
@@ -397,7 +402,7 @@ const Enrichment = () => {
                         id="provider"
                         name="Provider_Name"
                         required
-                        className="w-full"
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                         value={formData["Provider_Name"]}
                         onChange={handleSelectProvider}
                       >
@@ -421,7 +426,7 @@ const Enrichment = () => {
                         required
                         name="Query_Name"
                         value={formData["Query_Name"]}
-                        className="w-full"
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                         onChange={handleSelectedTemp}
                       >
                         <option value="">Select a template</option>
@@ -457,7 +462,7 @@ const Enrichment = () => {
                         name="Attribute_Value"
                         onChange={handleCustomerFormData}
                         required
-                        className="w-full"
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
                         <option value="email">Email</option>
@@ -468,7 +473,7 @@ const Enrichment = () => {
 
                     <div className="flex justify-end">
                       <button
-                        className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                        className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
                         type="submit"
                       >
                         Submit query
@@ -483,7 +488,7 @@ const Enrichment = () => {
       </div>
 
       <img
-                className="absolute  w-96 -z-50 bottom-1 opacity-90  right-2 text-amarant-400"
+                className="absolute  w-2/5 -z-50 bottom-1 opacity-20 -right-20  text-amarant-400"
                 src={enrichment}
                 alt=""
               />
