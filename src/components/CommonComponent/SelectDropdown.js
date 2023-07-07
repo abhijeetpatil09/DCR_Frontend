@@ -48,11 +48,11 @@ const SelectDropdown = ({
           const { label, closable, onClose } = props;
           return (
             <Tag
-              className="flex items-center rounded-lg flex-row py-0.5 px-2 bg-[#B4D0C133] text-[#056433] border-none"
+              className="flex items-center rounded-lg flex-row py-0.5 px-2 bg-[#c4f1d933] text-[#00FFB4] border-none"
               style={{
                 margin: "5px 4px",
                 fontWeight: "500",
-                fontFamily: "montserrat",
+                // fontFamily: "montserrat",
               }}
               closable={closable}
               onClose={onClose}
@@ -74,7 +74,7 @@ const SelectDropdown = ({
               value={item?.value}
               // disabled={value?.length > 0 && ((value?.includes('All') && item?.value !== 'All') || (!value?.includes('All') && item?.value === 'All'))}
               title={"location"}
-              className="font-[montserrat]"
+              className=""
               disabled={disableSet.has(item?.value)}
             >
               {item.name}
