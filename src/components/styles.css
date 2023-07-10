@@ -166,7 +166,7 @@ th, td {
   z-index: 20000;
 }
 
-.ant-select-selection-placeholder, .ant-select-arrow {
+.ant-select-selection-placeholder, .ant-select-arrow, .ant-tag-close-icon {
   color: #08f0a9 !important;
 }
 
