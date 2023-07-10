@@ -376,14 +376,14 @@ const Enrichment = () => {
               onClose={toggleDrawer(anchor, false)}
               onOpen={toggleDrawer(anchor, true)}
             >
-              <div className="flex flex-col flex-shrink h-full w-full  bg-deep-navy text-electric-green">
-              <img
-                className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
-                src={searchillustration}
-                alt=""
-              />  
+              <div className="flex flex-col flex-shrink h-full w-full px-5    bg-deep-navy text-electric-green">
+                <img
+                  className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
+                  src={searchillustration}
+                  alt=""
+                />  
                 <form
-                  className="  my-4 px-4 py-2 h-full w-96  bg-deep-navy"
+                  className=" z-20  my-4 px-4 py-2 h-full w-96  bg-deep-navy"
                   name="myForm"
                   onSubmit={handleSubmit}
                 >
@@ -395,7 +395,7 @@ const Enrichment = () => {
                       </svg>
                     </button>
                   </div>
-                  <div>
+                  <div clas>
                     <div className="mt-2 pb-2 flex flex-col">
                       <label>Provider name</label>
                       <select
@@ -488,10 +488,10 @@ const Enrichment = () => {
       </div>
 
       <img
-                className="absolute  w-2/5 -z-50 bottom-1 opacity-20 -right-20  text-amarant-400"
-                src={enrichment}
-                alt=""
-              />
+        className="absolute  w-2/5 -z-50 bottom-1 opacity-20 -right-20  text-amarant-400"
+        src={enrichment}
+        alt=""
+      />
       <div className="flex flex-row  gap-3  w-full">
 
         {!fetchData ? (

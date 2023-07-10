@@ -11,6 +11,10 @@ import Table from "./CommonComponent/Table";
 
 import "./styles.css";
 import "./pure-react.css";
+import { SwipeableDrawer } from "@mui/material";
+import enrichment from "../Assets/Profiling_Isometric.svg"
+// import {AccessTimeIcon} from '@mui/icons-material/AccessTime';
+import searchillustration from "../Assets/Target audience _Two Color.svg"
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
@@ -307,9 +311,218 @@ const MatchRate = () => {
         console.log("In API catch", error);
       });
   };
+  const [Dstate, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+    search: false
+  });
 
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return;
+    }
+
+    setState({ ...Dstate, [anchor]: open });
+  };
   return (
-    <div className="flex flex-col px-5">
+    <div className="flex flex-col w-full px-4">
+      <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
+        <div>
+          <h3 className="text-xl font-bold text-deep-navy mr-2">Publisher query</h3>
+          <p>Choose your query type, upload the data and publish it for your consumers.</p>
+        </div>
+        {['right'].map((anchor) => (
+          <React.Fragment key={anchor}>
+            <button
+              className="my-2 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+              onClick={toggleDrawer(anchor, true)}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+
+
+              Create new</button>
+            <SwipeableDrawer
+              anchor={anchor}
+              open={Dstate[anchor]}
+              onClose={toggleDrawer(anchor, false)}
+              onOpen={toggleDrawer(anchor, true)}
+            >
+              <div className="flex flex-col flex-shrink h-full w-full px-5    bg-deep-navy text-electric-green bg-[url('/static/media/Target audience _Two Color.6aa8a9f45675ef6dfbc33c3c3b61aa03.svg')] ">
+                <img
+                  className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
+                  src={searchillustration}
+                  alt=""
+                />
+                <form
+                  className="  my-4 px-4 py-2 h-auto w-96 z-20  bg-deep-navy/50 "
+                  name="myForm"
+                  onSubmit={handleSubmit}
+                >
+                  <div className="flex flex-row justify-between ">
+                    <h3 className="text-xl font-semibold">New publisher query</h3>
+                    <button onClick={toggleDrawer('right', false)}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div>
+                    <div className=" mt-2 pb-2 flex flex-col">
+                      <label>Query name</label>
+                      <select
+                        name="Query_Name"
+                        onChange={handleCustomerFormData}
+                        required
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+
+                      >
+                        <option value="">Please select</option>
+                        <option value="advertiser_match">Advertiser match</option>
+                      </select>
+                    </div>
+
+                    <div className="mt-2 pb-21 flex flex-col">
+                      <label>Upload File</label>
+                      <input
+                        // className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        className="block w-full text-sm text-true-teal
+                        file:mr-4 file:py-2 file:px-4 file:rounded-md
+                        file:border-0 file:text-sm file:font-semibold
+                        file:bg-electric-green file:text-deep-navy
+                        hover:file:bg-true-teal hover:file:cursor-pointer"
+                        type="file"
+                        id="myFileInput"
+                        onChange={handleFileInput}
+                        required
+                      />
+                    </div>
+
+                    <div className="mt-2 pb-21 flex flex-col">
+                      <label>Identifier type</label>
+                      <select
+                        name="Column_Names"
+                        onChange={handleCustomerFormData}
+                        required
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+
+                      >
+                        <option value="">Please select</option>
+                        <option value="email">Email</option>
+                        <option value="phone">Phone</option>
+                        <option value="MAID">MAID-WIP</option>
+                      </select>
+                    </div>
+
+                    <div className="mt-2 pb-21 flex flex-col">
+                      <label>Match attribute</label>
+                      <select
+                        name="Match_Attribute"
+                        onChange={handleCustomerFormData}
+                        required
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+
+                      >
+                        <option value="">Please select</option>
+                        <option value="overall">Overall</option>
+                        <option value="age">Age</option>
+                        <option value="gender">Gender</option>
+                      </select>
+                      {formData["Match_Attribute"] === "gender" && (
+                        <div className="mt-2 pb-21 flex flex-col">
+                          Select Gender
+                          <label>
+                            <input
+                              type="radio"
+                              value="male"
+                              checked={gender === "male"}
+                              onChange={(e) => setGender(e.target.value)}
+                            />
+                            <span className="pl-2">Male</span>
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              value="female"
+                              checked={gender === "female"}
+                              onChange={(e) => setGender(e.target.value)}
+                            />
+                            <span className="pl-2">Female</span>
+                          </label>
+                        </div>
+                      )}
+                      {formData["Match_Attribute"] === "age" && (
+                        <div className="mt-2 pb-21 flex flex-col">
+                          Select Age
+                          <label>
+                            <input
+                              type="radio"
+                              value="age_0_6"
+                              checked={age === "age_0_6"}
+                              onChange={(e) => setAge(e.target.value)}
+                            />
+                            <span className="pl-2">0-6</span>
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              value="age_7_16"
+                              checked={age === "age_7_16"}
+                              onChange={(e) => setAge(e.target.value)}
+                            />
+                            <span className="pl-2">7-16</span>
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              value="age_17_25"
+                              checked={age === "age_17_25"}
+                              onChange={(e) => setAge(e.target.value)}
+                            />
+                            <span className="pl-2">17-25</span>
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              value="age_26_40"
+                              checked={age === "age_26_40"}
+                              onChange={(e) => setAge(e.target.value)}
+                            />
+                            <span className="pl-2">26-40</span>
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              value="age_41_above"
+                              checked={age === "age_41_above"}
+                              onChange={(e) => setAge(e.target.value)}
+                            />
+                            <span className="pl-2">41-above</span>
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex justify-end">
+                      <button
+                        className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                        type="submit"
+                      >
+                        Submit query
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </SwipeableDrawer>
+          </React.Fragment>
+        ))}
+      </div>
       <h3 className="mt-4 text-xl font-bold text-deep-navy">Publisher query</h3>
       <div className="flex flex-row  gap-3  w-full">
         <div className="flex flex-col flex-shrink h-auto">
