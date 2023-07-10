@@ -11,7 +11,7 @@ import Table from "./CommonComponent/Table";
 
 import "./styles.css";
 import "./pure-react.css";
-import { SwipeableDrawer } from "@mui/material";
+import { Alert, SwipeableDrawer } from "@mui/material";
 import enrichment from "../Assets/Profiling_Isometric.svg"
 // import {AccessTimeIcon} from '@mui/icons-material/AccessTime';
 import searchillustration from "../Assets/Target audience _Two Color.svg"
@@ -523,155 +523,7 @@ const MatchRate = () => {
           </React.Fragment>
         ))}
       </div>
-      <h3 className="mt-4 text-xl font-bold text-deep-navy">Publisher query</h3>
-      <div className="flex flex-row  gap-3  w-full">
-        <div className="flex flex-col flex-shrink h-auto">
-          <form
-            className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto  w-80 max-w-xs"
-            name="myForm"
-            onSubmit={handleSubmit}
-          >
-            <span className="text-sm mb-4 font-light text-coal">
-              Advertiser record match
-            </span>
-            <div>
-              <div className=" mt-2 pb-2 flex flex-col">
-                <label>Query Name</label>
-                <select
-                  name="Query_Name"
-                  onChange={handleCustomerFormData}
-                  required
-                  className="w-full"
-                >
-                  <option value="">Please select</option>
-                  <option value="advertiser_match">Advertiser Match</option>
-                </select>
-              </div>
-
-              <div className="mt-2 pb-21 flex flex-col">
-                <label>Upload File</label>
-                <input
-                  className="w-full "
-                  type="file"
-                  id="myFileInput"
-                  onChange={handleFileInput}
-                  required
-                />
-              </div>
-
-              <div className="mt-2 pb-21 flex flex-col">
-                <label>Identifier Type</label>
-                <select
-                  name="Column_Names"
-                  onChange={handleCustomerFormData}
-                  required
-                  className="w-full"
-                >
-                  <option value="">Please select</option>
-                  <option value="email">Email</option>
-                  <option value="phone">Phone</option>
-                  <option value="MAID">MAID-WIP</option>
-                </select>
-              </div>
-
-              <div className="mt-2 pb-21 flex flex-col">
-                <label>Match Attribute</label>
-                <select
-                  name="Match_Attribute"
-                  onChange={handleCustomerFormData}
-                  required
-                  className="w-full"
-                >
-                  <option value="">Please select</option>
-                  <option value="overall">Overall</option>
-                  <option value="age">Age</option>
-                  <option value="gender">Gender</option>
-                </select>
-                {formData["Match_Attribute"] === "gender" && (
-                  <div className="mt-2 pb-21 flex flex-col">
-                    Select Gender
-                    <label>
-                      <input
-                        type="radio"
-                        value="male"
-                        checked={gender === "male"}
-                        onChange={(e) => setGender(e.target.value)}
-                      />
-                      <span className="pl-2">Male</span>
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        value="female"
-                        checked={gender === "female"}
-                        onChange={(e) => setGender(e.target.value)}
-                      />
-                      <span className="pl-2">Female</span>
-                    </label>
-                  </div>
-                )}
-                {formData["Match_Attribute"] === "age" && (
-                  <div className="mt-2 pb-21 flex flex-col">
-                    Select Age
-                    <label>
-                      <input
-                        type="radio"
-                        value="age_0_6"
-                        checked={age === "age_0_6"}
-                        onChange={(e) => setAge(e.target.value)}
-                      />
-                      <span className="pl-2">0-6</span>
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        value="age_7_16"
-                        checked={age === "age_7_16"}
-                        onChange={(e) => setAge(e.target.value)}
-                      />
-                      <span className="pl-2">7-16</span>
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        value="age_17_25"
-                        checked={age === "age_17_25"}
-                        onChange={(e) => setAge(e.target.value)}
-                      />
-                      <span className="pl-2">17-25</span>
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        value="age_26_40"
-                        checked={age === "age_26_40"}
-                        onChange={(e) => setAge(e.target.value)}
-                      />
-                      <span className="pl-2">26-40</span>
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        value="age_41_above"
-                        checked={age === "age_41_above"}
-                        onChange={(e) => setAge(e.target.value)}
-                      />
-                      <span className="pl-2">41-above</span>
-                    </label>
-                  </div>
-                )}
-              </div>
-              <div className="flex justify-end">
-                <button
-                  className="my-2 flex w-full justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-                  type="submit"
-                >
-                  Submit query
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+       <div className="flex flex-row  gap-3  w-full">
         {!fetchData ? (
           <div className=" flex flex-grow">
             {tableHead?.length > 0 && tableRows?.length > 0 ? (
@@ -679,10 +531,12 @@ const MatchRate = () => {
             ) : null}
           </div>
         ) : (
-          <span className="text-deep-navy flex flex-grow mt-4">
-            We are fetching the data you requested: Request Id -{" "}
-            <strong>{requestId}</strong>
-          </span>
+          <Alert 
+          // icon={<AccessTimeIcon fontSize="inherit" />} 
+          severity="info"
+        >
+          We are fetching the data you requested: Request Id - <strong> {requestId}</strong>
+        </Alert>
         )}
       </div>
     </div>

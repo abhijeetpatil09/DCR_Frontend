@@ -341,9 +341,10 @@ const Sidebar = ({ children }) => {
             {/* <div onClick={handleSignOut} >{(user?.name) ? "Sign Out" : "Sign In"}</div> */}
           </div>
         </div>
-        <div className="bg-blue-100 w-full right-0 h-10 flex flex-row items-center justify-end text-xs fixed bottom-0 px-10 py-2 z-30 border-l border-gray-100">
+        {/* FOOTER COMMENTED FOR FUTURE USE */}
+        {/* <div className="bg-blue-100 w-full right-0 h-10 flex flex-row items-center justify-end text-xs fixed bottom-0 px-10 py-2 z-30 border-l border-gray-100">
           &copy; 2023 Hoonar Tekwurks Private Ltd.
-        </div>
+        </div> */}
         {/* CONTAINER */}
         <main className="flex flex-col w-full overflow-auto h-full mb-4">
           <div className="w-full h-full">{children}</div>
