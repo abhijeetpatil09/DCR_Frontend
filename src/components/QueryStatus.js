@@ -21,8 +21,6 @@ import {
 } from "../utils/commonFunctions";
 import CustomTable from "./CommonComponent/Table";
 
-import "./styles.css";
-import "./pure-react.css";
 import {
   ApprovedStatus,
   CompletedStatus,
@@ -33,6 +31,9 @@ import {
 } from "./CommonComponent/StatusColumn";
 
 import SelectDropdown from "./CommonComponent/SelectDropdown";
+import "./styles.css";
+import "./pure-react.css";
+
 const resultstyle = {
   position: "absolute",
   top: "50%",
@@ -381,7 +382,7 @@ const QueryStatus = () => {
                                 className={`${
                                   row.STATUS.toLowerCase() === "completed"
                                     ? "text-deep-navy"
-                                    : "text-downriver-400"
+                                    : "text-electric-green/50"
                                 } flex flex-row items-center px-2 justify-center`}
                                 disabled={
                                   row.STATUS.toLowerCase() !== "completed"
