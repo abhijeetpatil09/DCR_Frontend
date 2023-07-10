@@ -12,9 +12,9 @@ import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
 import { Alert, SwipeableDrawer } from "@mui/material";
-import enrichment from "../Assets/Profiling_Isometric.svg"
+import enrichment from "../Assets/Data organization_Isometric.svg"
 // import {AccessTimeIcon} from '@mui/icons-material/AccessTime';
-import searchillustration from "../Assets/Target audience _Two Color.svg"
+import searchillustration from "../Assets/Data storage_Two Color.svg"
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
@@ -523,6 +523,12 @@ const MatchRate = () => {
           </React.Fragment>
         ))}
       </div>
+
+      <img
+        className="absolute  w-2/5 -z-50 bottom-1 opacity-20 -right-20"
+        src={enrichment}
+        alt=""
+      />
        <div className="flex flex-row  gap-3  w-full">
         {!fetchData ? (
           <div className=" flex flex-grow">

@@ -383,7 +383,7 @@ const Enrichment = () => {
                   alt=""
                 />  
                 <form
-                  className=" z-20  my-4 px-4 py-2 h-full w-96  bg-deep-navy"
+                  className=" z-20  my-4 px-4 py-2 w-96  bg-deep-navy/50"
                   name="myForm"
                   onSubmit={handleSubmit}
                 >
