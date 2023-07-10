@@ -334,14 +334,14 @@ const SearchCatalog = () => {
               onClose={toggleDrawer(anchor, false)}
               onOpen={toggleDrawer(anchor, true)}
             >
-              <div className="flex flex-col flex-shrink w-full h-full bg-deep-navy text-electric-green">
+              <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
                 <img
                   className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
                   src={searchillustration}
                   alt=""
                 />
                 <div
-                  className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy"
+                  className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy/50"
                   name="myForm"
                 >
                   <div className="flex flex-row justify-between">
@@ -421,7 +421,7 @@ const SearchCatalog = () => {
                   </div>
                   <div className="flex justify-end">
                     <button
-                      className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                      className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
                       type="submit"
                       onClick={() => handleSubmit(anchor)}
                     >

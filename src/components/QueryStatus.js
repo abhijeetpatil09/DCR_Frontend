@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Box, Modal } from "@mui/material";
+import { Box, CircularProgress, Modal, SwipeableDrawer } from "@mui/material";
+import searchillustration from "../Assets/search_illustration.svg";
 
 import {
   Table,
@@ -22,6 +23,7 @@ import CustomTable from "./CommonComponent/Table";
 
 import "./styles.css";
 import "./pure-react.css";
+import SelectDropdown from "./CommonComponent/SelectDropdown";
 
 const resultstyle = {
   position: "absolute",
@@ -59,6 +61,26 @@ const QueryStatus = () => {
       openModal: false,
       queryName: "",
     });
+
+
+  const [toggleDrawerPosition, setToggleDrawerPosition] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+    search: false,
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
+  };
 
   useEffect(() => {
     axios
@@ -137,11 +159,111 @@ const QueryStatus = () => {
   };
 
   return (
-    <div className="w-full px-8">
-      <h3 className="my-4 text-xl font-bold bg-white text-deep-navy">
-        Query Status
-      </h3>
-
+    <div className="flex flex-col w-full px-4">
+      <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
+        <div>
+          <h3 className="text-xl font-bold text-deep-navy mr-2">
+            Query status
+          </h3>
+          <p>
+            All your queries in one place. You can filter historic queries.
+          </p>
+        </div>
+        {["right"].map((anchor) => (
+          <React.Fragment key={anchor}>
+            <button
+              className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+              onClick={toggleDrawer(anchor, true)}
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                />
+              </svg>
+              Filter
+            </button>
+            <SwipeableDrawer
+              anchor={anchor}
+              open={toggleDrawerPosition[anchor]}
+              onClose={toggleDrawer(anchor, false)}
+              onOpen={toggleDrawer(anchor, true)}
+            >
+              <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
+                <img
+                  className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
+                  src={searchillustration}
+                  alt=""
+                />
+                <div
+                  className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy/50"
+                  name="myForm"
+                >
+                  <div className="flex flex-row justify-between">
+                    <h3 className="text-xl font-semibold">Query filter</h3>
+                    <button onClick={toggleDrawer("right", false)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="mt-4 pb-2 flex flex-col gap-3">
+                    <div className="w-full mt-2">
+                      <SelectDropdown
+                        title="Select category"
+                        mode="multiple"
+                        name="category"
+                         placeholder="Please select"
+                        
+                      />
+                    </div>
+                 
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                      type="submit"
+                      // onClick={() => handleSubmit(anchor)}
+                    >Filter
+                      {/* {loader ? (
+                        <CircularProgress
+                          style={{
+                            width: "24px",
+                            height: "24px",
+                            color: "#FFFFFF",
+                          }}
+                        />
+                      ) : (
+                        "Filter"
+                      )} */}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </SwipeableDrawer>
+          </React.Fragment>
+        ))}
+      </div>
+     
       <TableContainer>
         <Table
           sx={{ minWidth: 650, borderRadius: 0 }}
