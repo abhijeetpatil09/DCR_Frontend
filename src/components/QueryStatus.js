@@ -23,8 +23,16 @@ import CustomTable from "./CommonComponent/Table";
 
 import "./styles.css";
 import "./pure-react.css";
-import SelectDropdown from "./CommonComponent/SelectDropdown";
+import {
+  ApprovedStatus,
+  CompletedStatus,
+  RejectedStatus,
+  FailedStatus,
+  WaitingStatus,
+  OtherStatus,
+} from "./CommonComponent/StatusColumn";
 
+import SelectDropdown from "./CommonComponent/SelectDropdown";
 const resultstyle = {
   position: "absolute",
   top: "50%",
@@ -61,7 +69,6 @@ const QueryStatus = () => {
       openModal: false,
       queryName: "",
     });
-
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = React.useState({
     top: false,
@@ -165,9 +172,7 @@ const QueryStatus = () => {
           <h3 className="text-xl font-bold text-deep-navy mr-2">
             Query status
           </h3>
-          <p>
-            All your queries in one place. You can filter historic queries.
-          </p>
+          <p>All your queries in one place. You can filter historic queries.</p>
         </div>
         {["right"].map((anchor) => (
           <React.Fragment key={anchor}>
@@ -232,18 +237,17 @@ const QueryStatus = () => {
                         title="Select category"
                         mode="multiple"
                         name="category"
-                         placeholder="Please select"
-                        
+                        placeholder="Please select"
                       />
                     </div>
-                 
                   </div>
                   <div className="flex justify-end">
                     <button
                       className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
                       type="submit"
                       // onClick={() => handleSubmit(anchor)}
-                    >Filter
+                    >
+                      Filter
                       {/* {loader ? (
                         <CircularProgress
                           style={{
@@ -263,187 +267,213 @@ const QueryStatus = () => {
           </React.Fragment>
         ))}
       </div>
-     
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 650, borderRadius: 0 }}
-          stickyHeader
-          size="small"
-          classes={{ root: "w-100" }}
-          aria-label="simple table"
-        >
-          <TableHead>
-            <TableRow
-              sx={{
-                "& th": {
-                  fontSize: "0.9rem",
-                  fontWeight: 900,
-                  color: "#0A2756",
-                  backgroundColor: "#e8effb",
-                  borderRadius: 0,
-                  borderTop: 1,
-                  borderRight: 1,
-                  borderColor: "#d6d3d1",
-                },
-                "& th:first-of-type": { borderLeft: 1, borderColor: "#d6d3d1" },
-              }}
+      {data.length > 0 ? (
+        <div>
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 650, borderRadius: 0 }}
+              stickyHeader
+              size="small"
+              classes={{ root: "w-100" }}
+              aria-label="simple table"
             >
-              <TableCell key={0} align="center">
-                Request ID
-              </TableCell>
-              <TableCell key={1} align="center">
-                Template Name
-              </TableCell>
-              <TableCell key={2} align="center">
-                Provider Name
-              </TableCell>
-              <TableCell key={3} align="center">
-                Column Names
-              </TableCell>
-              <TableCell key={4} align="center">
-                Status
-              </TableCell>
-              <TableCell key={5} align="center">
-                Requested
-              </TableCell>
-              <TableCell key={6} align="center">
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data &&
-              data
-                ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                ?.map((row, index) => {
-                  return (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        "& td:last-child": {
-                          borderRight: 1,
-                          borderColor: "#d6d3d1",
-                        },
-                        "& td": {
-                          borderLeft: 1,
-                          borderColor: "#d6d3d1",
-                          color: "#0A2756",
-                        },
-                      }}
-                    >
-                      <TableCell align="center">{row.RUN_ID}</TableCell>
-                      <TableCell align="center">{row.TEMPLATE_NAME}</TableCell>
-                      <TableCell align="center">{row.PROVIDER_NAME}</TableCell>
-                      <TableCell align="center">{row.COLOUMNS}</TableCell>
-                      <TableCell align="center">
-                        <span
-                          className={`${
-                            row.STATUS.toLowerCase() === "completed" ||
-                            row.STATUS.toLowerCase() === "true"
-                              ? "bg-green-300 text-deep-navy inline"
-                              : row.STATUS.toLowerCase() === "failed" ||
-                                row.STATUS.toLowerCase() === "false"
-                              ? "bg-red-200 text-red-700 inline"
-                              : row.STATUS.toLowerCase() ===
-                                "waiting for approval"
-                              ? "flex items-center h-[45px] bg-downriver-400 text-deep-navy"
-                              : "bg-downriver-400 text-deep-navy "
-                          }  text-xs py-1 px-3 rounded-full  `}
+              <TableHead>
+                <TableRow
+                  sx={{
+                    "& th": {
+                      fontSize: "0.9rem",
+                      fontWeight: 900,
+                      color: "#0A2756",
+                      backgroundColor: "#e8effb",
+                      borderRadius: 0,
+                      borderTop: 1,
+                      borderRight: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                    "& th:first-of-type": {
+                      borderLeft: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                  }}
+                >
+                  <TableCell key={0} align="center">
+                    Request ID
+                  </TableCell>
+                  <TableCell key={1} align="center">
+                    Template Name
+                  </TableCell>
+                  <TableCell key={2} align="center">
+                    Provider Name
+                  </TableCell>
+                  <TableCell key={3} align="center">
+                    Column Names
+                  </TableCell>
+                  <TableCell key={4} align="center">
+                    Status
+                  </TableCell>
+                  <TableCell key={5} align="center">
+                    Requested
+                  </TableCell>
+                  <TableCell key={6} align="center">
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data &&
+                  data
+                    ?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                    ?.map((row, index) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            "& td:last-child": {
+                              borderRight: 1,
+                              borderColor: "#d6d3d1",
+                            },
+                            "& td": {
+                              borderLeft: 1,
+                              borderColor: "#d6d3d1",
+                              color: "#0A2756",
+                            },
+                          }}
                         >
-                          {row.STATUS.toLowerCase() === "true"
-                            ? "Approved"
-                            : row.STATUS.toLowerCase() === "false"
-                            ? "Rejected"
-                            : row.STATUS}
-                        </span>
-                      </TableCell>
-                      <TableCell align="center">
-                        {handleDate(row.RUN_ID)}
-                      </TableCell>
-                      <TableCell align="center">
-                        <div className="flex justify-center">
-                          <button
-                            onClick={() =>
-                              fetchcsvTableData(row.TEMPLATE_NAME, row.RUN_ID)
-                            }
-                            className={`${
-                              row.STATUS.toLowerCase() === "completed"
-                                ? "text-deep-navy"
-                                : "text-downriver-400"
-                            } flex flex-row items-center px-2 justify-center`}
-                            disabled={row.STATUS.toLowerCase() !== "completed"}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="w-5 h-5"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            <span className="pl-2 underline">View</span>
-                          </button>
-
-                          {(row.TEMPLATE_NAME === "CUSTOMER ENRICHMENT" ||
-                            row.TEMPLATE_NAME === "customer_enrichment") && (
-                            <button
-                              onClick={() =>
-                                downloadFile(row.TEMPLATE_NAME, row.RUN_ID)
-                              }
-                              className={`${
-                                row.STATUS.toLowerCase() === "completed"
-                                  ? "text-deep-navy"
-                                  : "text-downriver-400"
-                              } flex flex-row items-center px-2 justify-center`}
-                              disabled={
-                                row.STATUS.toLowerCase() !== "completed"
-                              }
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-5 h-5"
+                          <TableCell align="center">{row.RUN_ID}</TableCell>
+                          <TableCell align="center">
+                            {row.TEMPLATE_NAME}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.PROVIDER_NAME}
+                          </TableCell>
+                          <TableCell align="center">{row.COLOUMNS}</TableCell>
+                          <TableCell align="center">
+                            <span>
+                              {row.STATUS.toLowerCase() === "true"
+                                ? ApprovedStatus("approved")
+                                : row.STATUS.toLowerCase() === "false"
+                                ? RejectedStatus("rejected")
+                                : row.STATUS.toLowerCase() === "completed"
+                                ? CompletedStatus(row.STATUS)
+                                : row.STATUS.toLowerCase() === "failed"
+                                ? FailedStatus(row.STATUS)
+                                : row.STATUS.toLowerCase() ===
+                                  "waiting for approval"
+                                ? WaitingStatus(row.STATUS)
+                                : OtherStatus(row.STATUS)}
+                            </span>
+                          </TableCell>
+                          <TableCell align="center">
+                            {handleDate(row.RUN_ID)}
+                          </TableCell>
+                          <TableCell align="center">
+                            <div className="flex justify-center">
+                              <button
+                                onClick={() =>
+                                  fetchcsvTableData(
+                                    row.TEMPLATE_NAME,
+                                    row.RUN_ID
+                                  )
+                                }
+                                className={`${
+                                  row.STATUS.toLowerCase() === "completed"
+                                    ? "text-deep-navy"
+                                    : "text-downriver-400"
+                                } flex flex-row items-center px-2 justify-center`}
+                                disabled={
+                                  row.STATUS.toLowerCase() !== "completed"
+                                }
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-                                />
-                              </svg>
-                              <span className="pl-2 underline">Download</span>
-                            </button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={data?.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-5 h-5"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                </svg>
+                                <span className="pl-2 underline">View</span>
+                              </button>
+
+                              {(row.TEMPLATE_NAME === "CUSTOMER ENRICHMENT" ||
+                                row.TEMPLATE_NAME ===
+                                  "customer_enrichment") && (
+                                <button
+                                  onClick={() =>
+                                    downloadFile(row.TEMPLATE_NAME, row.RUN_ID)
+                                  }
+                                  className={`${
+                                    row.STATUS.toLowerCase() === "completed"
+                                      ? "text-deep-navy"
+                                      : "text-downriver-400"
+                                  } flex flex-row items-center px-2 justify-center`}
+                                  disabled={
+                                    row.STATUS.toLowerCase() !== "completed"
+                                  }
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                    />
+                                  </svg>
+                                  <span className="pl-2 underline">
+                                    Download
+                                  </span>
+                                </button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={data?.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </div>
+      ) : (
+        <div className="flex justify-center mt-8">
+          <CircularProgress
+            style={{
+              width: "60px",
+              height: "60px",
+              color: "#0A2756",
+            }}
+            thickness={5}
+          />
+        </div>
+      )}
 
       <Modal
         open={viewTemplate.openModal}

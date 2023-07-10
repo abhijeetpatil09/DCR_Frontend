@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
-import Table from "./CommonComponent/Table";
+import CommonTable from "./CommonComponent/Table";
 import axios from "axios";
 import { CircularProgress, SwipeableDrawer } from "@mui/material";
-import { Box, Modal } from "@mui/material";
+import {
+  Box,
+  Modal,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TablePagination,
+} from "@mui/material";
 
 import SelectDropdown from "./CommonComponent/SelectDropdown";
 import searchillustration from "../Assets/search_illustration.svg";
@@ -34,6 +44,8 @@ const SearchCatalog = () => {
     head: [],
     rows: [],
   });
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   // result model
   const [isResultModalOpen, toggleResultModal] = React.useState(false);
   const handleResultModalOpen = () => toggleResultModal(true);
@@ -52,6 +64,15 @@ const SearchCatalog = () => {
     right: false,
     search: false,
   });
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -445,76 +466,163 @@ const SearchCatalog = () => {
         ))}
       </div>
 
-      <div className="flex flex-col w-full">
-        {/* <h1 className=" mt-4 text-xl font-regular text-deep-navy pb-2 ">
-          Search Result
-        </h1> */}
-
-        <table className="table-auto w-full text-left text-sm">
-          <thead>
-            <tr className="bg-blue-50 text-deep-navy uppercase text-sm leading-normal border-t border-l ">
-              <th className="px-4 py-2 border-r">Provider Name</th>
-              <th className="px-4 py-2 border-r">Attribute Name</th>
-              <th className="px-4 py-2 border-r">Category</th>
-              <th className="px-4 py-2 border-r">Sub Category</th>
-              <th className="px-4 py-2 border-r">Description</th>
-              <th className="px-4 py-2 border-r">Entity Name</th>
-              <th className="px-4 py-2 border-r">Tech Name</th>
-              <th className="px-4 py-2 border-r">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="text-deep-navy text-sm font-light">
-            {data &&
-              data.map((item, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-gray-300 hover:bg-blue-50"
+      {data?.length > 0 ? (
+        <div className="flex flex-col w-full">
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 650, borderRadius: 0 }}
+              stickyHeader
+              size="small"
+              classes={{ root: "w-100" }}
+              aria-label="simple table"
+            >
+              <TableHead>
+                <TableRow
+                  sx={{
+                    "& th": {
+                      fontSize: "0.9rem",
+                      fontWeight: 900,
+                      color: "#0A2756",
+                      backgroundColor: "#e8effb",
+                      borderRadius: 0,
+                      borderTop: 1,
+                      borderRight: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                    "& th:first-of-type": {
+                      borderLeft: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                  }}
                 >
-                  <td className="border px-4 py-2">{item.PROVIDER_NAME}</td>
-                  <td className="border px-4 py-2">{item.ATTRIBUTE_NAME}</td>
-                  <td className="border px-4 py-2">{item.CATEGORY}</td>
-                  <td className="border px-4 py-2">{item.SUB_CATEGORY}</td>
-                  <td className="border px-4 py-2">{item.DESCRIPTION}</td>
-                  <td className="border px-4 py-2">{item.ENTITY_NAME}</td>
-                  <td className="border px-4 py-2">{item.TECH_NAME}</td>
-                  <td className="border px-4 py-2">
-                    <div className="flex justify-between">
-                      <button
-                        onClick={() =>
-                          fetchcsvTableData(
-                            item.PROVIDER_NAME,
-                            item.ENTITY_NAME
-                          )
-                        }
-                        title="View"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-5 h-5"
+                  <TableCell key={0} align="center">
+                    Provider Name
+                  </TableCell>
+                  <TableCell key={1} align="center">
+                    Attribute Name
+                  </TableCell>
+                  <TableCell key={2} align="center">
+                    Category
+                  </TableCell>
+                  <TableCell key={3} align="center">
+                    Sub Category
+                  </TableCell>
+                  <TableCell key={4} align="center">
+                    Description
+                  </TableCell>
+                  <TableCell key={5} align="center">
+                    Entity Name
+                  </TableCell>
+                  <TableCell key={6} align="center">
+                    Tech Name
+                  </TableCell>
+                  <TableCell key={6} align="center">
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data &&
+                  data
+                    ?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                    ?.map((row, index) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            "& td:last-child": {
+                              borderRight: 1,
+                              borderColor: "#d6d3d1",
+                            },
+                            "& td": {
+                              borderLeft: 1,
+                              borderColor: "#d6d3d1",
+                              color: "#0A2756",
+                            },
+                          }}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div>
+                          <TableCell align="center">
+                            {row.PROVIDER_NAME}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.ATTRIBUTE_NAME}
+                          </TableCell>
+                          <TableCell align="center">{row.CATEGORY}</TableCell>
+                          <TableCell align="center">
+                            {row.SUB_CATEGORY}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.DESCRIPTION}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.ENTITY_NAME}
+                          </TableCell>
+                          <TableCell align="center">{row.TECH_NAME}</TableCell>
+
+                          <TableCell align="center">
+                            <div className="flex justify-between">
+                              <button
+                                onClick={() =>
+                                  fetchcsvTableData(
+                                    row.PROVIDER_NAME,
+                                    row.ENTITY_NAME
+                                  )
+                                }
+                                title="View"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-5 h-5"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={data?.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </div>
+      ) : (
+        <div className="flex justify-center mt-8">
+          <CircularProgress
+            style={{
+              width: "60px",
+              height: "60px",
+              color: "#0A2756",
+            }}
+            thickness={5}
+          />
+        </div>
+      )}
 
       <Modal
         open={isResultModalOpen}
@@ -540,7 +648,7 @@ const SearchCatalog = () => {
             <div className="px-4">
               {viewTable?.head.length > 0 && viewTable?.rows.length > 0 ? (
                 <>
-                  <Table head={viewTable?.head} rows={viewTable?.rows} />
+                  <CommonTable head={viewTable?.head} rows={viewTable?.rows} />
                 </>
               ) : (
                 <div className="py-8">
@@ -549,8 +657,9 @@ const SearchCatalog = () => {
                       style={{
                         width: "48px",
                         height: "48px",
-                        color: "#a40d49",
+                        color: "#0A2756",
                       }}
+                      thickness={5}
                     />
                   </div>
                   <div className="text-center pt-4">

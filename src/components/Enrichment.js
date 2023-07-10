@@ -12,9 +12,9 @@ import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
 import { Alert, SwipeableDrawer } from "@mui/material";
-import enrichment from "../Assets/Profiling_Isometric.svg"
+import enrichment from "../Assets/Profiling_Isometric.svg";
 // import {AccessTimeIcon} from '@mui/icons-material/AccessTime';
-import searchillustration from "../Assets/Target audience _Two Color.svg"
+import searchillustration from "../Assets/Target audience _Two Color.svg";
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
@@ -25,8 +25,6 @@ const s3 = new AWS.S3({
 });
 
 const Enrichment = () => {
-
-
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
 
@@ -52,26 +50,25 @@ const Enrichment = () => {
   const [columns, setColumns] = useState([]);
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
 
-  const [Dstate, setState] = React.useState({
+  const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
-    search: false
+    search: false,
   });
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
       event &&
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
     ) {
       return;
     }
 
-    setState({ ...Dstate, [anchor]: open });
+    setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
   };
-
 
   useEffect(() => {
     if (TableData) {
@@ -260,15 +257,7 @@ const Enrichment = () => {
 
     const blob = new Blob([csv], { type: "text/csv" });
 
-    // const url = URL.createObjectURL(blob);
-    // const link = document.createElement('a');
-    // link.href = url;
-    // link.download = formData['RunId'] +'.csv';
-    // document.body.appendChild(link);
-    // link.click();
-
     const params = {
-      // Bucket: 'dcr-poc/query_request',
       Bucket: "dcr-poc",
       Key:
         "query_request/" +
@@ -277,13 +266,7 @@ const Enrichment = () => {
         formData["RunId"] +
         ".csv",
       Body: blob,
-      // ACL: 'private',
     };
-
-    // s3.listBuckets(function(err, data) {
-    //     if (err) console.log(err, err.stack);
-    //     else console.log(data);
-    // });
 
     s3.putObject(params, (err, data) => {
       if (err) {
@@ -356,23 +339,39 @@ const Enrichment = () => {
     <div className="flex flex-col w-full px-4">
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
         <div>
-          <h3 className="text-xl font-bold text-deep-navy mr-2">Consumer query</h3>
-          <p>Choose your provider to run a consumer query based on your parameters.</p>
+          <h3 className="text-xl font-bold text-deep-navy mr-2">
+            Consumer query
+          </h3>
+          <p>
+            Choose your provider to run a consumer query based on your
+            parameters.
+          </p>
         </div>
-        {['right'].map((anchor) => (
+        {["right"].map((anchor) => (
           <React.Fragment key={anchor}>
             <button
               className="my-2 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-              onClick={toggleDrawer(anchor, true)}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              onClick={toggleDrawer(anchor, true)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-4 h-4 mr-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
               </svg>
-
-
-              Create new</button>
+              Create new
+            </button>
             <SwipeableDrawer
               anchor={anchor}
-              open={Dstate[anchor]}
+              open={toggleDrawerPosition[anchor]}
               onClose={toggleDrawer(anchor, false)}
               onOpen={toggleDrawer(anchor, true)}
             >
@@ -381,21 +380,34 @@ const Enrichment = () => {
                   className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
                   src={searchillustration}
                   alt=""
-                />  
+                />
                 <form
                   className=" z-20  my-4 px-4 py-2 w-96  bg-deep-navy/50"
                   name="myForm"
                   onSubmit={handleSubmit}
                 >
                   <div className="flex flex-row justify-between">
-                    <h3 className="text-xl font-semibold">New consumer query</h3>
-                    <button onClick={toggleDrawer('right', false)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    <h3 className="text-xl font-semibold">
+                      New consumer query
+                    </h3>
+                    <button onClick={toggleDrawer("right", false)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   </div>
-                  <div clas>
+                  <div>
                     <div className="mt-2 pb-2 flex flex-col">
                       <label>Provider name</label>
                       <select
@@ -493,7 +505,6 @@ const Enrichment = () => {
         alt=""
       />
       <div className="flex flex-row  gap-3  w-full">
-
         {!fetchData ? (
           <div className=" flex flex-grow">
             {tableHead?.length > 0 && tableRows?.length > 0 ? (
@@ -501,14 +512,13 @@ const Enrichment = () => {
             ) : null}
           </div>
         ) : (
-
-          <Alert 
-            // icon={<AccessTimeIcon fontSize="inherit" />} 
+          <Alert
+            // icon={<AccessTimeIcon fontSize="inherit" />}
             severity="info"
           >
-            We are fetching the data you requested: Request Id - <strong> {requestId}</strong>
+            We are fetching the data you requested: Request Id -{" "}
+            <strong> {requestId}</strong>
           </Alert>
-
         )}
       </div>
     </div>

@@ -12,16 +12,13 @@ import Table from "./CommonComponent/Table";
 import "./styles.css";
 import "./pure-react.css";
 import { Alert, SwipeableDrawer } from "@mui/material";
-import enrichment from "../Assets/Data organization_Isometric.svg"
-// import {AccessTimeIcon} from '@mui/icons-material/AccessTime';
-import searchillustration from "../Assets/Data storage_Two Color.svg"
+import enrichment from "../Assets/Data organization_Isometric.svg";
+import searchillustration from "../Assets/Data storage_Two Color.svg";
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
   secretAccessKey: "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",
-  // signatureVersion: 'v4',
   region: "ap-south-1",
-  // region: 'ap-south-1',
 });
 
 const initialState = {
@@ -59,6 +56,13 @@ const MatchRate = () => {
   const [tableRows, setTableRows] = useState([]);
 
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
+  const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+    search: false,
+  });
 
   // useEffect for set match attribute values..
   useEffect(() => {
@@ -156,9 +160,11 @@ const MatchRate = () => {
     event.preventDefault();
 
     if (byPassAPICalled) {
-      toast.error("We are fetching the data for current request. Please wait...");
+      toast.error(
+        "We are fetching the data for current request. Please wait..."
+      );
       return;
-    };
+    }
 
     formData.RunId = Date.now();
 
@@ -175,15 +181,8 @@ const MatchRate = () => {
       formData["Query_Name"] + "_" + formData["RunId"] + ".csv",
       { type: "text/csv" }
     );
-    // const url = URL.createObjectURL(blob);
-    // const link = document.createElement('a');
-    // link.href = url;
-    // link.download = formData['RunId'] +'.csv';
-    // document.body.appendChild(link);
-    // link.click();
 
     const params = {
-      // Bucket: 'dcr-poc/query_request',
       Bucket: "dcr-poc",
       Key:
         "query_request/" +
@@ -192,7 +191,6 @@ const MatchRate = () => {
         formData["RunId"] +
         ".csv",
       Body: blob,
-      // ACL: 'private',
     };
 
     s3.putObject(params, (err, data) => {
@@ -206,11 +204,9 @@ const MatchRate = () => {
     var inputFile = document.getElementById("myFileInput");
 
     const params2 = {
-      // Bucket: 'dcr-poc/query_request',
       Bucket: "dcr-poc",
       Key: "query_request_data/" + inputFile.files[0].name,
       Body: inputFile.files[0],
-      // ACL: 'private',
     };
 
     s3.putObject(params2, (err, data) => {
@@ -245,34 +241,8 @@ const MatchRate = () => {
     const formData2 = new FormData();
     formData2.append("file", inputFile.files[0]);
 
-    // fetch("http://localhost:5000/upload", {
-    //   method: "POST",
-    //   body: formData2,
-    // })
-    //   .then((response) => {
-    //     console.log("response upload", response);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-
     const formData3 = new FormData();
     formData3.append("file", file1);
-
-    // try {
-    //   fetch("http://localhost:4040/upload2", {
-    //     method: "POST",
-    //     body: formData3,
-    //   })
-    //     .then((response) => {
-    //       console.log(response);
-    //     })
-    //     .catch((error) => {
-    //       console.error(error);
-    //     });
-    // } catch {
-    //   console.log("Error in Upload 2")
-    // }
   };
 
   const fetchTable = (data) => {
@@ -311,46 +281,55 @@ const MatchRate = () => {
         console.log("In API catch", error);
       });
   };
-  const [Dstate, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-    search: false
-  });
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
       event &&
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
     ) {
       return;
     }
-
-    setState({ ...Dstate, [anchor]: open });
+    setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
   };
+
   return (
     <div className="flex flex-col w-full px-4">
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
         <div>
-          <h3 className="text-xl font-bold text-deep-navy mr-2">Publisher query</h3>
-          <p>Choose your query type, upload the data and publish it for your consumers.</p>
+          <h3 className="text-xl font-bold text-deep-navy mr-2">
+            Publisher query
+          </h3>
+          <p>
+            Choose your query type, upload the data and publish it for your
+            consumers.
+          </p>
         </div>
-        {['right'].map((anchor) => (
+        {["right"].map((anchor) => (
           <React.Fragment key={anchor}>
             <button
               className="my-2 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-              onClick={toggleDrawer(anchor, true)}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              onClick={toggleDrawer(anchor, true)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-4 h-4 mr-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
               </svg>
-
-
-              Create new</button>
+              Create new
+            </button>
             <SwipeableDrawer
               anchor={anchor}
-              open={Dstate[anchor]}
+              open={toggleDrawerPosition[anchor]}
               onClose={toggleDrawer(anchor, false)}
               onOpen={toggleDrawer(anchor, true)}
             >
@@ -366,10 +345,23 @@ const MatchRate = () => {
                   onSubmit={handleSubmit}
                 >
                   <div className="flex flex-row justify-between ">
-                    <h3 className="text-xl font-semibold">New publisher query</h3>
-                    <button onClick={toggleDrawer('right', false)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    <h3 className="text-xl font-semibold">
+                      New publisher query
+                    </h3>
+                    <button onClick={toggleDrawer("right", false)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -381,10 +373,11 @@ const MatchRate = () => {
                         onChange={handleCustomerFormData}
                         required
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-
                       >
                         <option value="">Please select</option>
-                        <option value="advertiser_match">Advertiser match</option>
+                        <option value="advertiser_match">
+                          Advertiser match
+                        </option>
                       </select>
                     </div>
 
@@ -411,7 +404,6 @@ const MatchRate = () => {
                         onChange={handleCustomerFormData}
                         required
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-
                       >
                         <option value="">Please select</option>
                         <option value="email">Email</option>
@@ -427,7 +419,6 @@ const MatchRate = () => {
                         onChange={handleCustomerFormData}
                         required
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-
                       >
                         <option value="">Please select</option>
                         <option value="overall">Overall</option>
@@ -529,7 +520,7 @@ const MatchRate = () => {
         src={enrichment}
         alt=""
       />
-       <div className="flex flex-row  gap-3  w-full">
+      <div className="flex flex-row  gap-3  w-full">
         {!fetchData ? (
           <div className=" flex flex-grow">
             {tableHead?.length > 0 && tableRows?.length > 0 ? (
@@ -537,12 +528,13 @@ const MatchRate = () => {
             ) : null}
           </div>
         ) : (
-          <Alert 
-          // icon={<AccessTimeIcon fontSize="inherit" />} 
-          severity="info"
-        >
-          We are fetching the data you requested: Request Id - <strong> {requestId}</strong>
-        </Alert>
+          <Alert
+            // icon={<AccessTimeIcon fontSize="inherit" />}
+            severity="info"
+          >
+            We are fetching the data you requested: Request Id -{" "}
+            <strong> {requestId}</strong>
+          </Alert>
         )}
       </div>
     </div>
