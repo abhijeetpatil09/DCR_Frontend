@@ -10,6 +10,7 @@ import SelectDropdown from "./CommonComponent/SelectDropdown";
 
 import {
   Alert,
+  Stack,
   SwipeableDrawer,
   Table,
   TableBody,
@@ -37,6 +38,8 @@ import { handleDate } from "../utils/commonFunctions";
 
 import "./styles.css";
 import "./pure-react.css";
+import Item from "antd/es/list/Item";
+import { Button, Card, Typography } from "antd";
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIA57AGVWXYVR36XIEC",
@@ -379,7 +382,7 @@ const Enrichment = () => {
   };
 
   return (
-    <div className="flex flex-col w-full px-4">
+    <div className="flex flex-col w-full px-4 overflow-hidden">
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
         <div>
           <h3 className="text-xl font-bold text-deep-navy mr-2">
@@ -543,21 +546,19 @@ const Enrichment = () => {
       </div>
 
       <img
-        className="absolute  w-2/5 -z-50 bottom-1 opacity-20 -right-20  text-amarant-400"
+        className="absolute  w-1/4 -z-50 bottom-0 opacity-40 -right-20  text-amarant-400 "
         src={enrichment}
         alt=""
       />
 
-      <div className="flex flex-col w-full px-5">
-        <h1 className=" mt-4 text-xl font-regular text-deep-navy pb-2 ">
-          Recent Requests
-        </h1>
+      <div className="flex flex-col w-full">
+       <h2 className="text-lg font-medium mb-2 text-deep-navy">Recent queries</h2>
         <TableContainer>
           <Table
             sx={{ minWidth: 650, borderRadius: 0 }}
             stickyHeader
             size="small"
-            classes={{ root: "w-100" }}
+            classes={{ root: "w-100 bg-white/70" }}
             aria-label="simple table"
           >
             <TableHead>
@@ -579,7 +580,7 @@ const Enrichment = () => {
                   },
                 }}
               >
-                <TableCell key={0} align="center"></TableCell>
+                {/* <TableCell key={0} align="center"></TableCell> */}
                 <TableCell key={1} align="center">
                   Status
                 </TableCell>
@@ -620,7 +621,7 @@ const Enrichment = () => {
                       },
                     }}
                   >
-                    <TableCell align="center">
+                    {/* <TableCell align="center">
                       <span className="relative flex h-3 w-3 mr-2">
                         {row.STATUS.toLowerCase() === "completed" ||
                         row.STATUS.toLowerCase() === "true" ? (
@@ -634,7 +635,7 @@ const Enrichment = () => {
                           </>
                         )}
                       </span>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell align="center">
                       <span>
                         {row.STATUS.toLowerCase() === "true"
@@ -761,6 +762,8 @@ const Enrichment = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+   
       </div>
 
       <div className="flex flex-row  gap-3  w-full">

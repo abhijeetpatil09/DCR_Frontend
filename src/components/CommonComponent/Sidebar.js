@@ -4,9 +4,12 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as actions from "../../redux/actions/index";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import GroupMLogo from "../../Assets/logo-download-01.png";
 import GroupMLogoDark from "../../Assets/logo-download-02.png";
+import { Button, Menu, MenuItem } from "@mui/material";
+import { HelpOutline } from "@material-ui/icons";
 
 // import "../pure-react.css";
 // import "../styles.css";
@@ -48,6 +51,14 @@ const Sidebar = ({ children }) => {
 
   const navigateTo = (page) => {
     navigate(page);
+  };
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -311,7 +322,33 @@ const Sidebar = ({ children }) => {
               <span className="text-electric-green text-4xl">X</span>change
             </span>
           </div>
-          <div className="">
+          <div className="flex flex-row items-center">
+            <div>
+              <Button
+                id="basic-button"
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+                startIcon={<HelpOutline />}
+                className="text-deep-navy normal-case text-base"
+              >
+                Help
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={handleClose}>User manual</MenuItem>
+                <MenuItem onClick={handleClose}>FAQ</MenuItem>
+                {/* <MenuItem onClick={handleClose}>Logout</MenuItem> */}
+              </Menu>
+            </div>
             <div className="flex items-center w-full">
               <button
                 onClick={handleSignOut}
