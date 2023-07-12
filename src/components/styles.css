@@ -176,6 +176,12 @@ th, td {
   height: 40px;
 }
 
+.ant-select-selection-overflow {
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
 .ant-select-lg {
   border: none !important;
 }
@@ -205,7 +211,14 @@ th, td {
 .MuiDataGrid-footerContainer {
   display: none !important;
 }
-/* 
-.MuiDataGrid-root .MuiDataGrid-cell--textLeft {
-  justify-content: center !important;
-} */
+
+.react-datepicker__calendar-icon {
+  width: 2em !important;
+  height: 2em !important;
+  fill: #08f0a9 !important;
+}
+
+.react-datepicker__close-icon::after {
+  background-color: #08f0a9 !important;
+  color: black !important;
+}

@@ -3,8 +3,6 @@ import CommonTable from "./CommonComponent/Table";
 import axios from "axios";
 import { CircularProgress, SwipeableDrawer } from "@mui/material";
 import {
-  Box,
-  Modal,
   Table,
   TableBody,
   TableCell,
@@ -16,18 +14,6 @@ import {
 
 import SelectDropdown from "./CommonComponent/SelectDropdown";
 import searchillustration from "../Assets/search_illustration.svg";
-
-// Modal style
-const resultstyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "95%",
-  maxHeight: "90%",
-  bgcolor: "background.paper",
-  overflow: "scroll",
-};
 
 const SearchCatalog = () => {
   const [selectedValues, setSelectedValues] = useState({
@@ -48,7 +34,6 @@ const SearchCatalog = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   // result model
   const [isResultModalOpen, toggleResultModal] = React.useState(false);
-  const handleResultModalOpen = () => toggleResultModal(true);
   const handleResultModalClose = () => toggleResultModal(false);
 
   const [errors, setError] = useState({
@@ -285,7 +270,7 @@ const SearchCatalog = () => {
 
   const fetchcsvTableData = async (providerName, entity) => {
     setViewTable({ ...viewTable, head: [], rows: [] });
-    handleResultModalOpen();
+    toggleResultModal(true);
     axios
       .get(`http://127.0.0.1:5000/dataexadmin`, {
         params: {
@@ -624,55 +609,13 @@ const SearchCatalog = () => {
         </div>
       )}
 
-      <Modal
+      <CommonTable
+        head={viewTable?.head}
+        rows={viewTable?.rows}
         open={isResultModalOpen}
-        onClose={handleResultModalClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={resultstyle}>
-          <div className=" flex flex-col flex-grow w-full">
-            <div className="flex flex-row items-center justify-between sticky z-30 py-2 px-4 top-0 w-full bg-amaranth-800 text-white">
-              <h3 className="font-bold text-white">Query result</h3>
-              <button onClick={handleResultModalClose}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                </svg>
-              </button>
-            </div>
-            <div className="px-4">
-              {viewTable?.head.length > 0 && viewTable?.rows.length > 0 ? (
-                <>
-                  <CommonTable head={viewTable?.head} rows={viewTable?.rows} />
-                </>
-              ) : (
-                <div className="py-8">
-                  <div className="text-center">
-                    <CircularProgress
-                      style={{
-                        width: "48px",
-                        height: "48px",
-                        color: "#0A2756",
-                      }}
-                      thickness={5}
-                    />
-                  </div>
-                  <div className="text-center pt-4">
-                    <span className="text-amaranth-900">
-                      We are fetching the data. Please wait !!!
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </Box>
-      </Modal>
+        handleClose={handleResultModalClose}
+        title={"Search Result"}
+      />
     </div>
   );
 };

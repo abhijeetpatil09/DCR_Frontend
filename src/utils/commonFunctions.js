@@ -80,3 +80,12 @@ export const isObjectEmpty = (obj) => {
 };
 
 
+/// Remove Duplicate Objects...
+export const removeDuplicateObjects = (array) => {
+  return array?.filter((obj, index, self) => {
+    return (
+      index ===
+      self.findIndex((o) => o.id === obj.id && o.name === obj.name)
+    );
+  });
+};

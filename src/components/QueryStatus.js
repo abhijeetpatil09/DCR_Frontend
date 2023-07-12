@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Box, CircularProgress, Modal, SwipeableDrawer } from "@mui/material";
-import searchillustration from "../Assets/search_illustration.svg";
+import DatePicker from "react-datepicker";
 
 import {
+  CircularProgress,
+  SwipeableDrawer,
   Table,
   TableBody,
   TableCell,
@@ -14,12 +15,15 @@ import {
   TablePagination,
 } from "@mui/material";
 
+import searchillustration from "../Assets/search_illustration.svg";
 import {
   jsonToCsv,
   handleDate,
   downloadFileInCSV,
+  removeDuplicateObjects,
 } from "../utils/commonFunctions";
 import CustomTable from "./CommonComponent/Table";
+import CommonModal from "./CommonComponent/Modal";
 
 import {
   ApprovedStatus,
@@ -31,19 +35,10 @@ import {
 } from "./CommonComponent/StatusColumn";
 
 import SelectDropdown from "./CommonComponent/SelectDropdown";
+import "react-datepicker/dist/react-datepicker.css";
+
 import "./styles.css";
 import "./pure-react.css";
-
-const resultstyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "95%",
-  maxHeight: "90%",
-  bgcolor: "background.paper",
-  overflow: "scroll",
-};
 
 const QueryStatus = () => {
   const state = useSelector((state) => state);
@@ -53,10 +48,25 @@ const QueryStatus = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [loader, setLoader] = useState(false);
+
   const [viewTable, setViewTable] = useState({
     head: [],
     rows: [],
     runId: "",
+  });
+
+  const [filteredList, setFilteredList] = useState({
+    providersList: [],
+    templatesList: [],
+    statusList: [],
+  });
+
+  const [filteredData, setFilteredData] = useState({
+    providerName: [],
+    templateName: [],
+    status: [],
+    date: "",
   });
 
   const [viewTemplate, setViewTemplate] = React.useState({
@@ -70,6 +80,11 @@ const QueryStatus = () => {
       openModal: false,
       queryName: "",
     });
+
+  const [requestFailedReason, setRequestFailedReason] = React.useState({
+    openModal: false,
+    message: "",
+  });
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = React.useState({
     top: false,
@@ -91,6 +106,12 @@ const QueryStatus = () => {
   };
 
   useEffect(() => {
+    setLoader(true);
+    fetchMainTable();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchMainTable = () => {
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
@@ -98,9 +119,41 @@ const QueryStatus = () => {
             "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE order by RUN_ID desc;",
         },
       })
-      .then((response) => setData(response.data.data))
+      .then((response) => {
+        if (response?.data?.data) {
+          setLoader(false);
+          let data = response?.data?.data;
+          setData(data);
+
+          let providerList = [{ value: "all", name: "All" }];
+          let templateList = [{ value: "all", name: "All" }];
+          let statuses = [{ value: "all", name: "All" }];
+
+          data?.map((value) => {
+            providerList.push({
+              value: value.PROVIDER_NAME,
+              name: value.PROVIDER_NAME,
+            });
+            templateList.push({
+              value: value.TEMPLATE_NAME,
+              name: value.TEMPLATE_NAME,
+            });
+            statuses.push({
+              value: value.STATUS,
+              name: value.STATUS,
+            });
+            return null;
+          });
+          setFilteredList({
+            ...filteredList,
+            providersList: removeDuplicateObjects(providerList),
+            templatesList: removeDuplicateObjects(templateList),
+            statusList: removeDuplicateObjects(statuses),
+          });
+        }
+      })
       .catch((error) => console.log(error));
-  }, [user?.name]);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -109,6 +162,20 @@ const QueryStatus = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleChange = (event, name) => {
+    if (event?.includes("all")) {
+      setFilteredData({
+        ...filteredData,
+        [name]: ["all"],
+      });
+    } else {
+      setFilteredData({
+        ...filteredData,
+        [name]: event,
+      });
+    }
   };
 
   const downloadFile = (TEMPLATE_NAME, RUN_ID) => {
@@ -135,6 +202,12 @@ const QueryStatus = () => {
 
   const fetchcsvTableData = async (templateName, runId) => {
     templateName = templateName.replace(/\s/g, "_");
+    setViewTemplate({
+      ...viewTemplate,
+      openModal: true,
+      queryName: templateName,
+    });
+    setViewTable({ head: [], rows: [], runId: "" });
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
@@ -154,11 +227,165 @@ const QueryStatus = () => {
             });
           }
           setViewTable({ head: head, rows: row, runId: runId });
-          setViewTemplate({
-            ...viewTemplate,
-            openModal: true,
-            queryName: templateName,
-          });
+        }
+      })
+      .catch((error) => {
+        console.log("In API catch", error);
+      });
+  };
+
+  const handleUploadData = async (runId) => {
+    axios
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
+        params: {
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DCR_QUERY_REQUEST1 where run_id = '${runId}';`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          let data = response?.data?.data?.[0];
+          axios
+            .get(`http://127.0.0.1:5000/${user?.name}`, {
+              params: {
+                query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.DEMO_REQUESTS(QUERY_NAME,PROVIDER_NAME,COLUMN_NAMES,CONSUMER_NAME,FILE_NAME, match_attribute,match_attribute_value,Run_id) values ('${data.TEMPLATE_NAME}','${data.PROVIDER_NAME}','${data.COLUMNS}','${data.CONSUMER_NAME}','${data.FILE_NAME}','${data.ATTRIBUTE_NAME}','${data.ATTRIBUTE_VALUE}','${data.RUN_ID}');`,
+              },
+            })
+            .then((response) => {
+              if (response) {
+                callByPassUpload();
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const callByPassUpload = () => {
+    setTimeout(() => {
+      fetchMainTable();
+      axios
+        .get(`http://127.0.0.1:5000/${user?.name}/procedure`, {
+          params: {
+            query: `call DCR_SAMP_CONSUMER1.PUBLIC.proc_matched_data();`,
+          },
+        })
+        .then((response) => {
+          if (response) {
+            fetchMainTable();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          fetchMainTable();
+        });
+    }, 2000);
+  };
+
+  const handleFilter = (anchor) => {
+    setLoader(true);
+
+    setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: false });
+    setData([]);
+    setPage(0);
+    const finalProviderList =
+      filteredData?.providerNam?.length > 0
+        ? filteredData?.providerName
+            ?.map((item, index) =>
+              item !== "all"
+                ? "PROVIDER_NAME = '" +
+                  item +
+                  (index !== filteredData?.providerName?.length - 1
+                    ? "' or "
+                    : "'")
+                : ""
+            )
+            .join("")
+        : "";
+
+    const finalTemplateList =
+      filteredData?.templateName?.length > 0
+        ? filteredData?.templateName
+            ?.map((item, index) =>
+              item !== "all"
+                ? "TEMPLATE_NAME = '" +
+                  item +
+                  (index !== filteredData?.templateName?.length - 1
+                    ? "' or "
+                    : "'")
+                : ""
+            )
+            .join("")
+        : "";
+
+    const finalStatus =
+      filteredData?.status?.length > 0
+        ? filteredData?.status
+            ?.map((item, index) =>
+              item !== "all"
+                ? "STATUS = '" +
+                  item +
+                  (index !== filteredData?.status?.length - 1 ? "' or " : "'")
+                : ""
+            )
+            .join("")
+        : "";
+
+    let finalDate = "";
+    console.log("filteredData?.date", filteredData?.date);
+    if (filteredData?.date) {
+      const dateObj = new Date(parseInt((filteredData?.date).getTime()));
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1;
+      const day = dateObj.getDate().toString().padStart(2, "0");
+      finalDate = "REQUEST_TS = '" + year + "-" + month + "-" + day + "'";
+    }
+    console.log("finalDate", finalDate);
+
+    let finalResult =
+      (finalProviderList !== "" ? "(" + finalProviderList + ")" : "") +
+      (finalTemplateList !== ""
+        ? (finalProviderList !== "" ? " and " : "") +
+          "(" +
+          finalTemplateList +
+          ")"
+        : "") +
+      (finalStatus !== ""
+        ? (finalProviderList !== "" || finalTemplateList !== ""
+            ? " and "
+            : "") +
+          "(" +
+          finalStatus +
+          ")"
+        : "") +
+      (finalDate !== ""
+        ? (finalStatus !== "" ||
+          finalProviderList !== "" ||
+          finalTemplateList !== ""
+            ? " and "
+            : "") +
+          "(" +
+          finalDate +
+          ")"
+        : "");
+
+    axios
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
+        params: {
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE ${
+            finalResult !== "" ? `where ${finalResult}` : ""
+          } order by RUN_ID desc;`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          setLoader(false);
+          let data = response?.data?.data;
+          setData(data);
         }
       })
       .catch((error) => {
@@ -178,7 +405,7 @@ const QueryStatus = () => {
         {["right"].map((anchor) => (
           <React.Fragment key={anchor}>
             <button
-              className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+              className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-4 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
               onClick={toggleDrawer(anchor, true)}
             >
               <svg
@@ -233,12 +460,61 @@ const QueryStatus = () => {
                     </button>
                   </div>
                   <div className="mt-4 pb-2 flex flex-col gap-3">
-                    <div className="w-full mt-2">
+                    <div className="w-full">
                       <SelectDropdown
-                        title="Select category"
+                        title="Select Provider"
                         mode="multiple"
-                        name="category"
+                        name="providerName"
                         placeholder="Please select"
+                        value={filteredData?.providerName}
+                        data={filteredList.providersList}
+                        setValue={(e, value) => {
+                          handleChange(e, value);
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4 pb-2 flex flex-col gap-3">
+                    <div className="w-full">
+                      <SelectDropdown
+                        title="Select Template"
+                        mode="multiple"
+                        name="templateName"
+                        placeholder="Please select"
+                        value={filteredData?.templateName}
+                        data={filteredList.templatesList}
+                        setValue={(e, value) => {
+                          handleChange(e, value);
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4 pb-2 flex flex-col gap-3">
+                    <div className="w-full">
+                      <SelectDropdown
+                        title="Select Status"
+                        mode="multiple"
+                        name="status"
+                        placeholder="Please select"
+                        value={filteredData?.status}
+                        data={filteredList.statusList}
+                        setValue={(e, value) => {
+                          handleChange(e, value);
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4 pb-2 flex flex-col gap-1">
+                    <label className="ml-1 montserrat">Select Date</label>
+                    <div className="w-full">
+                      <DatePicker
+                        showIcon
+                        selected={filteredData?.date}
+                        onChange={(date) =>
+                          setFilteredData({ ...filteredData, date: date })
+                        }
+                        isClearable
+                        className="rounded-md pl-8 bg-transparent border border-electric-green"
                       />
                     </div>
                   </div>
@@ -246,20 +522,9 @@ const QueryStatus = () => {
                     <button
                       className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
                       type="submit"
-                      // onClick={() => handleSubmit(anchor)}
+                      onClick={() => handleFilter(anchor)}
                     >
                       Filter
-                      {/* {loader ? (
-                        <CircularProgress
-                          style={{
-                            width: "24px",
-                            height: "24px",
-                            color: "#FFFFFF",
-                          }}
-                        />
-                      ) : (
-                        "Filter"
-                      )} */}
                     </button>
                   </div>
                 </div>
@@ -268,7 +533,7 @@ const QueryStatus = () => {
           </React.Fragment>
         ))}
       </div>
-      {data.length > 0 ? (
+      {!loader ? (
         <div>
           <TableContainer>
             <Table
@@ -320,9 +585,9 @@ const QueryStatus = () => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {data &&
-                  data
+              {data && data?.length > 0 ? (
+                <TableBody>
+                  {data
                     ?.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
@@ -332,14 +597,14 @@ const QueryStatus = () => {
                         <TableRow
                           key={index}
                           sx={{
-                            "& td:last-child": {
-                              borderRight: 1,
-                              borderColor: "#d6d3d1",
-                            },
                             "& td": {
                               borderLeft: 1,
                               borderColor: "#d6d3d1",
                               color: "#0A2756",
+                            },
+                            "& td:last-child": {
+                              borderRight: 1,
+                              borderColor: "#d6d3d1",
                             },
                           }}
                         >
@@ -371,56 +636,52 @@ const QueryStatus = () => {
                             {handleDate(row.RUN_ID)}
                           </TableCell>
                           <TableCell align="center">
-                            <div className="flex justify-center">
-                              <button
-                                onClick={() =>
-                                  fetchcsvTableData(
-                                    row.TEMPLATE_NAME,
-                                    row.RUN_ID
-                                  )
-                                }
-                                className={`${
-                                  row.STATUS.toLowerCase() === "completed"
-                                    ? "text-deep-navy"
-                                    : "text-electric-green/50"
-                                } flex flex-row items-center px-2 justify-center`}
-                                disabled={
-                                  row.STATUS.toLowerCase() !== "completed"
-                                }
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="w-5 h-5"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                                  />
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                  />
-                                </svg>
-                                <span className="pl-2 underline">View</span>
-                              </button>
-
-                              {(row.TEMPLATE_NAME === "CUSTOMER ENRICHMENT" ||
-                                row.TEMPLATE_NAME ===
-                                  "customer_enrichment") && (
+                            {row.STATUS.toLowerCase() === "failed" ||
+                            row.STATUS.toLowerCase() === "false" ? (
+                              <div className="flex flex-row items-center justify-center">
                                 <button
                                   onClick={() =>
-                                    downloadFile(row.TEMPLATE_NAME, row.RUN_ID)
+                                    setRequestFailedReason({
+                                      ...requestFailedReason,
+                                      openModal: true,
+                                      message: row.ERROR,
+                                    })
+                                  }
+                                  className="flex flex-row px-2 text-red-600"
+                                  title="Request Error"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    class="w-5 h-5 text-red-600"
+                                  >
+                                    <path
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                                    />
+                                  </svg>
+                                  <span className="pl-2 underline">
+                                    Request Error
+                                  </span>
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex justify-center">
+                                <button
+                                  onClick={() =>
+                                    fetchcsvTableData(
+                                      row.TEMPLATE_NAME,
+                                      row.RUN_ID
+                                    )
                                   }
                                   className={`${
                                     row.STATUS.toLowerCase() === "completed"
                                       ? "text-deep-navy"
-                                      : "text-downriver-400"
+                                      : "text-electric-green/50"
                                   } flex flex-row items-center px-2 justify-center`}
                                   disabled={
                                     row.STATUS.toLowerCase() !== "completed"
@@ -437,20 +698,113 @@ const QueryStatus = () => {
                                     <path
                                       strokeLinecap="round"
                                       strokeLinejoin="round"
-                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                    />
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                                     />
                                   </svg>
-                                  <span className="pl-2 underline">
-                                    Download
-                                  </span>
+                                  <span className="pl-2 underline">View</span>
                                 </button>
-                              )}
-                            </div>
+                                {(row.TEMPLATE_NAME === "CUSTOMER ENRICHMENT" ||
+                                  row.TEMPLATE_NAME ===
+                                    "customer_enrichment") && (
+                                  <button
+                                    onClick={() =>
+                                      downloadFile(
+                                        row.TEMPLATE_NAME,
+                                        row.RUN_ID
+                                      )
+                                    }
+                                    className={`${
+                                      row.STATUS.toLowerCase() === "completed"
+                                        ? "text-deep-navy"
+                                        : "text-electric-green/50"
+                                    } flex flex-row items-center px-2 justify-center`}
+                                    disabled={
+                                      row.STATUS.toLowerCase() !== "completed"
+                                    }
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={1.5}
+                                      stroke="currentColor"
+                                      className="w-5 h-5"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                      />
+                                    </svg>
+                                    <span className="pl-2 underline">
+                                      Download
+                                    </span>
+                                  </button>
+                                )}
+                                {(row.TEMPLATE_NAME === "ADVERTISER MATCH" ||
+                                  row.TEMPLATE_NAME === "advertiser_match") && (
+                                  <button
+                                    onClick={() => handleUploadData(row.RUN_ID)}
+                                    disabled={
+                                      row.UPL_INTO_CLI_SPACE?.toLowerCase() ===
+                                        "true" &&
+                                      row.STATUS?.toLowerCase() === "completed"
+                                    }
+                                    className={`${
+                                      row.UPL_INTO_CLI_SPACE?.toLowerCase() !==
+                                        "true" &&
+                                      row.STATUS?.toLowerCase() === "completed"
+                                        ? "opacity-1 hover:text-inherit"
+                                        : "disabled opacity-10 hover:text-inherit"
+                                    }  px-2 hover:text-amaranth-600 flex flex-row items-center justify-center`}
+                                    title={
+                                      row.UPL_INTO_CLI_SPACE?.toLowerCase() ===
+                                      "true"
+                                        ? "Already Uploaded into client ecospace"
+                                        : "Upload match records into client ecospace"
+                                    }
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth="1.5"
+                                      stroke="currentColor"
+                                      className="w-5 h-5"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                                      />
+                                    </svg>
+                                    <span className="pl-2 underline">
+                                      Upload
+                                    </span>
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </TableCell>
                         </TableRow>
                       );
                     })}
-              </TableBody>
+                </TableBody>
+              ) : (
+                <TableRow className="text-deep-navy">
+                  <TableCell
+                    className="text-center border border-downriver-200"
+                    colSpan={7}
+                  >
+                    Currently We don't have data display!!
+                  </TableCell>
+                </TableRow>
+              )}
             </Table>
           </TableContainer>
           <TablePagination
@@ -476,44 +830,30 @@ const QueryStatus = () => {
         </div>
       )}
 
-      <Modal
+      <CustomTable
+        id={viewTable.runId}
+        head={viewTable.head}
+        rows={viewTable.rows}
+        pagination={
+          viewTemplate.queryName === "ADVERTISER_MATCH" ? "none" : true
+        }
         open={viewTemplate.openModal}
-        onClose={handleResultModalClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={resultstyle}>
-          <div className=" flex flex-col flex-grow w-full">
-            <div className="flex flex-row items-center justify-between sticky z-30 py-2 px-4 top-0 w-full bg-deep-navy text-white">
-              <h3 className="font-bold text-white">Query result</h3>
-              <button onClick={handleResultModalClose}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                </svg>
-              </button>
-            </div>
-            <div className="px-4">
-              {viewTable.head?.length > 0 && viewTable.rows?.length > 0 ? (
-                <CustomTable
-                  id={viewTable.runId}
-                  head={viewTable.head}
-                  rows={viewTable.rows}
-                  pagination={
-                    viewTemplate.queryName === "ADVERTISER_MATCH"
-                      ? "none"
-                      : true
-                  }
-                />
-              ) : null}
-            </div>
-          </div>
-        </Box>
-      </Modal>
+        handleClose={handleResultModalClose}
+        title={"Query Result"}
+      />
+
+      {requestFailedReason.openModal ? (
+        <CommonModal
+          open={requestFailedReason.openModal}
+          handleClose={() =>
+            setRequestFailedReason({ ...requestFailedReason, openModal: false })
+          }
+          title={"Request Error"}
+          message={requestFailedReason.message}
+          buttons={false}
+          textColor={"text-red-600"}
+        />
+      ) : null}
     </div>
   );
 };

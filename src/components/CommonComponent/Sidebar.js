@@ -4,7 +4,6 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as actions from "../../redux/actions/index";
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import GroupMLogo from "../../Assets/logo-download-01.png";
 import GroupMLogoDark from "../../Assets/logo-download-02.png";
@@ -326,9 +325,9 @@ const Sidebar = ({ children }) => {
             <div>
               <Button
                 id="basic-button"
-                aria-controls={open ? 'basic-menu' : undefined}
+                aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
+                aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
                 startIcon={<HelpOutline />}
                 className="text-deep-navy normal-case text-base"
@@ -341,7 +340,7 @@ const Sidebar = ({ children }) => {
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{
-                  'aria-labelledby': 'basic-button',
+                  "aria-labelledby": "basic-button",
                 }}
               >
                 <MenuItem onClick={handleClose}>User manual</MenuItem>
