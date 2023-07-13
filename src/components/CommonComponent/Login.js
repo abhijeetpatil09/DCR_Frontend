@@ -198,18 +198,24 @@ const Login = () => {
       </div>
 
       <div>
-        <button
-          onClick={handleSubmit}
-          className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-        >
-          {loading ? (
+        {loading ? (
+          <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green">
             <CircularProgress
-              style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
+              style={{
+                width: "24px",
+                height: "24px",
+                color: "#FFFFFF",
+              }}
             />
-          ) : (
-            "Log In"
-          )}
-        </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+          >
+            Log In
+          </button>
+        )}
       </div>
     </div>
   );

@@ -10,9 +10,6 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import NewCatalogUploadModal from "./components/NewCatalogUploadModal";
-// import UpdateCatalog from "./components/UpdateCatalog";
-
-// import { catalogUpdate } from "../../utils/data";
 
 import UpdateAttributeTable from "./components/UpdateAttributeTable";
 

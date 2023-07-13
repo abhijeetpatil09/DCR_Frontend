@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 import { useSelector } from "react-redux";
@@ -37,7 +37,6 @@ import "../pure-react.css";
 
 const initialState = {
   Query_Name: "",
-  Provider_Name: "",
   Column_Names: "",
   Consumer_Name: "",
   File_Name: "",
@@ -49,20 +48,23 @@ const initialState = {
 const MatchRate = () => {
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
+  const fileInputRef = useRef(null);
 
   const user = state && state.user;
   const TableData =
     state && state.PublisherForm && state.PublisherForm.TableData;
   const requestId =
     state && state.PublisherForm && state.PublisherForm.RequestId;
-
+  const loadingTable =
+    state && state.PublisherForm && state.PublisherForm.loadingTable;
   const [formData, setFormData] = useState({
     ...initialState,
-    Provider_Name: user?.name,
     Consumer_Name: user?.Consumer,
   });
 
   const [gender, setGender] = useState("male");
+  const [providerName, setProviderName] = useState("");
+
   const [age, setAge] = useState("age_0_6");
 
   const [tableHead, setTableHead] = useState([]);
@@ -78,6 +80,7 @@ const MatchRate = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState("");
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
@@ -130,10 +133,33 @@ const MatchRate = () => {
   }, [TableData]);
 
   useEffect(() => {
-    // setLoader(true);
+    dispatch(
+      actions.PublisherForm({
+        loadingTable: true,
+      })
+    );
     fetchMainTable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // UseEffect used for Inserting the Provider...
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
+        params: {
+          query: "select provider from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS;",
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          let provider_name = response?.data?.data?.[0];
+          setProviderName(provider_name.PROVIDER);
+        }
+      })
+      .catch((error) => console.log(error));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.name]);
 
   const fetchMainTable = () => {
     axios
@@ -145,12 +171,23 @@ const MatchRate = () => {
       })
       .then((response) => {
         if (response?.data?.data) {
-          // setLoader(false);
           let res = response?.data?.data;
           setTableData(res);
+          dispatch(
+            actions.PublisherForm({
+              loadingTable: false,
+            })
+          );
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        dispatch(
+          actions.PublisherForm({
+            loadingTable: false,
+          })
+        );
+      });
   };
 
   const handleCustomerFormData = (e) => {
@@ -232,16 +269,24 @@ const MatchRate = () => {
         if (response?.data?.data === true) {
           fetchMainTable();
           setLoading(false);
-          setToggleDrawerPosition({ ...toggleDrawerPosition, right: false });
 
           axios
             .get(`http://127.0.0.1:5000/${user?.name}`, {
               params: {
-                query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
+                query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${providerName}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
               },
             })
             .then((response) => {
               if (response) {
+                // Reset the file input
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = "";
+                }
+                setFormData({ ...initialState, Consumer_Name: user?.Consumer });
+                setToggleDrawerPosition({
+                  ...toggleDrawerPosition,
+                  right: false,
+                });
                 callByPassAPI();
               }
             })
@@ -261,58 +306,6 @@ const MatchRate = () => {
         setErrorMessage("Something went wrong, please try again later !!!");
         console.log(error);
       });
-  };
-
-  const handleUploadData = async (runId) => {
-    axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
-        params: {
-          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DCR_QUERY_REQUEST1 where run_id = '${runId}';`,
-        },
-      })
-      .then((response) => {
-        if (response?.data?.data) {
-          let data = response?.data?.data?.[0];
-          axios
-            .get(`http://127.0.0.1:5000/${user?.name}`, {
-              params: {
-                query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.DEMO_REQUESTS(QUERY_NAME,PROVIDER_NAME,COLUMN_NAMES,CONSUMER_NAME,FILE_NAME, match_attribute,match_attribute_value,Run_id) values ('${data.TEMPLATE_NAME}','${data.PROVIDER_NAME}','${data.COLUMNS}','${data.CONSUMER_NAME}','${data.FILE_NAME}','${data.ATTRIBUTE_NAME}','${data.ATTRIBUTE_VALUE}','${data.RUN_ID}');`,
-              },
-            })
-            .then((response) => {
-              if (response) {
-                callByPassUpload();
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const callByPassUpload = () => {
-    setTimeout(() => {
-      fetchMainTable();
-      axios
-        .get(`http://127.0.0.1:5000/${user?.name}/procedure`, {
-          params: {
-            query: `call DCR_SAMP_CONSUMER1.PUBLIC.proc_matched_data();`,
-          },
-        })
-        .then((response) => {
-          if (response) {
-            fetchMainTable();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          fetchMainTable();
-        });
-    }, 2000);
   };
 
   const fetchcsvTableData = async (templateName, runId) => {
@@ -348,7 +341,7 @@ const MatchRate = () => {
       });
   };
 
-  const toggleDrawer = (anchor, open) => (event) => {
+  const handleToggleDrawer = (anchor, open) => (event) => {
     if (
       event &&
       event.type === "keydown" &&
@@ -356,6 +349,7 @@ const MatchRate = () => {
     ) {
       return;
     }
+    setFormData({ ...initialState, Consumer_Name: user?.Consumer });
     setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
   };
 
@@ -375,7 +369,7 @@ const MatchRate = () => {
           <React.Fragment key={anchor}>
             <button
               className="my-2 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-              onClick={toggleDrawer(anchor, true)}
+              onClick={handleToggleDrawer(anchor, true)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -396,10 +390,10 @@ const MatchRate = () => {
             <SwipeableDrawer
               anchor={anchor}
               open={toggleDrawerPosition[anchor]}
-              onClose={toggleDrawer(anchor, false)}
-              onOpen={toggleDrawer(anchor, true)}
+              onClose={handleToggleDrawer(anchor, false)}
+              onOpen={handleToggleDrawer(anchor, true)}
             >
-              <div className="flex flex-col flex-shrink h-full w-full px-5    bg-deep-navy text-electric-green bg-[url('/static/media/Target audience _Two Color.6aa8a9f45675ef6dfbc33c3c3b61aa03.svg')] ">
+              <div className="flex flex-col flex-shrink h-full w-full px-5 bg-deep-navy text-electric-green bg-[url('/static/media/Target audience _Two Color.6aa8a9f45675ef6dfbc33c3c3b61aa03.svg')] ">
                 <img
                   className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
                   src={searchillustration}
@@ -414,7 +408,7 @@ const MatchRate = () => {
                     <h3 className="text-xl font-semibold">
                       New publisher query
                     </h3>
-                    <button onClick={toggleDrawer("right", false)}>
+                    <button onClick={handleToggleDrawer("right", false)}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -438,6 +432,7 @@ const MatchRate = () => {
                         name="Query_Name"
                         onChange={handleCustomerFormData}
                         required
+                        value={formData.Query_Name}
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
@@ -460,6 +455,7 @@ const MatchRate = () => {
                         id="myFileInput"
                         onChange={handleFileInput}
                         required
+                        ref={fileInputRef}
                       />
                     </div>
 
@@ -469,6 +465,7 @@ const MatchRate = () => {
                         name="Column_Names"
                         onChange={handleCustomerFormData}
                         required
+                        value={formData.Column_Names}
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
@@ -484,6 +481,7 @@ const MatchRate = () => {
                         name="Match_Attribute"
                         onChange={handleCustomerFormData}
                         required
+                        value={formData.Match_Attribute}
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
@@ -585,13 +583,19 @@ const MatchRate = () => {
                         </button>
                       )}
                     </div>
-                    {errorMessage !== "" && (
-                      <div className="py-2">
+                    <div className="py-2">
+                      {errorMessage !== "" ? (
                         <span className="text-red-600 font-bold">
                           {errorMessage}
                         </span>
-                      </div>
-                    )}
+                      ) : (
+                        loading && (
+                          <span className="text-red-600">
+                            Uploading the Attachment. Please wait
+                          </span>
+                        )
+                      )}
+                    </div>
                   </div>
                 </form>
               </div>
@@ -605,213 +609,195 @@ const MatchRate = () => {
         src={enrichment}
         alt=""
       />
-      <div className="flex flex-col w-full px-5">
-        <h1 className=" mt-4 text-xl font-regular text-deep-navy pb-2 ">
-          Recent queries
-        </h1>
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 650, borderRadius: 0 }}
-            stickyHeader
-            size="small"
-            classes={{ root: "w-100" }}
-            aria-label="simple table"
-          >
-            <TableHead>
-              <TableRow
-                sx={{
-                  "& th": {
-                    fontSize: "0.9rem",
-                    fontWeight: 900,
-                    color: "#0A2756",
-                    backgroundColor: "#e8effb",
-                    borderRadius: 0,
-                    borderTop: 1,
-                    borderRight: 1,
-                    borderColor: "#d6d3d1",
-                  },
-                  "& th:first-of-type": {
-                    borderLeft: 1,
-                    borderColor: "#d6d3d1",
-                  },
-                }}
-              >
-                <TableCell key={1} align="center">
-                  Status
-                </TableCell>
-                <TableCell key={2} align="center">
-                  Request ID
-                </TableCell>
-                <TableCell key={3} align="center">
-                  Identifier Type
-                </TableCell>
-                <TableCell key={4} align="center">
-                  Match Attribute
-                </TableCell>
-                <TableCell key={5} align="center">
-                  Match count
-                </TableCell>
-                <TableCell key={6} align="center">
-                  Requested
-                </TableCell>
-                <TableCell key={7} align="center">
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData?.map((row, index) => {
-                return (
-                  <TableRow
-                    key={index}
-                    sx={{
-                      "& td:last-child": {
-                        borderRight: 1,
-                        borderColor: "#d6d3d1",
-                      },
-                      "& td": {
-                        borderLeft: 1,
-                        borderColor: "#d6d3d1",
-                        color: "#0A2756",
-                      },
-                    }}
-                  >
-                    <TableCell align="center">
-                      <span>
-                        {row.STATUS.toLowerCase() === "true"
-                          ? ApprovedStatus("approved")
-                          : row.STATUS.toLowerCase() === "false"
-                          ? RejectedStatus("rejected")
-                          : row.STATUS.toLowerCase() === "completed"
-                          ? CompletedStatus(row.STATUS)
-                          : row.STATUS.toLowerCase() === "failed"
-                          ? FailedStatus(row.STATUS)
-                          : row.STATUS.toLowerCase() === "waiting for approval"
-                          ? WaitingStatus(row.STATUS)
-                          : OtherStatus(row.STATUS)}
-                      </span>
-                    </TableCell>
-                    <TableCell align="center">{row.RUN_ID}</TableCell>
-                    <TableCell align="center">{row.IDENTIFIER_TYPE}</TableCell>
-                    <TableCell align="center">{row.ATTRIBUTE}</TableCell>
-                    <TableCell align="center">{row.MATCH_COUNT}</TableCell>
-                    <TableCell align="center">
-                      {handleDate(row.RUN_ID)}
-                    </TableCell>
-                    <TableCell align="center">
-                      {row.STATUS.toLowerCase() === "failed" ||
-                      row.STATUS.toLowerCase() === "false" ? (
-                        <div className="flex flex-row items-center justify-center">
-                          <button
-                            onClick={() =>
-                              setRequestFailedReason({
-                                ...requestFailedReason,
-                                openModal: true,
-                                message: row.ERROR,
-                              })
-                            }
-                            className="flex flex-row px-2 text-red-600"
-                            title="Request Error"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-5 h-5"
+      {!loadingTable ? (
+        <div className="flex flex-col w-full px-5">
+          <h1 className=" mt-4 text-xl font-regular text-deep-navy pb-2 ">
+            Recent queries
+          </h1>
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 650, borderRadius: 0 }}
+              stickyHeader
+              size="small"
+              classes={{ root: "w-100" }}
+              aria-label="simple table"
+            >
+              <TableHead>
+                <TableRow
+                  sx={{
+                    "& th": {
+                      fontSize: "0.9rem",
+                      fontWeight: 900,
+                      color: "#0A2756",
+                      backgroundColor: "#e8effb",
+                      borderRadius: 0,
+                      borderTop: 1,
+                      borderRight: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                    "& th:first-of-type": {
+                      borderLeft: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                  }}
+                >
+                  <TableCell key={1} align="center">
+                    Status
+                  </TableCell>
+                  <TableCell key={2} align="center">
+                    Request ID
+                  </TableCell>
+                  <TableCell key={3} align="center">
+                    Identifier Type
+                  </TableCell>
+                  <TableCell key={4} align="center">
+                    Match Attribute
+                  </TableCell>
+                  <TableCell key={5} align="center">
+                    Match count
+                  </TableCell>
+                  <TableCell key={6} align="center">
+                    Requested
+                  </TableCell>
+                  <TableCell key={7} align="center">
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tableData?.map((row, index) => {
+                  return (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        "& td:last-child": {
+                          borderRight: 1,
+                          borderColor: "#d6d3d1",
+                        },
+                        "& td": {
+                          borderLeft: 1,
+                          borderColor: "#d6d3d1",
+                          color: "#0A2756",
+                        },
+                      }}
+                    >
+                      <TableCell align="center">
+                        <span>
+                          {row.STATUS.toLowerCase() === "true"
+                            ? ApprovedStatus("approved")
+                            : row.STATUS.toLowerCase() === "false"
+                            ? RejectedStatus("rejected")
+                            : row.STATUS.toLowerCase() === "completed"
+                            ? CompletedStatus(row.STATUS)
+                            : row.STATUS.toLowerCase() === "failed"
+                            ? FailedStatus(row.STATUS)
+                            : row.STATUS.toLowerCase() ===
+                              "waiting for approval"
+                            ? WaitingStatus(row.STATUS)
+                            : OtherStatus(row.STATUS)}
+                        </span>
+                      </TableCell>
+                      <TableCell align="center">{row.RUN_ID}</TableCell>
+                      <TableCell align="center">
+                        {row.IDENTIFIER_TYPE}
+                      </TableCell>
+                      <TableCell align="center">{row.ATTRIBUTE}</TableCell>
+                      <TableCell align="center">{row.MATCH_COUNT}</TableCell>
+                      <TableCell align="center">
+                        {handleDate(row.RUN_ID)}
+                      </TableCell>
+                      <TableCell align="center">
+                        {row.STATUS.toLowerCase() === "failed" ||
+                        row.STATUS.toLowerCase() === "false" ? (
+                          <div className="flex flex-row items-center justify-center">
+                            <button
+                              onClick={() =>
+                                setRequestFailedReason({
+                                  ...requestFailedReason,
+                                  openModal: true,
+                                  message: row.ERROR,
+                                })
+                              }
+                              className="flex flex-row px-2 text-red-600"
+                              title="Request Error"
                             >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                              />
-                            </svg>
-                            <span className="pl-2 underline">
-                              Request Error
-                            </span>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex justify-between">
-                          <button
-                            onClick={() =>
-                              fetchcsvTableData(row.TEMPLATE_NAME, row.RUN_ID)
-                            }
-                            className={`${
-                              row.STATUS.toLowerCase() === "completed"
-                                ? "text-deep-navy"
-                                : "text-electric-green/50"
-                            } flex flex-row items-center px-2 justify-center`}
-                            disabled={row.STATUS.toLowerCase() !== "completed"}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="w-5 h-5"
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                                />
+                              </svg>
+                              <span className="pl-2 underline">
+                                Request Error
+                              </span>
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex justify-center">
+                            <button
+                              onClick={() =>
+                                fetchcsvTableData(row.TEMPLATE_NAME, row.RUN_ID)
+                              }
+                              className={`${
+                                row.STATUS.toLowerCase() === "completed"
+                                  ? "text-deep-navy"
+                                  : "text-electric-green/50"
+                              } flex flex-row items-center px-2 justify-center`}
+                              disabled={
+                                row.STATUS.toLowerCase() !== "completed"
+                              }
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            <span className="pl-2 underline">View</span>
-                          </button>
-                          <button
-                            onClick={() => handleUploadData(row.RUN_ID)}
-                            disabled={
-                              row.UPL_INTO_CLI_SPACE?.toLowerCase() ===
-                                "true" &&
-                              row.STATUS?.toLowerCase() === "completed"
-                            }
-                            className={`${
-                              row.UPL_INTO_CLI_SPACE?.toLowerCase() !==
-                                "true" &&
-                              row.STATUS?.toLowerCase() === "completed"
-                                ? "opacity-1 hover:text-inherit"
-                                : "disabled opacity-10 hover:text-inherit"
-                            }  px-2 hover:text-amaranth-600 flex flex-row items-center justify-center`}
-                            title={
-                              row.UPL_INTO_CLI_SPACE?.toLowerCase() === "true"
-                                ? "Already Uploaded into client ecospace"
-                                : "Upload match records into client ecospace"
-                            }
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="w-5 h-5"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                              />
-                            </svg>
-                            <span className="pl-2 underline">Upload</span>
-                          </button>
-                        </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              <span className="pl-2 underline">View</span>
+                            </button>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      ) : (
+        <div className="flex justify-center mt-8">
+          <CircularProgress
+            style={{
+              width: "60px",
+              height: "60px",
+              color: "#0A2756",
+            }}
+            thickness={5}
+          />
+        </div>
+      )}
 
       <CustomTable
         id={requestId}
@@ -819,7 +805,14 @@ const MatchRate = () => {
         rows={tableRows}
         pagination={"none"}
         open={viewActionModal}
-        handleClose={() => setViewActionModal(false)}
+        handleClose={() => {
+          setViewActionModal(false);
+          dispatch(
+            actions.PublisherForm({
+              TableData: { head: [], rows: [] },
+            })
+          );
+        }}
         title={"Query Result"}
       />
 

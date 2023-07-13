@@ -19,6 +19,7 @@ import ConsumerAdmin from "./components/Admin/ConsumerAdmin";
 import ProviderAdmin from "./components/Admin/ProviderAdmin/ProviderAdmin";
 import PrivacyPolicy from "./components/CommonComponent/CommonPages/PrivacyPolicy";
 import TermsAndConditions from "./components/CommonComponent/CommonPages/TermsAndConditions";
+import HowToVideos from "./components/CommonComponent/howToVideos";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -46,6 +47,7 @@ const App = () => {
                   <Route path="/upload-catalog" element={<UploadCatalog />} />
                   <Route path="/consumer-admin" element={<ConsumerAdmin />} />
                   <Route path="/provider-admin" element={<ProviderAdmin />} />
+                  <Route path="/how-to-videos" element={<HowToVideos />} />
                 </Routes>
               </Sidebar>
             }
@@ -68,4 +70,3 @@ const PrivateRouter = () => {
     </div>
   );
 };
-

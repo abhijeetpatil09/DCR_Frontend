@@ -4,7 +4,7 @@ import { updateObject } from '../utility/utility';
 const initialState = {
     RequestId: '',
     TableData: {},
-    fetchData: false
+    loadingTable: false
 };
 
 const reducer = (state = initialState, action) => {

@@ -71,8 +71,8 @@ const LandingPage = () => {
                       aria-hidden="true"
                       className="h-3.5 w-3.5 overflow-visible stroke-slate-700"
                       fill="none"
-                      stroke-width="2"
-                      stroke-linecap="round"
+                      strokeWidth="2"
+                      strokeLinecap="round"
                     >
                       <path
                         d="M0 1H14M0 7H14M0 13H14"
@@ -508,9 +508,9 @@ const LandingPage = () => {
                       <path
                         d="m30 15-4 5-4-11-4 18-4-11-4 7-4-5"
                         stroke="url(#:R2mdm:)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       ></path>
                     </svg>
                   </div>
@@ -680,9 +680,9 @@ const LandingPage = () => {
                       <path
                         d="m30 15-4 5-4-11-4 18-4-11-4 7-4-5"
                         stroke="url(#:Rardm:)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       ></path>
                     </svg>
                   </div>

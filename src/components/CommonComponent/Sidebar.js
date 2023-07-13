@@ -210,13 +210,13 @@ const Sidebar = ({ children }) => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
-                  class="w-6 h-6"
+                  className="w-6 h-6"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
                   />
                 </svg>
@@ -246,13 +246,13 @@ const Sidebar = ({ children }) => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
-                  class="w-5 h-5 stroke-2"
+                  className="w-5 h-5 stroke-2"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                   />
                 </svg>
@@ -303,7 +303,7 @@ const Sidebar = ({ children }) => {
         </ul>
       </aside>
 
-      <div className="flex flex-col flex-grow w-full  overflow-hidden mb-8">
+      <div className="flex flex-col flex-grow w-full  overflow-hidden">
         {/* HEADER */}
         <div className="sticky top-0 z-30 flex flex-row justify-between items-center bg-white drop-shadow-sm h-20">
           <div>
@@ -382,7 +382,7 @@ const Sidebar = ({ children }) => {
           &copy; 2023 Hoonar Tekwurks Private Ltd.
         </div> */}
         {/* CONTAINER */}
-        <main className="flex flex-col w-full overflow-auto h-full mb-4">
+        <main className="flex flex-col w-full overflow-auto h-full">
           <div className="w-full h-full">{children}</div>
         </main>
       </div>

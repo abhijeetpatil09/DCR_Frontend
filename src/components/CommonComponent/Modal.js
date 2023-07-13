@@ -10,7 +10,7 @@ const style = {
   width: "auto",
   bgcolor: "background.paper",
   p: 4,
-  borderRadius: 5,
+  borderRadius: 2,
 };
 
 const CommonModal = ({

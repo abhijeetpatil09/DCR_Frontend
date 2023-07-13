@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
-import AWS from "aws-sdk";
 import axios from "axios";
-import { toast } from "react-toastify";
-
-import { useDispatch, useSelector } from "react-redux";
-
-import * as actions from "../redux/actions/index";
-import SelectDropdown from "./CommonComponent/SelectDropdown";
 
 import {
-  Alert,
-  Stack,
+  CircularProgress,
   SwipeableDrawer,
   Table,
   TableBody,
@@ -19,8 +11,13 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 
-import CommonTable from "./CommonComponent/Table";
+import * as actions from "../redux/actions/index";
+import SelectDropdown from "./CommonComponent/SelectDropdown";
+
+import CommonModal from "./CommonComponent/Modal";
+import CustomTable from "./CommonComponent/Table";
 
 import {
   ApprovedStatus,
@@ -34,21 +31,22 @@ import {
 import enrichment from "../Assets/Profiling_Isometric.svg";
 import searchillustration from "../Assets/Target audience _Two Color.svg";
 
-import { handleDate } from "../utils/commonFunctions";
+import {
+  jsonToCsv,
+  handleDate,
+  downloadFileInCSV,
+} from "../utils/commonFunctions";
 
 import "./styles.css";
 import "./pure-react.css";
-import Item from "antd/es/list/Item";
-import { Button, Card, Typography } from "antd";
 
-const s3 = new AWS.S3({
-  accessKeyId: "AKIA57AGVWXYVR36XIEC",
-  secretAccessKey: "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",
-  // signatureVersion: 'v4',
-  region: "ap-south-1",
-  // region: 'ap-south-1',
-});
-
+const initialState = {
+  Query_Name: "",
+  Provider_Name: "",
+  Column_Names: [],
+  Consumer_Name: "",
+  Attribute_Value: "",
+};
 const Enrichment = () => {
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -56,14 +54,12 @@ const Enrichment = () => {
   const user = state && state.user;
   const TableData = state && state.ConsumerForm && state.ConsumerForm.TableData;
   const requestId = state && state.ConsumerForm && state.ConsumerForm.RequestId;
-  const fetchData = state && state.ConsumerForm && state.ConsumerForm.fetchData;
+  const loadingTable =
+    state && state.ConsumerForm && state.ConsumerForm.loadingTable;
 
   const [formData, setFormData] = useState({
-    Query_Name: "",
-    Provider_Name: "",
-    Column_Names: [],
+    ...initialState,
     Consumer_Name: user?.Consumer,
-    Attribute_Value: "",
   });
 
   const [tableHead, setTableHead] = useState([]);
@@ -76,6 +72,13 @@ const Enrichment = () => {
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
 
   const [tableData, setTableData] = useState([]);
+  const [viewActionModal, setViewActionModal] = useState(false);
+  const [requestFailedReason, setRequestFailedReason] = React.useState({
+    openModal: false,
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
     top: false,
@@ -85,18 +88,6 @@ const Enrichment = () => {
     search: false,
   });
 
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
-  };
-
   useEffect(() => {
     if (TableData) {
       setTableHead(TableData?.head || []);
@@ -105,6 +96,29 @@ const Enrichment = () => {
   }, [TableData]);
 
   useEffect(() => {
+    let intervalId;
+    if (byPassAPICalled === true) {
+      intervalId = setInterval(() => {
+        fetchMainTable();
+      }, 5000);
+    }
+    return () => {
+      clearInterval(intervalId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [byPassAPICalled]);
+
+  useEffect(() => {
+    dispatch(
+      actions.ConsumerQueryForm({
+        loadingTable: true,
+      })
+    );
+    fetchMainTable();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchMainTable = () => {
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
@@ -116,12 +130,22 @@ const Enrichment = () => {
         if (response?.data?.data) {
           let res = response?.data?.data;
           setTableData(res);
-        } else {
-          setTableData([]);
+          dispatch(
+            actions.ConsumerQueryForm({
+              loadingTable: false,
+            })
+          );
         }
       })
-      .catch((error) => console.log(error));
-  }, [user?.name]);
+      .catch((error) => {
+        console.log(error);
+        dispatch(
+          actions.ConsumerQueryForm({
+            loadingTable: false,
+          })
+        );
+      });
+  };
 
   useEffect(() => {
     axios
@@ -250,92 +274,76 @@ const Enrichment = () => {
     }
   };
 
-  const callByPassAPI = () => {
-    setByPassAPICalled(true);
-    setTimeout(() => {
-      axios
-        .get(`http://127.0.0.1:5000/${user?.name}/procedure`, {
-          params: {
-            query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS_1();`,
-          },
-        })
-        .then((response) => {
-          if (response) {
-            fetchcsvTableData();
-            setByPassAPICalled(false);
-          } else {
-            setByPassAPICalled(false);
-            dispatch(
-              actions.ConsumerQueryForm({
-                fetchData: false,
-              })
-            );
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          setByPassAPICalled(false);
-          dispatch(
-            actions.ConsumerQueryForm({
-              fetchData: false,
-            })
-          );
-        });
-    }, 5000);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (byPassAPICalled) {
-      toast.error(
-        "We are fetching the data for current request. Please wait..."
-      );
-      return;
-    }
-    formData.RunId = Date.now();
-
-    const keys = Object.keys(formData);
-    let csv = keys.join(",") + "\n";
-    for (const obj of [formData]) {
-      const values = keys.map((key) => obj[key]);
-      csv += values.join(",") + "\n";
-    }
-
-    const blob = new Blob([csv], { type: "text/csv" });
-
-    const params = {
-      Bucket: "dcr-poc",
-      Key:
-        "query_request/" +
-        formData["Query_Name"] +
-        "_" +
-        formData["RunId"] +
-        ".csv",
-      Body: blob,
-    };
-
-    s3.putObject(params, (err, data) => {
-      if (err) {
-        console.log("err", err);
-      } else {
-        console.log("data", data);
-      }
-    });
-
+  const downloadFile = (TEMPLATE_NAME, RUN_ID) => {
+    TEMPLATE_NAME = TEMPLATE_NAME.replace(/\s/g, "_");
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
+        responseType: "json",
         params: {
-          query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id, attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.Attribute_Value}');`,
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${TEMPLATE_NAME}_${RUN_ID};`,
+        },
+      })
+      .then((response) => {
+        if (response?.data) {
+          const csvData = jsonToCsv(response?.data); // Create a Blob from the CSV data
+          downloadFileInCSV(csvData, TEMPLATE_NAME, RUN_ID);
+        } else {
+          console.log("File cannot be downloaded...");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const callByPassAPI = () => {
+    setByPassAPICalled(true);
+    axios
+      .get(`http://127.0.0.1:5000/${user?.name}/procedure`, {
+        params: {
+          query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS_1();`,
         },
       })
       .then((response) => {
         if (response) {
+          fetchMainTable();
+          setByPassAPICalled(false);
+        } else {
+          fetchMainTable(false);
+          setByPassAPICalled(false);
+        }
+      })
+      .catch(() => {
+        setByPassAPICalled(false);
+        fetchMainTable(false);
+      });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    formData.RunId = Date.now();
+
+    setLoading(true);
+    const delimiter = "&";
+    const selectedColumns = `#${formData.Column_Names?.join(delimiter)}#`;
+
+    axios
+      .get(`http://127.0.0.1:5000/${user?.name}`, {
+        params: {
+          query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id, attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${selectedColumns}','${formData.Consumer_Name}','${formData.RunId}', '${formData.Attribute_Value}');`,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          fetchMainTable();
+          setLoading(false);
           dispatch(
             actions.ConsumerQueryForm({
               RequestId: formData?.RunId,
-              fetchData: true,
             })
           );
+          setFormData({ ...initialState, Consumer_Name: user?.Consumer });
+          setToggleDrawerPosition({ ...toggleDrawerPosition, right: false });
           callByPassAPI();
         }
       })
@@ -344,41 +352,50 @@ const Enrichment = () => {
       });
   };
 
-  const fetchTable = (data) => {
-    let head = [];
-    let row = [];
-    if (data?.length > 0) {
-      head = data && Object.keys(data[0]);
-      data?.map((obj) => {
-        return row.push(head?.map((key) => obj[key]));
-      });
-    }
-    dispatch(
-      actions.ConsumerQueryForm({
-        TableData: { head: head, rows: row },
-        fetchData: false,
-      })
-    );
-  };
+  const fetchcsvTableData = async (templateName, runId) => {
+    templateName = templateName.replace(/\s/g, "_");
 
-  const fetchcsvTableData = async () => {
+    setViewActionModal(true);
     axios
       .get(`http://127.0.0.1:5000/${user?.name}`, {
         params: {
-          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${formData?.Query_Name}_${formData?.RunId} limit 1000;`,
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${templateName}_${runId} limit 1000;`,
         },
       })
       .then((response) => {
         if (response?.data?.data) {
-          fetchTable(response?.data?.data, formData?.RunId);
-          toast.success(
-            `Data fetched successfully. Request Id: ${formData?.RunId}`
+          let data = response?.data?.data;
+          let head = [];
+          let row = [];
+          if (data?.length > 0) {
+            head = data && Object.keys(data[0]);
+            data?.map((obj) => {
+              return row.push(head?.map((key) => obj[key]));
+            });
+          }
+          dispatch(
+            actions.ConsumerQueryForm({
+              TableData: { head: head, rows: row },
+              RequestId: runId,
+            })
           );
         }
       })
       .catch((error) => {
         console.log("In API catch", error);
       });
+  };
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setFormData({ ...initialState, Consumer_Name: user?.Consumer });
+    setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
   };
 
   return (
@@ -530,12 +547,24 @@ const Enrichment = () => {
                     </div>
 
                     <div className="flex justify-end">
-                      <button
-                        className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
-                        type="submit"
-                      >
-                        Submit query
-                      </button>
+                      {loading ? (
+                        <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
+                          <CircularProgress
+                            style={{
+                              width: "24px",
+                              height: "24px",
+                              color: "#FFFFFF",
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <button
+                          className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                          type="submit"
+                        >
+                          Submit query
+                        </button>
+                      )}
                     </div>
                   </div>
                 </form>
@@ -551,238 +580,252 @@ const Enrichment = () => {
         alt=""
       />
 
-      <div className="flex flex-col w-full">
-       <h2 className="text-lg font-medium mb-2 text-deep-navy">Recent queries</h2>
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 650, borderRadius: 0 }}
-            stickyHeader
-            size="small"
-            classes={{ root: "w-100 bg-white/70" }}
-            aria-label="simple table"
-          >
-            <TableHead>
-              <TableRow
-                sx={{
-                  "& th": {
-                    fontSize: "0.9rem",
-                    fontWeight: 900,
-                    color: "#0A2756",
-                    backgroundColor: "#e8effb",
-                    borderRadius: 0,
-                    borderTop: 1,
-                    borderRight: 1,
-                    borderColor: "#d6d3d1",
-                  },
-                  "& th:first-of-type": {
-                    borderLeft: 1,
-                    borderColor: "#d6d3d1",
-                  },
-                }}
-              >
-                {/* <TableCell key={0} align="center"></TableCell> */}
-                <TableCell key={1} align="center">
-                  Status
-                </TableCell>
-                <TableCell key={2} align="center">
-                  Request ID
-                </TableCell>
-                <TableCell key={3} align="center">
-                  Column names
-                </TableCell>
-                <TableCell key={4} align="center">
-                  Identifier Type
-                </TableCell>
-                <TableCell key={5} align="center">
-                  Match count
-                </TableCell>
-                <TableCell key={6} align="center">
-                  Requested
-                </TableCell>
-                <TableCell key={7} align="center">
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData?.map((row, index) => {
-                return (
-                  <TableRow
-                    key={index}
-                    sx={{
-                      "& td:last-child": {
-                        borderRight: 1,
-                        borderColor: "#d6d3d1",
-                      },
-                      "& td": {
-                        borderLeft: 1,
-                        borderColor: "#d6d3d1",
-                        color: "#0A2756",
-                      },
-                    }}
-                  >
-                    {/* <TableCell align="center">
-                      <span className="relative flex h-3 w-3 mr-2">
-                        {row.STATUS.toLowerCase() === "completed" ||
-                        row.STATUS.toLowerCase() === "true" ? (
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-400"></span>
-                        ) : row.STATUS.toLowerCase() === "false" ||
-                          row.STATUS.toLowerCase() === "failed" ? (
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-red-400"></span>
-                        ) : (
-                          <>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-downriver-400"></span>
-                          </>
-                        )}
-                      </span>
-                    </TableCell> */}
-                    <TableCell align="center">
-                      <span>
-                        {row.STATUS.toLowerCase() === "true"
-                          ? ApprovedStatus("approved")
-                          : row.STATUS.toLowerCase() === "false"
-                          ? RejectedStatus("rejected")
-                          : row.STATUS.toLowerCase() === "completed"
-                          ? CompletedStatus(row.STATUS)
-                          : row.STATUS.toLowerCase() === "failed"
-                          ? FailedStatus(row.STATUS)
-                          : row.STATUS.toLowerCase() === "waiting for approval"
-                          ? WaitingStatus(row.STATUS)
-                          : OtherStatus(row.STATUS)}
-                      </span>
-                    </TableCell>
-                    <TableCell align="center">{row.RUN_ID}</TableCell>
-                    <TableCell align="center">{row.COLOUMNS}</TableCell>
-                    <TableCell align="center">{row.IDENTIFIER_TYPE}</TableCell>
-                    <TableCell align="center">{row.MATCH_COUNT}</TableCell>
-                    <TableCell align="center">
-                      {handleDate(row.RUN_ID)}
-                    </TableCell>
-                    <TableCell align="center">
-                      <div className="flex justify-center">
+      {!loadingTable ? (
+        <div className="flex flex-col w-full">
+          <h2 className="text-lg font-medium mb-2 text-deep-navy">
+            Recent queries
+          </h2>
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 650, borderRadius: 0 }}
+              stickyHeader
+              size="small"
+              classes={{ root: "w-100 bg-white/70" }}
+              aria-label="simple table"
+            >
+              <TableHead>
+                <TableRow
+                  sx={{
+                    "& th": {
+                      fontSize: "0.9rem",
+                      fontWeight: 900,
+                      color: "#0A2756",
+                      backgroundColor: "#e8effb",
+                      borderRadius: 0,
+                      borderTop: 1,
+                      borderRight: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                    "& th:first-of-type": {
+                      borderLeft: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                  }}
+                >
+                  <TableCell key={1} align="center">
+                    Status
+                  </TableCell>
+                  <TableCell key={2} align="center">
+                    Request ID
+                  </TableCell>
+                  <TableCell key={3} align="center">
+                    Column names
+                  </TableCell>
+                  <TableCell key={4} align="center">
+                    Identifier Type
+                  </TableCell>
+                  <TableCell key={5} align="center">
+                    Match count
+                  </TableCell>
+                  <TableCell key={6} align="center">
+                    Requested
+                  </TableCell>
+                  <TableCell key={7} align="center">
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tableData?.map((row, index) => {
+                  return (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        "& td:last-child": {
+                          borderRight: 1,
+                          borderColor: "#d6d3d1",
+                        },
+                        "& td": {
+                          borderLeft: 1,
+                          borderColor: "#d6d3d1",
+                          color: "#0A2756",
+                        },
+                      }}
+                    >
+                      <TableCell align="center">
+                        <span>
+                          {row.STATUS.toLowerCase() === "true"
+                            ? ApprovedStatus("approved")
+                            : row.STATUS.toLowerCase() === "false"
+                            ? RejectedStatus("rejected")
+                            : row.STATUS.toLowerCase() === "completed"
+                            ? CompletedStatus(row.STATUS)
+                            : row.STATUS.toLowerCase() === "failed"
+                            ? FailedStatus(row.STATUS)
+                            : row.STATUS.toLowerCase() ===
+                              "waiting for approval"
+                            ? WaitingStatus(row.STATUS)
+                            : OtherStatus(row.STATUS)}
+                        </span>
+                      </TableCell>
+                      <TableCell align="center">{row.RUN_ID}</TableCell>
+                      <TableCell align="center">{row.COLOUMNS}</TableCell>
+                      <TableCell align="center">
+                        {row.IDENTIFIER_TYPE}
+                      </TableCell>
+                      <TableCell align="center">{row.MATCH_COUNT}</TableCell>
+                      <TableCell align="center">
+                        {handleDate(row.RUN_ID)}
+                      </TableCell>
+                      <TableCell align="center">
                         {row.STATUS.toLowerCase() === "failed" ||
                         row.STATUS.toLowerCase() === "false" ? (
-                          <button
-                            // onClick={() =>
-                            //   setRequestFailedReason({
-                            //     ...requestFailedReason,
-                            //     openModal: true,
-                            //     message: item.ERROR,
-                            //   })
-                            // }
-                            className="flex flex-row items-center px-2 justify-center text-red-600"
-                            title="Request Error"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-5 h-5 text-red-600"
+                          <div className="flex justify-center">
+                            <button
+                              onClick={() =>
+                                setRequestFailedReason({
+                                  ...requestFailedReason,
+                                  openModal: true,
+                                  message: row.ERROR,
+                                })
+                              }
+                              className="flex flex-row items-center px-2 justify-center text-red-600"
+                              title="Request Error"
                             >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                              />
-                            </svg>
-                            <span className="pl-2 underline">Error</span>
-                          </button>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-5 h-5 text-red-600"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                                />
+                              </svg>
+                              <span className="pl-2 underline">Error</span>
+                            </button>
+                          </div>
                         ) : (
-                          <button
-                            // onClick={() =>
-                            //   fetchcsvTableData(
-                            //     row.TEMPLATE_NAME,
-                            //     row.RUN_ID
-                            //   )
-                            // }
-                            className={`${
-                              row.STATUS.toLowerCase() === "completed"
-                                ? "text-deep-navy"
-                                : "text-electric-green/50"
-                            } flex flex-row items-center px-2 justify-center`}
-                            disabled={row.STATUS.toLowerCase() !== "completed"}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="w-5 h-5"
+                          <div className="flex justify-between">
+                            <button
+                              onClick={() =>
+                                fetchcsvTableData(row.TEMPLATE_NAME, row.RUN_ID)
+                              }
+                              className={`${
+                                row.STATUS.toLowerCase() === "completed"
+                                  ? "text-deep-navy"
+                                  : "text-electric-green/50"
+                              } flex flex-row items-center px-2 justify-center`}
+                              disabled={
+                                row.STATUS.toLowerCase() !== "completed"
+                              }
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            <span className="pl-2 underline">View</span>
-                          </button>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              <span className="pl-2 underline">View</span>
+                            </button>
+                            <button
+                              onClick={() =>
+                                downloadFile(row.TEMPLATE_NAME, row.RUN_ID)
+                              }
+                              className={`${
+                                row.STATUS.toLowerCase() === "completed"
+                                  ? "text-deep-navy"
+                                  : "text-electric-green/50"
+                              } flex flex-row items-center px-2 justify-center`}
+                              disabled={
+                                row.STATUS.toLowerCase() !== "completed"
+                              }
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                />
+                              </svg>
+                              <span className="pl-2 underline">Download</span>
+                            </button>
+                          </div>
                         )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      ) : (
+        <div className="flex justify-center mt-8">
+          <CircularProgress
+            style={{
+              width: "60px",
+              height: "60px",
+              color: "#0A2756",
+            }}
+            thickness={5}
+          />
+        </div>
+      )}
 
-                        <button
-                          // onClick={() =>
-                          //   downloadFile(row.TEMPLATE_NAME, row.RUN_ID)
-                          // }
-                          className={`${
-                            row.STATUS.toLowerCase() === "completed"
-                              ? "text-deep-navy"
-                              : "text-downriver-400"
-                          } flex flex-row items-center px-2 justify-center`}
-                          disabled={row.STATUS.toLowerCase() !== "completed"}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-                            />
-                          </svg>
-                          <span className="pl-2 underline">Download</span>
-                        </button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      <CustomTable
+        id={requestId}
+        head={tableHead}
+        rows={tableRows}
+        pagination={true}
+        open={viewActionModal}
+        handleClose={() => {
+          setViewActionModal(false);
+          dispatch(
+            actions.ConsumerQueryForm({
+              TableData: { head: [], rows: [] },
+            })
+          );
+        }}
+        title={"Query Result"}
+      />
 
-   
-      </div>
-
-      <div className="flex flex-row  gap-3  w-full">
-        {!fetchData ? (
-          <div className=" flex flex-grow">
-            {tableHead?.length > 0 && tableRows?.length > 0 ? (
-              <CommonTable id={requestId} head={tableHead} rows={tableRows} />
-            ) : null}
-          </div>
-        ) : (
-          <Alert
-            // icon={<AccessTimeIcon fontSize="inherit" />}
-            severity="info"
-          >
-            We are fetching the data you requested: Request Id -{" "}
-            <strong> {requestId}</strong>
-          </Alert>
-        )}
-      </div>
+      {requestFailedReason.openModal ? (
+        <CommonModal
+          open={requestFailedReason.openModal}
+          handleClose={() =>
+            setRequestFailedReason({ ...requestFailedReason, openModal: false })
+          }
+          title={"Request Error"}
+          message={requestFailedReason.message}
+          buttons={false}
+          textColor={"text-red-600"}
+        />
+      ) : null}
     </div>
   );
 };
