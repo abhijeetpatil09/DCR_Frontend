@@ -354,7 +354,7 @@ const MatchRate = () => {
   };
 
   return (
-    <div className="flex flex-col w-full px-4">
+    <div className="flex flex-col w-full px-4 overflow-hidden">
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
         <div>
           <h3 className="text-xl font-bold text-deep-navy mr-2">
@@ -605,7 +605,7 @@ const MatchRate = () => {
       </div>
 
       <img
-        className="absolute  w-2/5 -z-50 bottom-1 opacity-20 -right-20"
+        className="absolute object-cover w-1/4 -z-50 bottom-1 opacity-20 right-0"
         src={enrichment}
         alt=""
       />
@@ -619,7 +619,7 @@ const MatchRate = () => {
               sx={{ minWidth: 650, borderRadius: 0 }}
               stickyHeader
               size="small"
-              classes={{ root: "w-100" }}
+              classes={{ root: "w-100 bg-white/70" }}
               aria-label="simple table"
             >
               <TableHead>

@@ -399,7 +399,7 @@ const Enrichment = () => {
   };
 
   return (
-    <div className="flex flex-col w-full px-4 overflow-hidden">
+    <div className="flex flex-col w-full px-4 ">
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
         <div>
           <h3 className="text-xl font-bold text-deep-navy mr-2">
@@ -575,7 +575,7 @@ const Enrichment = () => {
       </div>
 
       <img
-        className="absolute  w-1/4 -z-50 bottom-0 opacity-40 -right-20  text-amarant-400 "
+        className="absolute  w-1/4 -z-50 bottom-0 opacity-40 right-0 text-amarant-400 "
         src={enrichment}
         alt=""
       />
