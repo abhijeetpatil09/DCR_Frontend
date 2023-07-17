@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 
-import CommonModal from "../../../CommonComponent/Modal";
+import CommonModal from "../../CommonComponent/Modal";
 
 const QueryTemplate = ({ user }) => {
   const [queryData, setQueryData] = useState({
@@ -144,8 +144,8 @@ const QueryTemplate = ({ user }) => {
 
   return (
     <div className="w-2/3 mx-8">
-      <div className="bg-white bg-opacity-75 backdrop-filter backdrop-blur-lg ">
-        <div className="flex flex-row items-start text-amaranth-500 ">
+      <div className="pt-4 bg-opacity-75 backdrop-filter backdrop-blur-lg ">
+        <div className="flex flex-row items-start text-deep-navy ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -161,10 +161,10 @@ const QueryTemplate = ({ user }) => {
             />
           </svg>
           <div className="flex flex-col">
-            <h3 className="text-lg font-bold text-amaranth-900 uppercase">
+            <h3 className="text-lg font-bold text-deep-navy uppercase">
               Configure Query Template
             </h3>
-            <span className="text-sm mb-4 font-light text-amaranth-900">
+            <span className="text-sm mb-4 font-light text-deep-navy">
               {" "}
               Enable/Disable Query Template for particular consumer.
             </span>
@@ -173,7 +173,7 @@ const QueryTemplate = ({ user }) => {
       </div>
       <div className="w-1/3">
         <div className="mt-2 pb-21 flex flex-col">
-          <label className="block text-sm font-medium leading-6 text-amaranth-600 ">
+          <label className="block text-sm font-medium leading-6 text-deep-navy ">
             Consumer Name
           </label>
           <select
@@ -182,7 +182,7 @@ const QueryTemplate = ({ user }) => {
               setQueryData({ ...queryData, consumer: e.target.value })
             }
             required
-            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-amaranth-600  bg-blend-darken    shadow-sm ring-1 ring-inset ring-amaranth-600  placeholder:text-amaranth-600  focus:ring-2 focus:ring-inset focus:ring-amaranth-600  sm:text-sm sm:leading-6"
+            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-deep-navy  bg-blend-darken    shadow-sm ring-1 ring-inset ring-deep-navy  placeholder:text-deep-navy  focus:ring-2 focus:ring-inset focus:ring-deep-navy  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
             {consumers?.map((consumer, index) => (
@@ -194,7 +194,7 @@ const QueryTemplate = ({ user }) => {
         </div>
 
         <div className="mt-2 pb-21 flex flex-col">
-          <label className="block text-sm font-medium leading-6 text-amaranth-600 ">
+          <label className="block text-sm font-medium leading-6 text-deep-navy ">
             Query Name
           </label>
           <select
@@ -203,7 +203,7 @@ const QueryTemplate = ({ user }) => {
               setQueryData({ ...queryData, template: e.target.value })
             }
             required
-            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-amaranth-600  bg-blend-darken    shadow-sm ring-1 ring-inset ring-amaranth-600  placeholder:text-amaranth-600  focus:ring-2 focus:ring-inset focus:ring-amaranth-600  sm:text-sm sm:leading-6"
+            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-deep-navy  bg-blend-darken    shadow-sm ring-1 ring-inset ring-deep-navy  placeholder:text-deep-navy  focus:ring-2 focus:ring-inset focus:ring-deep-navy  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
             {templateNames?.map((template, index) => (
@@ -218,7 +218,7 @@ const QueryTemplate = ({ user }) => {
           <div className="mt-4 flex justify-center">
             <button
               onClick={handleSubmit}
-              className="px-8 bg-amaranth-600 opacity-1 flex items-center py-2 text-sm text-white rounded-md"
+              className="px-8 bg-deep-navy opacity-1 flex items-center py-2 text-sm text-white rounded-md"
             >
               {loading ? (
                 <CircularProgress
@@ -242,6 +242,7 @@ const QueryTemplate = ({ user }) => {
           handleClose={handleCloseModal}
           handleClickYes={handleClickYes}
           message={message}
+          buttons={true}
         />
       </div>
     </div>

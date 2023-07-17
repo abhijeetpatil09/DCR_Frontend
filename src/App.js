@@ -15,8 +15,7 @@ import Home from "./components/Home";
 import MatchRate from "./components/MatchRate";
 import UploadCatalog from "./components/UploadCatalog/index";
 import SearchCatalog from "./components/SearchCatalog";
-import ConsumerAdmin from "./components/Admin/ConsumerAdmin";
-import ProviderAdmin from "./components/Admin/ProviderAdmin/ProviderAdmin";
+import AdminConsole from "./components/Admin";
 import PrivacyPolicy from "./components/CommonComponent/CommonPages/PrivacyPolicy";
 import TermsAndConditions from "./components/CommonComponent/CommonPages/TermsAndConditions";
 import HowToVideos from "./components/CommonComponent/howToVideos";
@@ -45,8 +44,7 @@ const App = () => {
                   <Route path="/publisherform" element={<MatchRate />} />
                   <Route path="/search-catalog" element={<SearchCatalog />} />
                   <Route path="/upload-catalog" element={<UploadCatalog />} />
-                  <Route path="/consumer-admin" element={<ConsumerAdmin />} />
-                  <Route path="/provider-admin" element={<ProviderAdmin />} />
+                  <Route path="/admin-console" element={<AdminConsole />} />
                   <Route path="/how-to-videos" element={<HowToVideos />} />
                 </Routes>
               </Sidebar>

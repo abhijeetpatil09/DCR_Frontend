@@ -234,58 +234,6 @@ const QueryStatus = () => {
       });
   };
 
-  const handleUploadData = async (runId) => {
-    axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
-        params: {
-          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DCR_QUERY_REQUEST1 where run_id = '${runId}';`,
-        },
-      })
-      .then((response) => {
-        if (response?.data?.data) {
-          let data = response?.data?.data?.[0];
-          axios
-            .get(`http://127.0.0.1:5000/${user?.name}`, {
-              params: {
-                query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.DEMO_REQUESTS(QUERY_NAME,PROVIDER_NAME,COLUMN_NAMES,CONSUMER_NAME,FILE_NAME, match_attribute,match_attribute_value,Run_id) values ('${data.TEMPLATE_NAME}','${data.PROVIDER_NAME}','${data.COLUMNS}','${data.CONSUMER_NAME}','${data.FILE_NAME}','${data.ATTRIBUTE_NAME}','${data.ATTRIBUTE_VALUE}','${data.RUN_ID}');`,
-              },
-            })
-            .then((response) => {
-              if (response) {
-                callByPassUpload();
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const callByPassUpload = () => {
-    setTimeout(() => {
-      fetchMainTable();
-      axios
-        .get(`http://127.0.0.1:5000/${user?.name}/procedure`, {
-          params: {
-            query: `call DCR_SAMP_CONSUMER1.PUBLIC.proc_matched_data();`,
-          },
-        })
-        .then((response) => {
-          if (response) {
-            fetchMainTable();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          fetchMainTable();
-        });
-    }, 2000);
-  };
-
   const handleFilter = (anchor) => {
     setLoader(true);
 
@@ -670,7 +618,14 @@ const QueryStatus = () => {
                                 </button>
                               </div>
                             ) : (
-                              <div className="flex justify-between">
+                              <div
+                                className={`flex ${
+                                  row.TEMPLATE_NAME === "CUSTOMER ENRICHMENT" ||
+                                  row.TEMPLATE_NAME === "customer_enrichment"
+                                    ? "justify-between"
+                                    : "justify-center"
+                                } `}
+                              >
                                 <button
                                   onClick={() =>
                                     fetchcsvTableData(
@@ -746,48 +701,6 @@ const QueryStatus = () => {
                                     </span>
                                   </button>
                                 )}
-                                {(row.TEMPLATE_NAME === "ADVERTISER MATCH" ||
-                                  row.TEMPLATE_NAME === "advertiser_match") && (
-                                  <button
-                                    onClick={() => handleUploadData(row.RUN_ID)}
-                                    disabled={
-                                      row.UPL_INTO_CLI_SPACE?.toLowerCase() ===
-                                        "true" &&
-                                      row.STATUS?.toLowerCase() === "completed"
-                                    }
-                                    className={`${
-                                      row.UPL_INTO_CLI_SPACE?.toLowerCase() !==
-                                        "true" &&
-                                      row.STATUS?.toLowerCase() === "completed"
-                                        ? "opacity-1 hover:text-inherit"
-                                        : "disabled opacity-10 hover:text-inherit"
-                                    }  px-2 hover:text-amaranth-600 flex flex-row items-center justify-center`}
-                                    title={
-                                      row.UPL_INTO_CLI_SPACE?.toLowerCase() ===
-                                      "true"
-                                        ? "Already Uploaded into client ecospace"
-                                        : "Upload match records into client ecospace"
-                                    }
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      strokeWidth="1.5"
-                                      stroke="currentColor"
-                                      className="w-5 h-5"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                                      />
-                                    </svg>
-                                    <span className="pl-2 underline">
-                                      Upload
-                                    </span>
-                                  </button>
-                                )}
                               </div>
                             )}
                           </TableCell>
@@ -852,6 +765,7 @@ const QueryStatus = () => {
           message={requestFailedReason.message}
           buttons={false}
           textColor={"text-red-600"}
+          svg={true}
         />
       ) : null}
     </div>

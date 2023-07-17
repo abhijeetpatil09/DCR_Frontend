@@ -15,6 +15,7 @@ module.exports = {
         "bright-blue": "#0080FF",
         "orange-highlight": "#EF5B2B",
         "new-gold": "#FFA800",
+        "table-head": "#e8effb",
         amaranth: {
           50: "#fff1f4",
           100: "#ffe3e8",

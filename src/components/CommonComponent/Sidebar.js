@@ -267,6 +267,41 @@ const Sidebar = ({ children }) => {
               </button>
             </li>
           )}
+          {((user["role"] && user["role"].includes("Consumer_Admin")) ||
+            (user["role"] && user["role"].includes("Provider_Admin"))) && (
+            <li
+              className={`${
+                tab === 6 ? "text-white" : "text-electric-green"
+              } hover:text-white transition ease-in-out duration-500`}
+            >
+              <button
+                onClick={() => navigateTo("/admin-console")}
+                className="py-4 px-6 flex flex justify-start items-center w-full"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-5 h-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                  />
+                </svg>
+                <span
+                  className={`${
+                    isOpened ? "" : "hidden"
+                  } pl-3.5 uppercase font-semibold`}
+                >
+                  Admin Console
+                </span>
+              </button>
+            </li>
+          )}
           <li
             className={`${
               tab === 7 ? "text-white" : "text-electric-green"

@@ -824,6 +824,7 @@ const Enrichment = () => {
           message={requestFailedReason.message}
           buttons={false}
           textColor={"text-red-600"}
+          svg={true}
         />
       ) : null}
     </div>
