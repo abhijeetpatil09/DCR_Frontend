@@ -163,16 +163,28 @@ const Home = () => {
                     <h4 className=" text-md font-medium text-deep-navy">
                       {item.title}
                     </h4>
-                    <div className="flex flex-row flex-wrap gap-2 mt-2 h-16">
-                      {item.templates?.map((template) => {
-                        return (
-                          <span className="flex items-center h-6 px-3 text-xs font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
-                            {template}
-                          </span>
-                        );
-                      })}
+                    <div className="flex flex-row flex-wrap gap-2 mt-2">
+                    {item.templates?.map((template, index) => {
+                         if (index < 2) {
+                            return (
+                                <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
+                                    {template}
+                                </span>
+                            );
+                        }
+                         else if (index === 2) {
+                            return (
+                                <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
+                                    {`+${item.templates.length - 2} more`}
+                                </span>
+                            );
+                        }
+                         else {
+                            return null;
+                        }
+                    })}
                     </div>
-                    <div className="flex items-center w-full mt-3 text-xs gap-2 font-medium text-gray-400 h-8">
+                    <div className="flex items-center w-full text-xs gap-2 font-medium text-gray-400 h-8">
                       <div className="flex items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
