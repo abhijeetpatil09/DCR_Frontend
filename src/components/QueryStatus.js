@@ -380,7 +380,7 @@ const QueryStatus = () => {
             >
               <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
                 <img
-                  className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
+                  className="absolute w-80  bottom-0 opacity-90 z-0 right-0 text-amarant-400"
                   src={searchillustration}
                   alt=""
                 />

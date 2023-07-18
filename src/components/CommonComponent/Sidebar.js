@@ -61,11 +61,11 @@ const Sidebar = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-grow w-full  h-[calc(100vh)]">
+    <div className="flex flex-grow w-full">
       <aside
         className={`${
           isOpened ? "w-64 drawer" : ""
-        } z-50 flex flex-col items-start bg-deep-navy text-electric-green shadow h-[calc(100vh)] sticky top-0`}
+        } z-50 flex flex-col items-start bg-deep-navy text-electric-green shadow   sticky top-0`}
       >
         <div className="flex flex-row items-center h-20">
           <div
@@ -417,7 +417,7 @@ const Sidebar = ({ children }) => {
           &copy; 2023 Hoonar Tekwurks Private Ltd.
         </div> */}
         {/* CONTAINER */}
-        <main className="flex flex-col w-full overflow-auto h-full">
+        <main className="flex flex-col w-full h-full">
           <div className="w-full h-full">{children}</div>
         </main>
       </div>
