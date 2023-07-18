@@ -181,9 +181,9 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
         sx={style}
         className="bg-white bg-opacity-75 backdrop-filter backdrop-blur-lg "
       >
-        <div className="flex flex-col gap-3  w-full">
-          <div className="flex flex-row items-center justify-between sticky z-30 py-2 px-4 top-0 w-full bg-deep-navy text-white">
-            <h3 className="font-bold text-white">Create New Catalog</h3>
+        <div className="flex flex-col w-full">
+          <div className="flex flex-row items-center justify-between sticky z-30 py-2 top-0 w-full">
+            <h3 className="text-lg font-bold text-deep-navy">Create New Catalog</h3>
             <button onClick={close}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -195,7 +195,7 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
               </svg>
             </button>
           </div>
-          <div className="flex flex-col flex-shrink h-auto">
+          <div className="flex flex-col flex-shrink h-auto text-deep-navy">
             <div
               className=" border border-gray-400 rounded my-4 px-4 py-2 h-auto w-[32rem] max-w-3xl"
               name="myForm"
@@ -240,12 +240,8 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
                 </div>
               ) : null}
               <div className="flex justify-center">
-                <button
-                  className="my-2 flex w-3/5 justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-                  type="submit"
-                  onClick={handleSubmit}
-                >
-                  {loader ? (
+                {loader ? (
+                  <div className="my-2 flex w-3/5 justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green">
                     <CircularProgress
                       style={{
                         width: "24px",
@@ -253,10 +249,16 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
                         color: "#FFFFFF",
                       }}
                     />
-                  ) : (
-                    "Submit Catalog"
-                  )}
-                </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="my-2 flex w-3/5 justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                  >
+                    Submit New Catalog
+                  </button>
+                )}
               </div>
             </div>
             <div className="text-red-600 text-sm">

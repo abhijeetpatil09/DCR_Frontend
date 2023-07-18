@@ -173,14 +173,14 @@ th, td {
 .ant-select-selector {
   border: 1px solid #08f0a9 !important;
   background-color: transparent !important;
-  height: 40px;
+  /* height: 40px; */
 }
-
+/* 
 .ant-select-selection-overflow {
   flex-wrap: nowrap !important;
   white-space: nowrap !important;
   overflow: hidden !important;
-}
+} */
 
 .ant-select-lg {
   border: none !important;

@@ -14,6 +14,7 @@ import {
 
 import SelectDropdown from "./CommonComponent/SelectDropdown";
 import searchillustration from "../Assets/search_illustration.svg";
+import Spinner from "./CommonComponent/Spinner";
 
 const SearchCatalog = () => {
   const [selectedValues, setSelectedValues] = useState({
@@ -598,14 +599,7 @@ const SearchCatalog = () => {
         </div>
       ) : (
         <div className="flex justify-center mt-8">
-          <CircularProgress
-            style={{
-              width: "60px",
-              height: "60px",
-              color: "#0A2756",
-            }}
-            thickness={5}
-          />
+          <Spinner />
         </div>
       )}
 

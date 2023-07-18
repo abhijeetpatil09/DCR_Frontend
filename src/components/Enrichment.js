@@ -39,6 +39,7 @@ import {
 
 import "./styles.css";
 import "./pure-react.css";
+import Spinner from "./CommonComponent/Spinner";
 
 const initialState = {
   Query_Name: "",
@@ -786,14 +787,7 @@ const Enrichment = () => {
         </div>
       ) : (
         <div className="flex justify-center mt-8">
-          <CircularProgress
-            style={{
-              width: "60px",
-              height: "60px",
-              color: "#0A2756",
-            }}
-            thickness={5}
-          />
+          <Spinner />
         </div>
       )}
 

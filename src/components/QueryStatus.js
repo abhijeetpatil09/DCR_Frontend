@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 
 import {
-  CircularProgress,
   SwipeableDrawer,
   Table,
   TableBody,
@@ -39,6 +38,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import "./styles.css";
 import "./pure-react.css";
+import Spinner from "./CommonComponent/Spinner";
 
 const QueryStatus = () => {
   const state = useSelector((state) => state);
@@ -732,14 +732,7 @@ const QueryStatus = () => {
         </div>
       ) : (
         <div className="flex justify-center mt-8">
-          <CircularProgress
-            style={{
-              width: "60px",
-              height: "60px",
-              color: "#0A2756",
-            }}
-            thickness={5}
-          />
+          <Spinner />
         </div>
       )}
 
