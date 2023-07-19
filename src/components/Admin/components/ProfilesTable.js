@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@mui/material";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const ProfileTable = ({ user, UserRole }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,7 @@ const ProfileTable = ({ user, UserRole }) => {
   const fetchProfileTable = () => {
     if (UserRole?.includes("Consumer_Admin")) {
       axios
-        .get(`http://127.0.0.1:5000/${user?.name}`, {
+        .get(`${baseURL}/${user?.name}`, {
           params: {
             query: "select * from CONSUMER_ATTRIBUTES_VW order by admin desc;",
           },
@@ -50,7 +52,7 @@ const ProfileTable = ({ user, UserRole }) => {
         .catch((error) => console.log(error));
     } else {
       axios
-        .get(`http://127.0.0.1:5000/${user?.name}`, {
+        .get(`${baseURL}/${user?.name}`, {
           params: {
             query:
               "select * from DCR_SAMP_PROVIDER_DB.DATAEX.CONSUMER_ATTRIBUTES_VW order by provider desc;",
@@ -76,7 +78,7 @@ const ProfileTable = ({ user, UserRole }) => {
     setLoading(true);
     setDisableTemplate(!disableTemplate);
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `update DCR_SAMP_PROVIDER_DB.SHARED_SCHEMA.CONSUMER_ATTRIBUTES set CONSUMER = '${status}' where user= '${userName}';`,
         },
@@ -96,7 +98,7 @@ const ProfileTable = ({ user, UserRole }) => {
     setLoading(true);
     setDisableTemplate(!disableTemplate);
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `update DCR_SAMP_PROVIDER_DB.SHARED_SCHEMA.CONSUMER_ATTRIBUTES set PUBLISHER = '${status}' where user= '${userName}';`,
         },
@@ -116,7 +118,7 @@ const ProfileTable = ({ user, UserRole }) => {
     setLoading(true);
     setDisableTemplate(!disableTemplate);
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `update DCR_SAMP_PROVIDER_DB.SHARED_SCHEMA.CONSUMER_ATTRIBUTES set ADMIN = '${status}' where user= '${userName}';`,
         },

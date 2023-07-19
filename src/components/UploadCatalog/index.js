@@ -13,6 +13,8 @@ import NewCatalogUploadModal from "./components/NewCatalogUploadModal";
 
 import UpdateAttributeTable from "./components/UpdateAttributeTable";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const UploadCatalog = () => {
   const state = useSelector((state) => state);
   const user = state && state.user;
@@ -30,7 +32,7 @@ const UploadCatalog = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `select distinct entity_name from DATAEXCHANGEDB.DATACATALOG.PROVIDER where PROVIDER_NAME = '${user?.name}' order by entity_name`,
         },

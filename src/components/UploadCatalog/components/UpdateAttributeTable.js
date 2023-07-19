@@ -23,6 +23,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import "../../styles.css";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 function EditToolbar(props) {
   const { setRows, setRowModesModel, attributeErrorMsg } = props;
 
@@ -99,7 +101,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       `We are fetching the data for ${selectedKey}. Please wait..`
     );
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER where entity_name = '${selectedKey}' and PROVIDER_NAME = '${user?.name}';`,
         },
@@ -137,7 +139,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const deleteRecordsAPI = (attributeName) => {
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `DELETE FROM DATAEXCHANGEDB.DATACATALOG.PROVIDER WHERE PROVIDER_NAME ='${user?.name}' AND ENTITY_NAME='${selectedKey}' AND ATTRIBUTE_NAME='${attributeName}';`,
         },
@@ -157,7 +159,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   const updateRecordsAPI = (result, tag) => {
     setLoader(true);
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `insert into DATAEXCHANGEDB.DATACATALOG.JSON_TABLE select PARSE_JSON('${result}');`,
         },
@@ -181,7 +183,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const callProcedureAddRecords = () => {
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `call ADDATTRIBUTE();`,
         },
@@ -199,7 +201,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const callProcedureUpdateRecords = () => {
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `call UPDATECATALOG();`,
         },
@@ -255,6 +257,19 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     const index = attributeList?.filter(
       (item) => item === updatedRow.ATTRIBUTE_NAME
     );
+    if (updatedRow.CATEGORY === "") {
+      setAttributeErrorMsg("Please enter the Category.");
+      return;
+    } else if (updatedRow.SUB_CATEGORY === "") {
+      setAttributeErrorMsg("Please enter the Sub Category.");
+      return;
+    } else if (updatedRow.DESCRIPTION === "") {
+      setAttributeErrorMsg("Please enter the Description.");
+      return;
+    } else if (updatedRow.TECH_NAME === "") {
+      setAttributeErrorMsg("Please enter the Tech Name.");
+      return;
+    }
     if (updatedRow.ATTRIBUTE_NAME === "") {
       setAttributeErrorMsg("Please enter the Attribute Name.");
       return;

@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import Papa from "papaparse";
+import { read, utils } from "xlsx";
 
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -18,6 +20,7 @@ import {
 import * as actions from "../../redux/actions/index";
 import CommonModal from "../CommonComponent/Modal";
 import CustomTable from "../CommonComponent/Table";
+import SampleTemplate from "../../Assets/CSVTemplates/Sample_Template_Match_Rate.xlsx";
 
 import {
   ApprovedStatus,
@@ -34,6 +37,10 @@ import searchillustration from "../../Assets/Data storage_Two Color.svg";
 
 import "../styles.css";
 import "../pure-react.css";
+import Spinner from "../CommonComponent/Spinner";
+import { toast } from "react-toastify";
+
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const initialState = {
   Query_Name: "",
@@ -82,6 +89,7 @@ const MatchRate = () => {
   const [loading, setLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [fileErrorMessage, setFileErrorMessage] = useState("");
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
     top: false,
@@ -146,7 +154,7 @@ const MatchRate = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: "select provider from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS;",
         },
@@ -163,7 +171,7 @@ const MatchRate = () => {
 
   const fetchMainTable = () => {
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query:
             "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'ADVERTISER MATCH' order by RUN_ID desc limit 5;",
@@ -199,9 +207,103 @@ const MatchRate = () => {
 
   const handleFileInput = (event) => {
     event.preventDefault();
+    setFileErrorMessage("");
     var fileInput = document.getElementById("myFileInput");
-    var file = fileInput.files[0];
+    var file = fileInput?.files[0];
     setFormData({ ...formData, file: file });
+    if (file) {
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+
+      if (fileExtension === "csv") {
+        // Handle CSV file
+        Papa.parse(file, {
+          complete: function (results) {
+            const jsonData = results?.data;
+            // Assuming the first row contains the column names
+            const headers = jsonData[0];
+
+            // Transform jsonData into an array of objects with key-value pairs
+            // let parsedData = jsonData?.slice(1).map((row) =>
+            //   row.reduce((obj, value, columnIndex) => {
+            //     obj[headers[columnIndex]] = value;
+            //     return obj;
+            //   }, {})
+            // );
+            // parsedData = parsedData?.map((item) => {
+            //   return item.EMAIL
+            // })
+            // console.log("parsedData", parsedData);
+
+            if (headers.length > 1) {
+              setFileErrorMessage(
+                "Columns are added more than one in the CSV file"
+              );
+            } else if (headers.length < 1) {
+              setFileErrorMessage("Please add one Column in the CSV file");
+            } else if (headers.length === 1) {
+              if (
+                headers[0].toUpperCase() === "EMAIL" ||
+                headers[0].toUpperCase() === "PHONE" ||
+                headers[0].toUpperCase() === "MAID-WIP"
+              ) {
+                setFileErrorMessage("");
+              } else {
+                setFileErrorMessage("Invalid CSV file. Upload not allowed.");
+              }
+            }
+          },
+        });
+      } else if (fileExtension === "xlsx") {
+        // Handle XLSX file
+        const reader = new FileReader();
+        reader.onload = () => {
+          const arrayBuffer = reader.result;
+          const workbook = read(arrayBuffer, { type: "array" });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = utils
+            .sheet_to_json(worksheet, { header: 1 })
+            ?.filter((row) => Object.keys(row).length > 0);
+          // Assuming the first row contains the column names
+          const firstRow = jsonData[0];
+          const firstElement = firstRow && firstRow[0];
+
+          // Assuming the first row contains the column names
+          // const headers = jsonData[0];
+
+          // Transform jsonData into an array of objects with key-value pairs
+          // const parsedData = jsonData?.slice(1).map((row) =>
+          //   row.reduce((obj, value, columnIndex) => {
+          //     obj[headers[columnIndex]] = value;
+          //     return obj;
+          //   }, {})
+          // );
+
+          if (firstRow.length > 1) {
+            setFileErrorMessage(
+              "Columns are added more than one in the XLSX file"
+            );
+          } else if (firstRow.length < 1) {
+            setFileErrorMessage("Please add one Column in the XLSX file");
+          } else if (firstRow.length === 1) {
+            if (
+              firstElement.toUpperCase() === "EMAIL" ||
+              firstElement.toUpperCase() === "PHONE" ||
+              firstElement.toUpperCase() === "MAID-WIP"
+            ) {
+              setFileErrorMessage("");
+            } else {
+              setFileErrorMessage("Invalid XLSX file. Upload not allowed.");
+            }
+          }
+        };
+
+        reader.readAsArrayBuffer(file);
+      } else {
+        setFileErrorMessage(
+          "Invalid file type. Only CSV and XLSX files are allowed."
+        );
+      }
+    }
   };
 
   // const isValidInput = (inputString) => {
@@ -212,7 +314,7 @@ const MatchRate = () => {
   const callByPassAPI = () => {
     setByPassAPICalled(true);
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}/procedure`, {
+      .get(`${baseURL}/${user?.name}/procedure`, {
         params: {
           query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS_1();`,
         },
@@ -234,6 +336,10 @@ const MatchRate = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (downloadSample || fileErrorMessage !== "") {
+      setDownloadSample(false);
+      return;
+    }
 
     formData.RunId = Date.now();
     setLoading(true);
@@ -259,7 +365,7 @@ const MatchRate = () => {
     });
 
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}/attachment`, {
+      .get(`${baseURL}/${user?.name}/attachment`, {
         params: {
           filename: `${formData.File_Name}`,
           identifyer: `${formData.Column_Names.toUpperCase()}`,
@@ -271,7 +377,7 @@ const MatchRate = () => {
           setLoading(false);
 
           axios
-            .get(`http://127.0.0.1:5000/${user?.name}`, {
+            .get(`${baseURL}/${user?.name}`, {
               params: {
                 query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${providerName}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
               },
@@ -312,7 +418,7 @@ const MatchRate = () => {
     templateName = templateName.replace(/\s/g, "_");
     setViewActionModal(true);
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${templateName}_${runId} limit 1000;`,
         },
@@ -339,6 +445,18 @@ const MatchRate = () => {
       .catch((error) => {
         console.log("In API catch", error);
       });
+  };
+
+  const [downloadSample, setDownloadSample] = useState(false);
+
+  const downloadNewFile = () => {
+    const link = document.createElement("a");
+    link.href = SampleTemplate;
+    link.download = "Sample_Template_Match_Rate.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`The File has been downloaded...`);
   };
 
   const handleToggleDrawer = (anchor, open) => (event) => {
@@ -457,6 +575,41 @@ const MatchRate = () => {
                         required
                         ref={fileInputRef}
                       />
+                    </div>
+                    <div className="my-4 flex flex-col">
+                      <button
+                        className="flex w-fit text-electric-green"
+                        onClick={() => {
+                          downloadNewFile();
+                          setDownloadSample(true);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-6 h-6"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span className="pl-2 underline">
+                          Download Template
+                        </span>
+                      </button>
+                    </div>
+
+                    <div className="my-2">
+                      {fileErrorMessage !== "" && (
+                        <span className="text-red-600 ">
+                          {fileErrorMessage}
+                        </span>
+                      )}
                     </div>
 
                     <div className="mt-2 pb-21 flex flex-col">
@@ -788,14 +941,7 @@ const MatchRate = () => {
         </div>
       ) : (
         <div className="flex justify-center mt-8">
-          <CircularProgress
-            style={{
-              width: "60px",
-              height: "60px",
-              color: "#0A2756",
-            }}
-            thickness={5}
-          />
+          <Spinner />
         </div>
       )}
 

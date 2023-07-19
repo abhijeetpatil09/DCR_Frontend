@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 import { latestPartners } from "../utils/data";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const Home = () => {
   const state = useSelector((state) => state);
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query:
             "SELECT COUNT(*) AS Consumers FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE CONSUMER ='TRUE' AND ADMIN='TRUE';",
@@ -46,7 +48,7 @@ const Home = () => {
       });
 
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query:
             "SELECT COUNT(*) AS Providers FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE PROVIDER ='TRUE' AND ADMIN='TRUE';",

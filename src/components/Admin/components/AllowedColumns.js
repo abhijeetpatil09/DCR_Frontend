@@ -5,6 +5,8 @@ import { CircularProgress } from "@mui/material";
 
 import CommonModal from "../../CommonComponent/Modal";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const AllowedColumns = ({ user }) => {
   const [publisherData, setPublisherData] = useState({
     consumer: "",
@@ -30,7 +32,7 @@ const AllowedColumns = ({ user }) => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/${user.name}`, {
+      .get(`${baseURL}/${user.name}`, {
         params: {
           query:
             "select distinct CONSUMER_NAME from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES;",
@@ -50,7 +52,7 @@ const AllowedColumns = ({ user }) => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/${user.name}`, {
+      .get(`${baseURL}/${user.name}`, {
         params: {
           query: `select distinct TEMPLATE_NAME from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where CONSUMER_NAME = '${publisherData.consumer}';`,
         },
@@ -70,7 +72,7 @@ const AllowedColumns = ({ user }) => {
   useEffect(() => {
     if (publisherData.consumer !== "" && publisherData.template !== "") {
       axios
-        .get(`http://127.0.0.1:5000/${user.name}`, {
+        .get(`${baseURL}/${user.name}`, {
           params: {
             query: `select ALLOWED_COLUMNS from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where TEMPLATE_NAME = '${publisherData.template}' and CONSUMER_NAME = '${publisherData.consumer}';`,
           },
@@ -103,7 +105,7 @@ const AllowedColumns = ({ user }) => {
       publisherData.column_name !== ""
     ) {
       axios
-        .get(`http://127.0.0.1:5000/${user.name}`, {
+        .get(`${baseURL}/${user.name}`, {
           params: {
             query: `select count(*) from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where TEMPLATE_NAME = '${publisherData.template}' and CONSUMER_NAME = '${publisherData.consumer}' and contains(ALLOWED_COLUMNS, '${publisherData.column_name}');`,
           },
@@ -134,7 +136,7 @@ const AllowedColumns = ({ user }) => {
     setOpenModal(!openModal);
     setLoading(true);
     axios
-      .get(`http://127.0.0.1:5000/${user.name}`, {
+      .get(`${baseURL}/${user.name}`, {
         params: {
           query: `insert into DCR_SAMP_PROVIDER_DB.TEMPLATES.JSON_TABLE select PARSE_JSON('
                   {
@@ -179,7 +181,7 @@ const AllowedColumns = ({ user }) => {
   const callByPass = () => {
     setTimeout(() => {
       axios
-        .get(`http://127.0.0.1:5000/${user.name}`, {
+        .get(`${baseURL}/${user.name}`, {
           params: {
             query: `call DCR_SAMP_PROVIDER_DB.TEMPLATES.PROC_NEW_11();`,
           },

@@ -41,6 +41,8 @@ import "./styles.css";
 import "./pure-react.css";
 import Spinner from "./CommonComponent/Spinner";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const initialState = {
   Query_Name: "",
   Provider_Name: "",
@@ -121,7 +123,7 @@ const Enrichment = () => {
 
   const fetchMainTable = () => {
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query:
             "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'CUSTOMER ENRICHMENT' order by RUN_ID desc limit 5;",
@@ -150,7 +152,7 @@ const Enrichment = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: "select provider from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS;",
         },
@@ -168,7 +170,7 @@ const Enrichment = () => {
   useEffect(() => {
     if (databaseName !== "") {
       axios
-        .get(`http://127.0.0.1:5000/${user?.name}`, {
+        .get(`${baseURL}/${user?.name}`, {
           params: {
             query: `select template_name from ${databaseName}.CLEANROOM.TEMPLATES where template_name <> 'advertiser_match';`,
           },
@@ -186,7 +188,7 @@ const Enrichment = () => {
   useEffect(() => {
     if (databaseName !== "" && formData["Query_Name"] !== "") {
       axios
-        .get(`http://127.0.0.1:5000/${user?.name}`, {
+        .get(`${baseURL}/${user?.name}`, {
           params: {
             query: `select allowed_columns from ${databaseName}.CLEANROOM.TEMPLATES where template_name='${formData["Query_Name"]}';`,
           },
@@ -229,7 +231,7 @@ const Enrichment = () => {
 
   const getDatabaseName = (selectedProvider) => {
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `select database from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS where provider = '${selectedProvider}';`,
         },
@@ -278,7 +280,7 @@ const Enrichment = () => {
   const downloadFile = (TEMPLATE_NAME, RUN_ID) => {
     TEMPLATE_NAME = TEMPLATE_NAME.replace(/\s/g, "_");
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         responseType: "json",
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${TEMPLATE_NAME}_${RUN_ID};`,
@@ -300,7 +302,7 @@ const Enrichment = () => {
   const callByPassAPI = () => {
     setByPassAPICalled(true);
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}/procedure`, {
+      .get(`${baseURL}/${user?.name}/procedure`, {
         params: {
           query: `call DCR_SAMP_CONSUMER1.PUBLIC.PROC_BYPASS_1();`,
         },
@@ -329,7 +331,7 @@ const Enrichment = () => {
     const selectedColumns = `#${formData.Column_Names?.join(delimiter)}#`;
 
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id, attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${selectedColumns}','${formData.Consumer_Name}','${formData.RunId}', '${formData.Attribute_Value}');`,
         },
@@ -358,7 +360,7 @@ const Enrichment = () => {
 
     setViewActionModal(true);
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${templateName}_${runId} limit 1000;`,
         },

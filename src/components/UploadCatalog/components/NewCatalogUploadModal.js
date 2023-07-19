@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Box, Modal } from "@mui/material";
-import CSVParse from "papaparse";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
-
+import Papa from "papaparse";
+import { read, utils } from "xlsx";
 import DummyCatalog from "../../../Assets/CSVTemplates/Dummy_Catalog.csv";
+
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const CSVFileColumns = [
   "Entity",
@@ -46,41 +48,98 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
   };
 
   const handleValidFileValidations = (rows) => {
-    if (rows[0]?.length > CSVFileColumns?.length) {
+    if (rows?.length > CSVFileColumns?.length) {
       setFileError("You have added more columns than the specified one");
-    } else if (rows[0]?.length < CSVFileColumns?.length) {
+    } else if (rows?.length < CSVFileColumns?.length) {
       setFileError("You have added less columns than the specified one");
-    } else if (rows[0]?.length > 0) {
+    } else if (rows?.length > 0) {
       const equalColumns =
-        JSON.stringify(CSVFileColumns) === JSON.stringify(rows[0]);
+        JSON.stringify(CSVFileColumns) === JSON.stringify(rows);
       equalColumns
         ? setFileError("")
         : setFileError("Please add proper template file");
     } else {
-      setFileError("Please Upload correct CSV File");
+      setFileError("Please Upload correct CSV/XLSX File");
     }
   };
 
   const uploadFile = (event) => {
     // Passing file data (event.target.files[0]) to parse using Papa.parse
-    CSVParse.parse(event.target.files[0], {
-      header: true,
-      skipEmptyLines: true,
-      complete: function (results) {
-        setParsedData(results?.data);
+    // CSVParse.parse(event.target.files[0], {
+    //   header: true,
+    //   skipEmptyLines: true,
+    //   complete: function (results) {
+    //     console.log("results prev", results?.data);
+    //     setParsedData(results?.data);
 
-        const rows = [];
-        // Iterating data to get column name and their values
-        results?.data?.map((d) => {
-          return rows.push(Object.keys(d));
-          // values.push(Object.values(d));
+    //     const rows = [];
+    //     // Iterating data to get column name and their values
+    //     results?.data?.map((d) => {
+    //       return rows.push(Object.keys(d));
+    //       // values.push(Object.values(d));
+    //     });
+
+    //     // Parsed Data Response in array format
+    //     setFileUploaded(true);
+    //     handleValidFileValidations(rows);
+    //   },
+    // });
+
+    var fileInput = document.getElementById("myFileInput");
+    var file = fileInput?.files[0];
+    if (file) {
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+
+      if (fileExtension === "csv") {
+        Papa.parse(file, {
+          complete: function (results) {
+            const jsonData = results?.data;
+            // Assuming the first row contains the column names
+            const headers = jsonData[0];
+
+            // Transform jsonData into an array of objects with key-value pairs
+            const parsedData = jsonData?.slice(1).map((row) =>
+              row.reduce((obj, value, columnIndex) => {
+                obj[headers[columnIndex]] = value;
+                return obj;
+              }, {})
+            );
+            setParsedData(parsedData);
+            setFileUploaded(true);
+            handleValidFileValidations(headers);
+          },
         });
+      } else if (fileExtension === "xlsx") {
+        // Handle XLSX file
+        const reader = new FileReader();
+        reader.onload = () => {
+          const arrayBuffer = reader.result;
+          const workbook = read(arrayBuffer, { type: "array" });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = utils
+            .sheet_to_json(worksheet, { header: 1 })
+            ?.filter((row) => Object.keys(row).length > 0);
 
-        // Parsed Data Response in array format
+          // Assuming the first row contains the column names
+          const headers = jsonData[0];
+
+          // Transform jsonData into an array of objects with key-value pairs
+          const parsedData = jsonData?.slice(1).map((row) =>
+            row.reduce((obj, value, columnIndex) => {
+              obj[headers[columnIndex]] = value;
+              return obj;
+            }, {})
+          );
+          setParsedData(parsedData);
+          setFileUploaded(true);
+          handleValidFileValidations(headers);
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
         setFileUploaded(true);
-        handleValidFileValidations(rows);
-      },
-    });
+        setFileError("Invalid file type. Only CSV and XLSX files are allowed.");
+      }
+    }
   };
 
   const handleSubmit = () => {
@@ -124,13 +183,11 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
 
       finalObject.entity = EntityArray;
       finalObject.name = user?.name;
-      console.log("finalArray ==>", finalObject);
-
       let result = JSON.stringify(finalObject);
       console.log("result", result);
 
       axios
-        .get(`http://127.0.0.1:5000/dataexadmin`, {
+        .get(`${baseURL}/dataexadmin`, {
           params: {
             // query: `insert into DEMO1.PUBLIC.PROVIDER(PROVIDER_NAME,ATTRIBUTE_NAME,CATEGORY,SUBCATEGORY,subcategory_description,TECHNAME) values ${joinedValues};`,
             query: `insert into DATAEXCHANGEDB.DATACATALOG.JSON_TABLE select parse_json('${result}');`,
@@ -149,8 +206,9 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
   };
 
   const callProcedure = () => {
+    setNewCatUploaded(false);
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `call INSERTCATALOG();`,
         },
@@ -183,7 +241,9 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
       >
         <div className="flex flex-col w-full">
           <div className="flex flex-row items-center justify-between sticky z-30 py-2 top-0 w-full">
-            <h3 className="text-lg font-bold text-deep-navy">Create New Catalog</h3>
+            <h3 className="text-lg font-bold text-deep-navy">
+              Create New Catalog
+            </h3>
             <button onClick={close}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

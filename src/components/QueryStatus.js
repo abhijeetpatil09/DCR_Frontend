@@ -40,6 +40,8 @@ import "./styles.css";
 import "./pure-react.css";
 import Spinner from "./CommonComponent/Spinner";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const QueryStatus = () => {
   const state = useSelector((state) => state);
   const user = state && state.user;
@@ -113,7 +115,7 @@ const QueryStatus = () => {
 
   const fetchMainTable = () => {
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query:
             "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE order by RUN_ID desc;",
@@ -181,7 +183,7 @@ const QueryStatus = () => {
   const downloadFile = (TEMPLATE_NAME, RUN_ID) => {
     TEMPLATE_NAME = TEMPLATE_NAME.replace(/\s/g, "_");
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         responseType: "json",
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${TEMPLATE_NAME}_${RUN_ID};`,
@@ -209,7 +211,7 @@ const QueryStatus = () => {
     });
     setViewTable({ head: [], rows: [], runId: "" });
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.${templateName}_${runId} limit 1000;`,
         },
@@ -322,7 +324,7 @@ const QueryStatus = () => {
         : "");
 
     axios
-      .get(`http://127.0.0.1:5000/${user?.name}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
           query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE ${
             finalResult !== "" ? `where ${finalResult}` : ""

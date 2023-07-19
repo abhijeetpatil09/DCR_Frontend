@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 // import DatePicker from "react-datepicker";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const ItemisedBills = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -69,7 +71,7 @@ const ItemisedBills = () => {
   useEffect(() => {
     if (user?.role && user?.role?.includes("Provider_Admin")) {
       axios
-        .get(`http://127.0.0.1:5000/${user?.name}`, {
+        .get(`${baseURL}/${user?.name}`, {
           params: {
             query: `select * from DCR_SAMP_PROVIDER_DB.DATAEX.CONSUMER_ATTRIBUTES_VW where PROVIDER='FALSE'and ADMIN='TRUE';`,
           },

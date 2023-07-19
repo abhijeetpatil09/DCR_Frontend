@@ -16,6 +16,8 @@ import SelectDropdown from "./CommonComponent/SelectDropdown";
 import searchillustration from "../Assets/search_illustration.svg";
 import Spinner from "./CommonComponent/Spinner";
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const SearchCatalog = () => {
   const [selectedValues, setSelectedValues] = useState({
     category: [],
@@ -73,7 +75,7 @@ const SearchCatalog = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER order by entity_name limit 10`,
         },
@@ -91,7 +93,7 @@ const SearchCatalog = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.CATEGORY_LIST`,
         },
@@ -109,7 +111,7 @@ const SearchCatalog = () => {
         console.log(error);
       });
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `select * from DATAEXCHANGEDB.DATACATALOG.PROVIDER_NAME;`,
         },
@@ -143,7 +145,7 @@ const SearchCatalog = () => {
         )
         .join("");
       axios
-        .get(`http://127.0.0.1:5000/dataexadmin`, {
+        .get(`${baseURL}/dataexadmin`, {
           params: {
             query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
               finalCategory !== "" ? `where (${finalCategory})` : ""
@@ -246,7 +248,7 @@ const SearchCatalog = () => {
     console.log("appendedString ==>", finalResult);
 
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${
             finalResult !== "" ? `where ${finalResult}` : ""
@@ -273,7 +275,7 @@ const SearchCatalog = () => {
     setViewTable({ ...viewTable, head: [], rows: [] });
     toggleResultModal(true);
     axios
-      .get(`http://127.0.0.1:5000/dataexadmin`, {
+      .get(`${baseURL}/dataexadmin`, {
         params: {
           query: `select * from DATAEXCHANGEDB.DATACATALOG.PROVIDER where PROVIDER_NAME='${providerName}' and ENTITY_NAME='${entity}';`,
         },
