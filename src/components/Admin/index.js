@@ -26,7 +26,7 @@ const AdminConsole = () => {
         <h3 className="px-5 text-xl font-bold">Admin Console</h3>
       </div>
 
-      <div className="tabs pt-8">
+      <div className="tabs pt-8 hidden">
         <ul className="px-8">
           {user?.role && user?.role?.includes("Consumer_Admin") && user?.role?.includes("Consumer")
             ? (adminConsumerConsoleTabs?.map((item) => {
@@ -102,6 +102,45 @@ const AdminConsole = () => {
             )}
         </div>
       </div>
+
+      {/* NEW LAYOUT */}
+      <section class=" flex flex-row text-center   px-4 w-full h-full">
+        <div class=" flex flex-row gap-4">
+          <div class="w-1/3 bg-white rounded-lg shadow-sm py-8 px-4  border border-gray-100 hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10">
+            <div class="h-24">
+              <img src="https://tailwindcss-templates.netlify.com/fair-rate-mortgage/images/icon-home-2.svg
+" alt="" class="mx-auto" />
+            </div>
+            <h4 class="text-md uppercase text-deep-navy font-bold mt-10">Profile</h4>
+            <p class="text-base text-gray-600 mt-2">Check user profile details</p>
+          </div>
+
+          <div class="w-1/3 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10">
+            <div class="h-24">
+              <img src="https://tailwindcss-templates.netlify.com/fair-rate-mortgage/images/icon-home-1.svg
+" alt="" class="mx-auto" />
+            </div>
+            <h4 class="text-md uppercase text-deep-navy font-bold mt-10">Templates</h4>
+            <p class="text-base text-gray-600 mt-2">Configure your publisher templates</p>
+          </div>
+
+          <div class="w-1/3 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10">
+            <div class="h-24">
+              <img src="https://tailwindcss-templates.netlify.com/fair-rate-mortgage/images/icon-home-3.svg
+" alt="" class="mx-auto" />
+            </div>
+            <h4 class="text-md uppercase text-deep-navy font-bold mt-10">Itemised bills</h4>
+            <p class="text-base text-gray-600 mt-2">Download your monthly bills</p>
+          </div>
+        </div>
+
+
+
+
+
+
+      </section>
+
     </div>
   );
 };
