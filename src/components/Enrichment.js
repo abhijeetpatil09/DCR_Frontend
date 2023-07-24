@@ -168,24 +168,6 @@ const Enrichment = () => {
   }, [user?.name]);
 
   useEffect(() => {
-    if (databaseName !== "") {
-      axios
-        .get(`${baseURL}/${user?.name}`, {
-          params: {
-            query: `select template_name from ${databaseName}.CLEANROOM.TEMPLATES where template_name <> 'advertiser_match';`,
-          },
-        })
-        .then((response) => {
-          if (response?.data) {
-            console.log("Template list", response?.data);
-            setTemplateList(response.data.data);
-          }
-        })
-        .catch((error) => console.log(error));
-    }
-  }, [databaseName, user?.name]);
-
-  useEffect(() => {
     if (databaseName !== "" && formData["Query_Name"] !== "") {
       axios
         .get(`${baseURL}/${user?.name}`, {
@@ -199,13 +181,20 @@ const Enrichment = () => {
             col_name = col_name?.map((item) => {
               return item?.split(".")[1];
             });
-
-            let temp = [];
-            temp.push({ value: "all", name: "All" });
-            col_name?.map((value) => {
-              return temp.push({ value: value, name: value });
-            });
-            setColumns(temp);
+            if (col_name && col_name?.length > 0) {
+              let temp = [];
+              temp.push({ value: "all", name: "All" });
+              col_name?.map((value) => {
+                return temp.push({ value: value, name: value });
+              });
+              setColumns(temp);
+            } else {
+              setColumns([]);
+              setFormData({
+                ...formData,
+                Column_Names: [],
+              });
+            }
           }
         })
         .catch((error) => console.log(error));
@@ -238,10 +227,20 @@ const Enrichment = () => {
       })
       .then((response) => {
         if (response?.data) {
-          let db_name = response?.data?.data;
-          setDatabaseName(db_name[0]?.DATABASE);
-        } else {
-          setDatabaseName("");
+          let db_name = response?.data?.data[0]?.DATABASE;
+          setDatabaseName(db_name);
+          axios
+            .get(`${baseURL}/${user?.name}`, {
+              params: {
+                query: `select template_name from ${db_name}.CLEANROOM.TEMPLATES where template_name <> 'advertiser_match';`,
+              },
+            })
+            .then((response) => {
+              if (response?.data) {
+                setTemplateList(response.data.data);
+              }
+            })
+            .catch((error) => console.log(error));
         }
       })
       .catch((error) => console.log(error));
