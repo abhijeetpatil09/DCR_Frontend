@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const HowToVideos = () => {
   const navigate = useNavigate();
@@ -7,22 +8,11 @@ const HowToVideos = () => {
   return (
     <div className="flex flex-col w-full px-4">
       <div className="flex flex-row justify-start items-center w-full m-4">
-        <div className="text-xl font-bold text-deep-navy mr-4 cursor-pointer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-            onClick={() => navigate("/home")}
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-            />
-          </svg>
+        <div
+          className="text-xl font-bold text-deep-navy mr-4 cursor-pointer"
+          onClick={() => navigate("/home")}
+        >
+          <ArrowBackIcon />
         </div>
         <h1 className="text-xl font-bold text-deep-navy mr-2">How to Videos</h1>
       </div>

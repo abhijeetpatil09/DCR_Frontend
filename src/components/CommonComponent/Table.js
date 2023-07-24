@@ -73,9 +73,6 @@ const OutputTable = ({
               <Paper elevation={0} className="w-full flex flex-col flex-grow">
                 {id && id !== "" ? (
                   <div className="flex flex-row justify-between px-1 py-3">
-                    <h3 className="text-xl font-light text-deep-navy">
-                      Query result
-                    </h3>
                     <span className="text-deep-navy">
                       Output Console: Request Id - <strong>{id}</strong>
                     </span>
