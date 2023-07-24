@@ -216,9 +216,22 @@ th, td {
   width: 2em !important;
   height: 2em !important;
   fill: #08f0a9 !important;
+  margin-top: 2px;
 }
 
 .react-datepicker__close-icon::after {
   background-color: #08f0a9 !important;
   color: black !important;
+}
+
+.fa {
+  font-family: 'Lato', 'Font Awesome 5 Free', 'Font Awesome 5 Brands';
+   font-weight: 900;
+ padding: 1rem 2rem;
+ color: #3a9c7d;
+
+}
+
+.react-datepicker-wrapper {
+  width: 100% !important;
 }
