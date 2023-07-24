@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
 import {
+  Alert,
   CircularProgress,
   SwipeableDrawer,
   Table,
@@ -41,6 +42,7 @@ import Spinner from "../CommonComponent/Spinner";
 import { toast } from "react-toastify";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const nodeURL = process.env.REACT_APP_NODE_URL;
 
 const initialState = {
   Query_Name: "",
@@ -90,6 +92,7 @@ const MatchRate = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [fileErrorMessage, setFileErrorMessage] = useState("");
+  const [downloadSample, setDownloadSample] = useState(false);
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
     top: false,
@@ -357,60 +360,69 @@ const MatchRate = () => {
 
     localFile.append("myFile", modifiedFile);
 
-    axios.post("http://localhost:9000/api/localFileUpload", localFile, {
-      headers: {
-        "content-type": "multipart/form-data",
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
-
     axios
-      .get(`${baseURL}/${user?.name}/attachment`, {
-        params: {
-          filename: `${formData.File_Name}`,
-          identifyer: `${formData.Column_Names.toUpperCase()}`,
+      .post(`${nodeURL}/api/localFileUpload`, localFile, {
+        headers: {
+          "content-type": "multipart/form-data",
+          "Access-Control-Allow-Origin": "*",
         },
       })
       .then((response) => {
-        if (response?.data?.data === true) {
-          fetchMainTable();
-          setLoading(false);
-
+        if (parseInt(response?.status) === 200) {
           axios
-            .get(`${baseURL}/${user?.name}`, {
+            .get(`${baseURL}/${user?.name}/attachment`, {
               params: {
-                query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${providerName}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
+                filename: `${formData.File_Name}`,
+                identifyer: `${formData.Column_Names.toUpperCase()}`,
               },
             })
             .then((response) => {
-              if (response) {
-                // Reset the file input
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = "";
-                }
-                setFormData({ ...initialState, Consumer_Name: user?.Consumer });
-                setToggleDrawerPosition({
-                  ...toggleDrawerPosition,
-                  right: false,
-                });
-                callByPassAPI();
+              if (response?.data?.data === true) {
+                fetchMainTable();
+                setLoading(false);
+
+                axios
+                  .get(`${baseURL}/${user?.name}`, {
+                    params: {
+                      query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${providerName}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
+                    },
+                  })
+                  .then((response) => {
+                    if (response) {
+                      // Reset the file input
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                      }
+                      setFormData({
+                        ...initialState,
+                        Consumer_Name: user?.Consumer,
+                      });
+                      setToggleDrawerPosition({
+                        ...toggleDrawerPosition,
+                        right: false,
+                      });
+                      callByPassAPI();
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              } else {
+                fetchMainTable();
+                setLoading(false);
+                setErrorMessage(
+                  "The data is not matching with requested Identifier."
+                );
               }
             })
             .catch((error) => {
+              setLoading(false);
+              setErrorMessage(
+                "Something went wrong, please try again later !!!"
+              );
               console.log(error);
             });
-        } else {
-          fetchMainTable();
-          setLoading(false);
-          setErrorMessage(
-            "The data is not matching with requested Identifier."
-          );
         }
-      })
-      .catch((error) => {
-        setLoading(false);
-        setErrorMessage("Something went wrong, please try again later !!!");
-        console.log(error);
       });
   };
 
@@ -446,8 +458,6 @@ const MatchRate = () => {
         console.log("In API catch", error);
       });
   };
-
-  const [downloadSample, setDownloadSample] = useState(false);
 
   const downloadNewFile = () => {
     const link = document.createElement("a");
@@ -606,9 +616,9 @@ const MatchRate = () => {
 
                     <div className="my-2">
                       {fileErrorMessage !== "" && (
-                        <span className="text-red-600 ">
+                        <Alert className="my-4 text-red-600" severity="error">
                           {fileErrorMessage}
-                        </span>
+                        </Alert>
                       )}
                     </div>
 
@@ -738,14 +748,14 @@ const MatchRate = () => {
                     </div>
                     <div className="py-2">
                       {errorMessage !== "" ? (
-                        <span className="text-red-600 font-bold">
+                        <Alert className="my-4 text-red-600" severity="error">
                           {errorMessage}
-                        </span>
+                        </Alert>
                       ) : (
                         loading && (
-                          <span className="text-red-600">
+                          <Alert className="my-4 text-red-600" severity="error">
                             Uploading the Attachment. Please wait
-                          </span>
+                          </Alert>
                         )
                       )}
                     </div>
