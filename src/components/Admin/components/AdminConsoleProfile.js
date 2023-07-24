@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Switch from "@mui/material/Switch";
 import { Box, CircularProgress, Modal } from "@mui/material";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import {
   Table,
@@ -14,7 +18,13 @@ import {
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
-const ProfileTable = ({ user, UserRole }) => {
+const AdminConsoleProfile = () => {
+  const state = useSelector((state) => state);
+  const navigate = useNavigate();
+
+  const user = state && state.user;
+  const UserRole = state && state.user && state.user.role;
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -136,7 +146,16 @@ const ProfileTable = ({ user, UserRole }) => {
 
   return (
     <div className="p-4 w-11/12">
-      <TableContainer className="mt-6">
+      <div className="flex flex-row justify-start items-center w-full m-4">
+        <div
+          className="text-xl font-bold text-deep-navy mr-4 cursor-pointer"
+          onClick={() => navigate("/admin-console")}
+        >
+          <ArrowBackIcon />
+        </div>
+        <h1 className="text-xl font-bold text-deep-navy mr-2">Profiles</h1>
+      </div>
+      <TableContainer className="mt-4">
         <Table
           sx={{ minWidth: 650, borderRadius: 0 }}
           stickyHeader
@@ -597,4 +616,4 @@ const ProfileTable = ({ user, UserRole }) => {
   );
 };
 
-export default ProfileTable;
+export default AdminConsoleProfile;

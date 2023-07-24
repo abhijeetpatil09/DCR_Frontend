@@ -4,10 +4,11 @@ import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 
 import CommonModal from "../../CommonComponent/Modal";
+import Allowed_Columns_Image from "../../../Assets/admin_console_allowed_columns.svg";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
-const AllowedColumns = ({ user }) => {
+const AllowedColumns = ({ user, handleToggleDrawer }) => {
   const [publisherData, setPublisherData] = useState({
     consumer: "",
     template: "",
@@ -204,9 +205,9 @@ const AllowedColumns = ({ user }) => {
   };
 
   return (
-    <div className="w-2/3 mx-8">
-      <div className="pt-4 bg-opacity-75 backdrop-filter backdrop-blur-lg ">
-        <div className="flex flex-row items-start text-deep-navy ">
+    <div className="w-96">
+      <div className="pt-8 bg-opacity-75 backdrop-filter backdrop-blur-lg">
+        <div className="flex flex-row items-start text-electric-green">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -221,20 +222,43 @@ const AllowedColumns = ({ user }) => {
               d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"
             />
           </svg>
-          <div className="flex flex-col">
-            <h3 className="text-lg font-bold text-deep-navy uppercase">
-              CONFIGURE ALLOWED COLUMNS
-            </h3>
-            <span className="text-sm mb-4 font-light text-deep-navy">
-              {" "}
+          <div className="flex flex-col w-full">
+            <div className="flex justify-between">
+              <h3 className="text-lg font-bold text-electric-green uppercase">
+                CONFIGURE ALLOWED COLUMNS
+              </h3>
+              <button onClick={handleToggleDrawer("right", false, "")}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <span className="text-sm mb-4 font-light text-electric-green">
               Add/Remove Allowed Columns for particular consumer.
             </span>
           </div>
         </div>
       </div>
-      <div className="w-1/3">
-        <div className="mt-2 pb-21 flex flex-col">
-          <label className="block text-sm font-medium leading-6 text-deep-navy ">
+
+      <img
+        className="absolute w-96 h-48 bottom-5 opacity-90 z-10 right-0 text-amarant-400"
+        src={Allowed_Columns_Image}
+        alt=""
+      />
+      <div className="pl-8">
+        <div className="my-4 flex flex-col">
+          <label className="block text-sm font-medium leading-6 text-electric-green ">
             Consumer Name
           </label>
           <select
@@ -246,7 +270,7 @@ const AllowedColumns = ({ user }) => {
               })
             }
             required
-            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-deep-navy  bg-blend-darken    shadow-sm ring-1 ring-inset ring-deep-navy  placeholder:text-deep-navy  focus:ring-2 focus:ring-inset focus:ring-deep-navy  sm:text-sm sm:leading-6"
+            className="bg-deep-navy block w-full rounded-md border-0 py-1.5 text-electric-green shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
             {consumers?.map((consumer, index) => (
@@ -257,8 +281,8 @@ const AllowedColumns = ({ user }) => {
           </select>
         </div>
 
-        <div className="mt-2 pb-21 flex flex-col">
-          <label className="block text-sm font-medium leading-6 text-deep-navy ">
+        <div className="my-4 flex flex-col">
+          <label className="block text-sm font-medium leading-6 text-electric-green ">
             Query Name
           </label>
           <select
@@ -270,7 +294,7 @@ const AllowedColumns = ({ user }) => {
               })
             }
             required
-            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-deep-navy  bg-blend-darken    shadow-sm ring-1 ring-inset ring-deep-navy  placeholder:text-deep-navy  focus:ring-2 focus:ring-inset focus:ring-deep-navy  sm:text-sm sm:leading-6"
+            className="bg-deep-navy block w-full rounded-md border-0 py-1.5 text-electric-green shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
             {templateNames?.map((template, index) => (
@@ -281,8 +305,8 @@ const AllowedColumns = ({ user }) => {
           </select>
         </div>
 
-        <div className="mt-2 pb-21 flex flex-col">
-          <label className="block text-sm font-medium leading-6 text-deep-navy ">
+        <div className="my-4 flex flex-col">
+          <label className="block text-sm font-medium leading-6 text-electric-green ">
             Column Name
           </label>
           <select
@@ -294,7 +318,7 @@ const AllowedColumns = ({ user }) => {
               })
             }
             required
-            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-deep-navy  bg-blend-darken    shadow-sm ring-1 ring-inset ring-deep-navy  placeholder:text-deep-navy  focus:ring-2 focus:ring-inset focus:ring-deep-navy  sm:text-sm sm:leading-6"
+            className="bg-deep-navy block w-full rounded-md border-0 py-1.5 text-electric-green shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
             {columns?.map((column, index) => (
@@ -306,25 +330,26 @@ const AllowedColumns = ({ user }) => {
         </div>
 
         {publisherData.status !== "" ? (
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={handleSubmit}
-              className="px-8 bg-deep-navy opacity-1 flex items-center py-2 text-sm text-white rounded-md"
-            >
-              {loading ? (
+          <div className="flex justify-end">
+            {loading ? (
+              <div className="flex w-full font-bold justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green my-4">
                 <CircularProgress
                   style={{
-                    width: "20px",
-                    height: "20px",
+                    width: "24px",
+                    height: "24px",
                     color: "#FFFFFF",
                   }}
                 />
-              ) : (
-                <span className="ml-2">{`${
-                  publisherData.status === true ? "Remove" : "Add"
-                }`}</span>
-              )}
-            </button>
+              </div>
+            ) : (
+              <button
+                className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                {`${publisherData.status === true ? "Remove" : "Add"}`}
+              </button>
+            )}
           </div>
         ) : null}
         <CommonModal

@@ -4,10 +4,11 @@ import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 
 import CommonModal from "../../CommonComponent/Modal";
+import Query_Template_Image from "../../../Assets/admin_console_query_template.svg";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
-const QueryTemplate = ({ user }) => {
+const QueryTemplate = ({ user, handleToggleDrawer }) => {
   const [queryData, setQueryData] = useState({
     consumer: "",
     template: "",
@@ -44,20 +45,22 @@ const QueryTemplate = ({ user }) => {
   }, [user?.name]);
 
   useEffect(() => {
-    axios
-      .get(`${baseURL}/${user?.name}`, {
-        params: {
-          query: `select distinct TEMPLATE_NAME from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where CONSUMER_NAME = '${queryData.consumer}';`,
-        },
-      })
-      .then((response) => {
-        if (response?.data) {
-          setTemplateNames(response?.data?.data);
-        } else {
-          setTemplateNames([]);
-        }
-      })
-      .catch((error) => console.log(error));
+    if (queryData.consumer !== "") {
+      axios
+        .get(`${baseURL}/${user?.name}`, {
+          params: {
+            query: `select distinct * from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where CONSUMER_NAME = '${queryData.consumer}';`,
+          },
+        })
+        .then((response) => {
+          if (response?.data) {
+            setTemplateNames(response?.data?.data);
+          } else {
+            setTemplateNames([]);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
   }, [user?.name, queryData.consumer]);
 
   useEffect(() => {
@@ -135,6 +138,7 @@ const QueryTemplate = ({ user }) => {
         .then((response) => {
           setLoading(false);
           setQueryData({ consumer: "", template: "", status: "" });
+          handleToggleDrawer("right", false);
           toast.success(response?.data?.data?.[0]?.UPDATETEMPLATESTATUS);
         })
         .catch((error) => {
@@ -145,9 +149,9 @@ const QueryTemplate = ({ user }) => {
   };
 
   return (
-    <div className="w-2/3 mx-8">
-      <div className="pt-4 bg-opacity-75 backdrop-filter backdrop-blur-lg ">
-        <div className="flex flex-row items-start text-deep-navy ">
+    <div className="w-96">
+      <div className="pt-8 bg-opacity-75 backdrop-filter backdrop-blur-lg">
+        <div className="flex flex-row items-start text-electric-green">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -162,20 +166,44 @@ const QueryTemplate = ({ user }) => {
               d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"
             />
           </svg>
-          <div className="flex flex-col">
-            <h3 className="text-lg font-bold text-deep-navy uppercase">
-              Configure Query Template
-            </h3>
-            <span className="text-sm mb-4 font-light text-deep-navy">
+          <div className="flex flex-col w-full">
+            <div className="flex justify-between">
+              <h3 className="text-lg font-bold text-electric-green uppercase">
+                Configure Query Template
+              </h3>
+              <button onClick={handleToggleDrawer("right", false, "")}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <span className="text-sm mb-4 font-light text-electric-green">
               {" "}
               Enable/Disable Query Template for particular consumer.
             </span>
           </div>
         </div>
       </div>
-      <div className="w-1/3">
-        <div className="mt-2 pb-21 flex flex-col">
-          <label className="block text-sm font-medium leading-6 text-deep-navy ">
+      <img
+        className="absolute w-96 h-64 bottom-5 opacity-90 z-10 right-0 text-amarant-400"
+        src={Query_Template_Image}
+        alt=""
+      />
+      <div className="pl-8">
+        <div className="my-4 flex flex-col ">
+          <label className="block text-sm font-medium leading-6 text-electric-green ">
             Consumer Name
           </label>
           <select
@@ -184,7 +212,7 @@ const QueryTemplate = ({ user }) => {
               setQueryData({ ...queryData, consumer: e.target.value })
             }
             required
-            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-deep-navy  bg-blend-darken    shadow-sm ring-1 ring-inset ring-deep-navy  placeholder:text-deep-navy  focus:ring-2 focus:ring-inset focus:ring-deep-navy  sm:text-sm sm:leading-6"
+            className="bg-deep-navy block w-full rounded-md border-0 py-1.5 text-electric-green  shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
             {consumers?.map((consumer, index) => (
@@ -195,17 +223,18 @@ const QueryTemplate = ({ user }) => {
           </select>
         </div>
 
-        <div className="mt-2 pb-21 flex flex-col">
-          <label className="block text-sm font-medium leading-6 text-deep-navy ">
+        <div className="my-4 flex flex-col ">
+          <label className="block text-sm font-medium leading-6 text-electric-green ">
             Query Name
           </label>
           <select
             value={queryData.template}
-            onChange={(e) =>
-              setQueryData({ ...queryData, template: e.target.value })
-            }
+            onChange={(e) => {
+              setQueryData({ ...queryData, template: e.target.value });
+              console.log("e.target.value", e.target.value);
+            }}
             required
-            className="bg-transparent  block w-full rounded-md border-0 py-1.5 text-deep-navy  bg-blend-darken    shadow-sm ring-1 ring-inset ring-deep-navy  placeholder:text-deep-navy  focus:ring-2 focus:ring-inset focus:ring-deep-navy  sm:text-sm sm:leading-6"
+            className="bg-deep-navy block w-full rounded-md border-0 py-1.5 text-electric-green shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
             {templateNames?.map((template, index) => (
@@ -217,25 +246,26 @@ const QueryTemplate = ({ user }) => {
         </div>
 
         {queryData.status !== "" ? (
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={handleSubmit}
-              className="px-8 bg-deep-navy opacity-1 flex items-center py-2 text-sm text-white rounded-md"
-            >
-              {loading ? (
+          <div className="flex justify-end">
+            {loading ? (
+              <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green m-4">
                 <CircularProgress
                   style={{
-                    width: "20px",
-                    height: "20px",
+                    width: "24px",
+                    height: "24px",
                     color: "#FFFFFF",
                   }}
                 />
-              ) : (
-                <span className="ml-2">{`${
-                  queryData.status === true ? "Disable" : "Enable"
-                }`}</span>
-              )}
-            </button>
+              </div>
+            ) : (
+              <button
+                className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                {`${queryData.status === true ? "Disable" : "Enable"}`}
+              </button>
+            )}
           </div>
         ) : null}
 

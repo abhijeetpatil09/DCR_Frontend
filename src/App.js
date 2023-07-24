@@ -19,6 +19,7 @@ import AdminConsole from "./components/Admin";
 import PrivacyPolicy from "./components/CommonComponent/CommonPages/PrivacyPolicy";
 import TermsAndConditions from "./components/CommonComponent/CommonPages/TermsAndConditions";
 import HowToVideos from "./components/CommonComponent/howToVideos";
+import AdminConsoleProfile from "./components/Admin/components/AdminConsoleProfile";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -46,6 +47,10 @@ const App = () => {
                   <Route path="/upload-catalog" element={<UploadCatalog />} />
                   <Route path="/admin-console" element={<AdminConsole />} />
                   <Route path="/how-to-videos" element={<HowToVideos />} />
+                  <Route
+                    path="/admin-console-profile"
+                    element={<AdminConsoleProfile />}
+                  />
                 </Routes>
               </Sidebar>
             }
