@@ -238,22 +238,24 @@ const MatchRate = () => {
             // })
             // console.log("parsedData", parsedData);
 
-            if (headers.length > 1) {
+            if (headers?.length > 1) {
               setFileErrorMessage(
                 "Columns are added more than one in the CSV file"
               );
-            } else if (headers.length < 1) {
+            } else if (headers?.length < 1) {
               setFileErrorMessage("Please add one Column in the CSV file");
-            } else if (headers.length === 1) {
+            } else if (headers?.length === 1) {
               if (
-                headers[0].toUpperCase() === "EMAIL" ||
-                headers[0].toUpperCase() === "PHONE" ||
-                headers[0].toUpperCase() === "MAID-WIP"
+                headers[0]?.toUpperCase() === "EMAIL" ||
+                headers[0]?.toUpperCase() === "PHONE" ||
+                headers[0]?.toUpperCase() === "MAID-WIP"
               ) {
                 setFileErrorMessage("");
               } else {
                 setFileErrorMessage("Invalid CSV file. Upload not allowed.");
               }
+            } else {
+              setFileErrorMessage("Invalid CSV file. Upload not allowed.");
             }
           },
         });
@@ -282,22 +284,24 @@ const MatchRate = () => {
           //   }, {})
           // );
 
-          if (firstRow.length > 1) {
+          if (firstRow?.length > 1) {
             setFileErrorMessage(
               "Columns are added more than one in the XLSX file"
             );
-          } else if (firstRow.length < 1) {
+          } else if (firstRow?.length < 1) {
             setFileErrorMessage("Please add one Column in the XLSX file");
-          } else if (firstRow.length === 1) {
+          } else if (firstRow?.length === 1) {
             if (
-              firstElement.toUpperCase() === "EMAIL" ||
-              firstElement.toUpperCase() === "PHONE" ||
-              firstElement.toUpperCase() === "MAID-WIP"
+              firstElement?.toUpperCase() === "EMAIL" ||
+              firstElement?.toUpperCase() === "PHONE" ||
+              firstElement?.toUpperCase() === "MAID-WIP"
             ) {
               setFileErrorMessage("");
             } else {
               setFileErrorMessage("Invalid XLSX file. Upload not allowed.");
             }
+          } else {
+            setFileErrorMessage("Invalid XLSX file. Upload not allowed.");
           }
         };
 
