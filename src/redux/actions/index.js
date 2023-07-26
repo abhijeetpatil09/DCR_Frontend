@@ -2,6 +2,7 @@
 export {
   loginRequest,
   logoutUser,
+  Home
 } from './userLoginAction';
 
 export {

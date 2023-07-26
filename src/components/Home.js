@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 
-import dash1 from "../Assets/Designer _Two Color.svg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import * as actions from "../redux/actions/index";
+import dash1 from "../Assets/Designer _Two Color.svg";
 
 // import { latestPartners } from "../utils/data";
 
@@ -12,11 +13,11 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 const Home = () => {
   const state = useSelector((state) => state);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const user = state && state.user;
-
-  const [countProviderConsumer, setCountProviderConsumer] = useState([]);
-
-  const [latestPartners, setLatestPartners] = useState([]);
+  const latestPartners = state && state.Home && state.Home.latestPartners;
+  const countProviderConsumer = state && state.Home && state.Home.countProviderConsumer;
 
   const startExploring = () => {
     if (user?.role?.includes("Consumer")) {
@@ -44,13 +45,17 @@ const Home = () => {
           res = res?.map((item) => {
             return { [item.TYPE]: item.COUNT };
           });
-          setCountProviderConsumer(res);
+          dispatch(
+            actions.Home({
+              countProviderConsumer: res,
+            })
+          );
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [user?.name]);
+  }, [dispatch, user.name]);
 
   useEffect(() => {
     axios
@@ -63,13 +68,17 @@ const Home = () => {
       .then((response) => {
         if (response?.data?.data) {
           let result = response?.data?.data;
-          setLatestPartners(result);
+          dispatch(
+            actions.Home({
+              latestPartners: result,
+            })
+          );
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [user?.name]);
+  }, [dispatch, user.name]);
 
   return (
     <>
@@ -166,7 +175,9 @@ const Home = () => {
                           } else if (index === 2) {
                             return (
                               <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
-                                {`+${item?.ALL_TEMPLATES?.split(",")?.length - 2} more`}
+                                {`+${
+                                  item?.ALL_TEMPLATES?.split(",")?.length - 2
+                                } more`}
                               </span>
                             );
                           } else {

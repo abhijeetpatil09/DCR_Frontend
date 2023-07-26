@@ -226,36 +226,28 @@ const MatchRate = () => {
             // Assuming the first row contains the column names
             const headers = jsonData[0];
 
-            // Transform jsonData into an array of objects with key-value pairs
-            // let parsedData = jsonData?.slice(1).map((row) =>
-            //   row.reduce((obj, value, columnIndex) => {
-            //     obj[headers[columnIndex]] = value;
-            //     return obj;
-            //   }, {})
-            // );
-            // parsedData = parsedData?.map((item) => {
-            //   return item.EMAIL
-            // })
-            // console.log("parsedData", parsedData);
-
-            if (headers?.length > 1) {
-              setFileErrorMessage(
-                "Columns are added more than one in the CSV file"
-              );
-            } else if (headers?.length < 1) {
-              setFileErrorMessage("Please add one Column in the CSV file");
-            } else if (headers?.length === 1) {
-              if (
-                headers[0]?.toUpperCase() === "EMAIL" ||
-                headers[0]?.toUpperCase() === "PHONE" ||
-                headers[0]?.toUpperCase() === "MAID-WIP"
-              ) {
-                setFileErrorMessage("");
+            if (jsonData?.length > 1) {
+              if (headers?.length > 1) {
+                setFileErrorMessage(
+                  "Columns are added more than one in the CSV file"
+                );
+              } else if (headers?.length < 1) {
+                setFileErrorMessage("Please add one Column in the CSV file");
+              } else if (headers?.length === 1) {
+                if (
+                  headers[0]?.toUpperCase() === "EMAIL" ||
+                  headers[0]?.toUpperCase() === "PHONE" ||
+                  headers[0]?.toUpperCase() === "MAID-WIP"
+                ) {
+                  setFileErrorMessage("");
+                } else {
+                  setFileErrorMessage("Invalid CSV file. Upload not allowed.");
+                }
               } else {
                 setFileErrorMessage("Invalid CSV file. Upload not allowed.");
               }
             } else {
-              setFileErrorMessage("Invalid CSV file. Upload not allowed.");
+              setFileErrorMessage("Invalid CSV file. No Data present.");
             }
           },
         });
@@ -266,42 +258,32 @@ const MatchRate = () => {
           const arrayBuffer = reader.result;
           const workbook = read(arrayBuffer, { type: "array" });
           const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-          const jsonData = utils
-            .sheet_to_json(worksheet, { header: 1 })
-            ?.filter((row) => Object.keys(row).length > 0);
-          // Assuming the first row contains the column names
-          const firstRow = jsonData[0];
-          const firstElement = firstRow && firstRow[0];
+          const jsonData = utils.sheet_to_json(worksheet, { header: 1 });
 
           // Assuming the first row contains the column names
-          // const headers = jsonData[0];
-
-          // Transform jsonData into an array of objects with key-value pairs
-          // const parsedData = jsonData?.slice(1).map((row) =>
-          //   row.reduce((obj, value, columnIndex) => {
-          //     obj[headers[columnIndex]] = value;
-          //     return obj;
-          //   }, {})
-          // );
-
-          if (firstRow?.length > 1) {
-            setFileErrorMessage(
-              "Columns are added more than one in the XLSX file"
-            );
-          } else if (firstRow?.length < 1) {
-            setFileErrorMessage("Please add one Column in the XLSX file");
-          } else if (firstRow?.length === 1) {
-            if (
-              firstElement?.toUpperCase() === "EMAIL" ||
-              firstElement?.toUpperCase() === "PHONE" ||
-              firstElement?.toUpperCase() === "MAID-WIP"
-            ) {
-              setFileErrorMessage("");
+          const headers = jsonData[0];
+          if (jsonData?.length > 1) {
+            if (headers?.length > 1) {
+              setFileErrorMessage(
+                "Columns are added more than one in the XLSX file"
+              );
+            } else if (headers?.length < 1) {
+              setFileErrorMessage("Please add one Column in the XLSX file");
+            } else if (headers?.length === 1) {
+              if (
+                headers[0]?.toUpperCase() === "EMAIL" ||
+                headers[0]?.toUpperCase() === "PHONE" ||
+                headers[0]?.toUpperCase() === "MAID-WIP"
+              ) {
+                setFileErrorMessage("");
+              } else {
+                setFileErrorMessage("Invalid XLSX file. Upload not allowed.");
+              }
             } else {
               setFileErrorMessage("Invalid XLSX file. Upload not allowed.");
             }
           } else {
-            setFileErrorMessage("Invalid XLSX file. Upload not allowed.");
+            setFileErrorMessage("Invalid XLSX file. No Data present.");
           }
         };
 
@@ -566,7 +548,7 @@ const MatchRate = () => {
                         onChange={handleCustomerFormData}
                         required
                         value={formData.Query_Name}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
                         <option value="advertiser_match">
@@ -578,7 +560,7 @@ const MatchRate = () => {
                     <div className="mt-2 pb-21 flex flex-col">
                       <label>Upload File</label>
                       <input
-                        // className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        // className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                         className="block w-full text-sm text-true-teal
                         file:mr-4 file:py-2 file:px-4 file:rounded-md
                         file:border-0 file:text-sm file:font-semibold
@@ -634,7 +616,7 @@ const MatchRate = () => {
                         onChange={handleCustomerFormData}
                         required
                         value={formData.Column_Names}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
                         <option value="email">Email</option>
@@ -650,7 +632,7 @@ const MatchRate = () => {
                         onChange={handleCustomerFormData}
                         required
                         value={formData.Match_Attribute}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
                         <option value="overall">Overall</option>

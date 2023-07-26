@@ -8,11 +8,13 @@ import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 import thunk from "redux-thunk";
 
 import userReducer from '../reducers/userReducer';
+import HomeReducer from '../reducers/HomeReducer';
 import ConsumerFormReducer from '../reducers/ConsumerFormReducer';
 import PublisherFormReducer from '../reducers/PublisherFormReducer';
 
 const AppRootReducer = combineReducers({
     user: userReducer,
+    Home: HomeReducer,
     ConsumerForm: ConsumerFormReducer,
     PublisherForm: PublisherFormReducer,
 });
