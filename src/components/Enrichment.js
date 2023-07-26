@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import {
+  Alert,
   CircularProgress,
   SwipeableDrawer,
   Table,
@@ -82,6 +83,7 @@ const Enrichment = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [columnError, setColumnError] = useState("");
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
     top: false,
@@ -325,6 +327,11 @@ const Enrichment = () => {
     event.preventDefault();
     formData.RunId = Date.now();
 
+    if (!formData.Column_Names || formData.Column_Names.length <= 0) {
+      setColumnError("Please select the columns");
+      return;
+    }
+
     setLoading(true);
     const delimiter = "&";
     const selectedColumns = `#${formData.Column_Names?.join(delimiter)}#`;
@@ -533,6 +540,13 @@ const Enrichment = () => {
                       />
                     </div>
 
+                    <div className="my-2">
+                      {columnError !== "" && (
+                        <Alert className="text-red-600" severity="error">
+                          {columnError}
+                        </Alert>
+                      )}
+                    </div>
                     <div className="mt-2 pb-21 flex flex-col">
                       <label>Identifier type</label>
                       <select

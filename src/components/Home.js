@@ -5,7 +5,7 @@ import dash1 from "../Assets/Designer _Two Color.svg";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { latestPartners } from "../utils/data";
+// import { latestPartners } from "../utils/data";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -14,8 +14,9 @@ const Home = () => {
   const navigate = useNavigate();
   const user = state && state.user;
 
-  const [consumers, setConsumers] = useState(0);
-  const [providers, setProviders] = useState(0);
+  const [countProviderConsumer, setCountProviderConsumer] = useState([]);
+
+  const [latestPartners, setLatestPartners] = useState([]);
 
   const startExploring = () => {
     if (user?.role?.includes("Consumer")) {
@@ -34,30 +35,35 @@ const Home = () => {
       .get(`${baseURL}/dataexadmin`, {
         params: {
           query:
-            "SELECT COUNT(*) AS Consumers FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE CONSUMER ='TRUE' AND ADMIN='TRUE';",
+            "SELECT COUNT(*) AS Count, 'Consumers' AS Type FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE CONSUMER ='TRUE' AND ADMIN='TRUE' UNION ALL SELECT COUNT(*) AS Count, 'Providers' AS Type FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE PROVIDER ='TRUE' AND ADMIN='TRUE';",
         },
       })
       .then((response) => {
         if (response?.data?.data) {
-          let res = response?.data?.data[0];
-          setConsumers(res?.CONSUMERS);
+          let res = response?.data?.data;
+          res = res?.map((item) => {
+            return { [item.TYPE]: item.COUNT };
+          });
+          setCountProviderConsumer(res);
         }
       })
       .catch((error) => {
         console.log(error);
       });
+  }, [user?.name]);
 
+  useEffect(() => {
     axios
       .get(`${baseURL}/dataexadmin`, {
         params: {
           query:
-            "SELECT COUNT(*) AS Providers FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE PROVIDER ='TRUE' AND ADMIN='TRUE';",
+            "SELECT partner_name, SUM(request_processed) AS total_requests, ARRAY_TO_STRING(ARRAY_AGG(template_name), ', ') AS all_templates, role FROM (SELECT * FROM DATAEXCHANGEDB.DATACATALOG.HOME_PAGE_VW WHERE role IN ('CONSUMER', 'CONSUMER_ADMIN')) AS filtered_data GROUP BY partner_name, role;",
         },
       })
       .then((response) => {
         if (response?.data?.data) {
-          let res = response?.data?.data[0];
-          setProviders(res?.PROVIDERS);
+          let result = response?.data?.data;
+          setLatestPartners(result);
         }
       })
       .catch((error) => {
@@ -94,48 +100,31 @@ const Home = () => {
               </button>
             </div>
           </div>
-          <div className="w-1/3 relative p-5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl shadow-lg overflow-hidden mx-2 mt-4">
-            <div className="relative z-10 mb-4 text-white text-8xl leading-none font-semibold">
-              {consumers}
-            </div>
-            <div className="relative z-10 text-blue-200 leading-none text-3xl font-semibold">
-              Consumers
-            </div>
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="absolute right-0 bottom-0 h-32 w-32 -mr-8 -mb-8 text-blue-700 opacity-50"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              ></path>
-            </svg>
-          </div>
-          <div className="w-1/3 relative p-5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl shadow-lg overflow-hidden mx-2 mt-4">
-            <div className="relative z-10 mb-4 text-white text-8xl leading-none font-semibold">
-              {providers}
-            </div>
-            <div className="relative z-10 text-blue-200 leading-none text-3xl font-semibold">
-              Providers
-            </div>
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="absolute right-0 bottom-0 h-32 w-32 -mr-8 -mb-8 text-blue-700 opacity-50"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              ></path>
-            </svg>
-          </div>
+          {countProviderConsumer?.map((item) => {
+            return (
+              <div className="w-1/3 relative p-5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl shadow-lg overflow-hidden mx-2 mt-4">
+                <div className="relative z-10 mb-4 text-white text-8xl leading-none font-semibold">
+                  {Object.values(item)}
+                </div>
+                <div className="relative z-10 text-blue-200 leading-none text-3xl font-semibold">
+                  {Object.keys(item)}
+                </div>
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="absolute right-0 bottom-0 h-32 w-32 -mr-8 -mb-8 text-blue-700 opacity-50"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  ></path>
+                </svg>
+              </div>
+            );
+          })}
         </div>
       </div>
       <div className="flex flex-row gap-4 px-5 justify-around h-full w-full">
@@ -163,30 +152,30 @@ const Home = () => {
                 <div className="w-1/3 px-1">
                   <div className="relative flex flex-col items-start p-4 border border-neutral-100 bg-white shadow-lg rounded-lg bg-opacity-40 ">
                     <h4 className=" text-md font-medium text-deep-navy">
-                      {item.title}
+                      {item.PARTNER_NAME}
                     </h4>
                     <div className="flex flex-row flex-wrap gap-2 mt-2">
-                    {item.templates?.map((template, index) => {
-                         if (index < 2) {
+                      {item?.ALL_TEMPLATES?.split(",")?.map(
+                        (template, index) => {
+                          if (index < 2) {
                             return (
-                                <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
-                                    {template}
-                                </span>
+                              <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
+                                {template}
+                              </span>
                             );
-                        }
-                         else if (index === 2) {
+                          } else if (index === 2) {
                             return (
-                                <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
-                                    {`+${item.templates.length - 2} more`}
-                                </span>
+                              <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
+                                {`+${item?.ALL_TEMPLATES?.split(",")?.length - 2} more`}
+                              </span>
                             );
-                        }
-                         else {
+                          } else {
                             return null;
+                          }
                         }
-                    })}
+                      )}
                     </div>
-                    <div className="flex items-center w-full text-xs gap-2 font-medium text-gray-400 h-8">
+                    <div className="flex items-center justify-between mt-4 w-full text-xs gap-2 font-medium text-gray-400 h-8">
                       <div className="flex items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -201,7 +190,7 @@ const Home = () => {
                           />
                         </svg>
                         <span className="ml-1 leading-none">
-                          {item.recordMatched}
+                          {item.TOTAL_REQUESTS} requests processed
                         </span>
                       </div>
                       <div className="flex items-center">
@@ -213,7 +202,7 @@ const Home = () => {
                         >
                           <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
                         </svg>
-                        <span className="ml-1 leading-none">{item.role}</span>
+                        <span className="ml-1 leading-none">{item.ROLE}</span>
                       </div>
                     </div>
                   </div>

@@ -36,10 +36,11 @@ import { handleDate } from "../../utils/commonFunctions";
 import enrichment from "../../Assets/Data organization_Isometric.svg";
 import searchillustration from "../../Assets/Data storage_Two Color.svg";
 
-import "../styles.css";
-import "../pure-react.css";
 import Spinner from "../CommonComponent/Spinner";
 import { toast } from "react-toastify";
+
+import "../styles.css";
+import "../pure-react.css";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const nodeURL = process.env.REACT_APP_NODE_URL;

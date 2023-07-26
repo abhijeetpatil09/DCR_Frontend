@@ -21,7 +21,6 @@ export const jsonToCsv = (jsonData) => {
 // Function for Handle the date as per DD-MM-YYYY format
 
 export const handleDate = (date) => {
-
   const dateObj = new Date(parseInt(date));
 
   const year = dateObj.getFullYear();
@@ -79,13 +78,19 @@ export const isObjectEmpty = (obj) => {
   return Object.keys(obj).length === 0;
 };
 
-
 /// Remove Duplicate Objects...
 export const removeDuplicateObjects = (array) => {
   return array?.filter((obj, index, self) => {
     return (
-      index ===
-      self.findIndex((o) => o.id === obj.id && o.name === obj.name)
+      index === self.findIndex((o) => o.id === obj.id && o.name === obj.name)
     );
   });
+};
+
+// Validate Eamil
+
+export const validateEmail = (mail) => {
+  var mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  if (mail.match(mailformat)) return true;
+  else return false;
 };

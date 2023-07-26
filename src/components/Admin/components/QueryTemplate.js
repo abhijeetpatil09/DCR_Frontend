@@ -231,7 +231,6 @@ const QueryTemplate = ({ user, handleToggleDrawer }) => {
             value={queryData.template}
             onChange={(e) => {
               setQueryData({ ...queryData, template: e.target.value });
-              console.log("e.target.value", e.target.value);
             }}
             required
             className="bg-deep-navy block w-full rounded-md border-0 py-1.5 text-electric-green shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
