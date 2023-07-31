@@ -344,7 +344,7 @@ const AllowedColumns = ({ user, handleToggleDrawer }) => {
               <option key={index} value={column}>
                 {column}
                 {"       "}
-                {allowedColumns.includes(column) ? "?" : "?"}
+                {allowedColumns.includes(column) ? "✓" : "✗"}
               </option>
             ))}
           </select>

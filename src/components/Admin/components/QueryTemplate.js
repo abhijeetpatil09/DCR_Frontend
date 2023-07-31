@@ -240,7 +240,7 @@ const QueryTemplate = ({ user, handleToggleDrawer }) => {
               <option key={index} value={template?.TEMPLATE_NAME}>
                 {template?.TEMPLATE_NAME}
                 {"       "}
-                {template?.TEMPLATE_STATUS === true ? " ?" : "?"}
+                {template?.TEMPLATE_STATUS === true ? " ✓" : "✗"}
               </option>
             ))}
           </select>
