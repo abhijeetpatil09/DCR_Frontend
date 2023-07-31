@@ -18,7 +18,8 @@ const AllowedColumns = ({ user, handleToggleDrawer }) => {
 
   const [consumers, setConsumers] = useState([]);
   const [templateNames, setTemplateNames] = useState([]);
-  const [columns, setColumns] = useState([]);
+  const [allColumns, setAllColumns] = useState([]);
+  const [allowedColumns, setAllowedColumns] = useState([]);
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -68,7 +69,7 @@ const AllowedColumns = ({ user, handleToggleDrawer }) => {
       .catch((error) => console.log(error));
   }, [user?.name, publisherData.consumer]);
 
-  //   UseEffect for Column List....
+  //   UseEffect for All Columns and Allowed columns list....
 
   useEffect(() => {
     if (publisherData.consumer !== "" && publisherData.template !== "") {
@@ -81,18 +82,36 @@ const AllowedColumns = ({ user, handleToggleDrawer }) => {
         .then((response) => {
           if (response?.data?.data) {
             let data = response?.data?.data;
-            let col_name = data[0]?.ALLOWED_COLUMNS?.split("|");
-            col_name = col_name?.map((item) => {
+            let allowed_columns = data[0]?.ALLOWED_COLUMNS?.split("|");
+            allowed_columns = allowed_columns?.map((item) => {
               return item?.split(".")[1];
             });
-            setColumns(col_name);
+            setAllowedColumns(allowed_columns);
           } else {
-            setColumns([]);
+            setAllowedColumns([]);
           }
         })
         .catch((error) => console.log(error));
-    } else {
-      setColumns([]);
+
+      axios
+        .get(`${baseURL}/${user.name}`, {
+          params: {
+            query: `select ALL_COLUMNS from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where TEMPLATE_NAME = '${publisherData.template}' and CONSUMER_NAME = '${publisherData.consumer}';`,
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            let data = response?.data?.data;
+            let all_columns = data[0]?.ALL_COLUMNS?.split(",");
+            all_columns = all_columns?.map((item) => {
+              return item;
+            });
+            setAllColumns(all_columns);
+          } else {
+            setAllColumns([]);
+          }
+        })
+        .catch((error) => console.log(error));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publisherData.consumer, publisherData.template]);
@@ -321,9 +340,11 @@ const AllowedColumns = ({ user, handleToggleDrawer }) => {
             className="bg-deep-navy block w-full rounded-md border-0 py-1.5 text-electric-green shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
           >
             <option value="">Please select</option>
-            {columns?.map((column, index) => (
+            {allColumns?.map((column, index) => (
               <option key={index} value={column}>
                 {column}
+                {"       "}
+                {allowedColumns.includes(column) ? "?" : "?"}
               </option>
             ))}
           </select>

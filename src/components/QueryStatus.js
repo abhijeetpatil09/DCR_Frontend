@@ -34,11 +34,12 @@ import {
 } from "./CommonComponent/StatusColumn";
 
 import SelectDropdown from "./CommonComponent/SelectDropdown";
+import Spinner from "./CommonComponent/Spinner";
+
 import "react-datepicker/dist/react-datepicker.css";
 
 import "./styles.css";
 import "./pure-react.css";
-import Spinner from "./CommonComponent/Spinner";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -503,11 +504,15 @@ const QueryStatus = () => {
                       backgroundColor: "#e8effb",
                       borderRadius: 0,
                       borderTop: 1,
-                      borderRight: 1,
+                      borderLeft: 1,
                       borderColor: "#d6d3d1",
                     },
                     "& th:first-of-type": {
                       borderLeft: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                    "& th:last-child": {
+                      borderRight: 1,
                       borderColor: "#d6d3d1",
                     },
                   }}
@@ -527,11 +532,11 @@ const QueryStatus = () => {
                   <TableCell key={4} align="center">
                     Status
                   </TableCell>
-                  <TableCell key={5} align="center">
-                    Requested
-                  </TableCell>
                   <TableCell key={6} align="center">
                     Actions
+                  </TableCell>
+                  <TableCell key={5} align="center">
+                    Requested
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -583,9 +588,6 @@ const QueryStatus = () => {
                             </span>
                           </TableCell>
                           <TableCell align="center">
-                            {handleDate(row.RUN_ID)}
-                          </TableCell>
-                          <TableCell align="center">
                             {row.STATUS.toLowerCase() === "failed" ||
                             row.STATUS.toLowerCase() === "false" ? (
                               <div className="flex flex-row items-center justify-center">
@@ -620,14 +622,7 @@ const QueryStatus = () => {
                                 </button>
                               </div>
                             ) : (
-                              <div
-                                className={`flex ${
-                                  row.TEMPLATE_NAME === "CUSTOMER ENRICHMENT" ||
-                                  row.TEMPLATE_NAME === "customer_enrichment"
-                                    ? "justify-between"
-                                    : "justify-center"
-                                } `}
-                              >
+                              <div className={`flex justify-between`}>
                                 <button
                                   onClick={() =>
                                     fetchcsvTableData(
@@ -705,6 +700,9 @@ const QueryStatus = () => {
                                 )}
                               </div>
                             )}
+                          </TableCell>
+                          <TableCell align="center">
+                            {handleDate(row.RUN_ID)}
                           </TableCell>
                         </TableRow>
                       );

@@ -782,11 +782,15 @@ const MatchRate = () => {
                       backgroundColor: "#e8effb",
                       borderRadius: 0,
                       borderTop: 1,
-                      borderRight: 1,
+                      borderLeft: 1,
                       borderColor: "#d6d3d1",
                     },
                     "& th:first-of-type": {
                       borderLeft: 1,
+                      borderColor: "#d6d3d1",
+                    },
+                    "& th:last-child": {
+                      borderRight: 1,
                       borderColor: "#d6d3d1",
                     },
                   }}
@@ -806,11 +810,11 @@ const MatchRate = () => {
                   <TableCell key={5} align="center">
                     Match count
                   </TableCell>
-                  <TableCell key={6} align="center">
-                    Requested
-                  </TableCell>
                   <TableCell key={7} align="center">
                     Actions
+                  </TableCell>
+                  <TableCell key={6} align="center">
+                    Requested
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -853,9 +857,6 @@ const MatchRate = () => {
                       </TableCell>
                       <TableCell align="center">{row.ATTRIBUTE}</TableCell>
                       <TableCell align="center">{row.MATCH_COUNT}</TableCell>
-                      <TableCell align="center">
-                        {handleDate(row.RUN_ID)}
-                      </TableCell>
                       <TableCell align="center">
                         {row.STATUS.toLowerCase() === "failed" ||
                         row.STATUS.toLowerCase() === "false" ? (
@@ -928,6 +929,9 @@ const MatchRate = () => {
                             </button>
                           </div>
                         )}
+                      </TableCell>
+                      <TableCell align="center">
+                        {handleDate(row.RUN_ID)}
                       </TableCell>
                     </TableRow>
                   );

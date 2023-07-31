@@ -10,6 +10,7 @@ import BgVideo from "../../Assets/loginbg.mp4";
 import BgVideoGreen from "../../Assets/loginbg_green.mp4";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -51,9 +52,9 @@ const Login = () => {
 
   const getAllConsumers = async (userRole) => {
     await axios
-      .get(`${baseURL}/${loginDetails?.userName}`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select user from CONSUMER_ATTRIBUTES_VW where admin = 'TRUE';`,
+          query: `select user from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES where admin = 'TRUE' and party_account = (select distinct party_account from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES where user = '${loginDetails?.userName}');`,
         },
       })
       .then((response) => {
@@ -91,9 +92,9 @@ const Login = () => {
     if (loginDetails?.userName !== "") {
       setLoading(true);
       await axios
-        .get(`${baseURL}/${loginDetails?.userName}`, {
+        .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: `select * from CONSUMER_ATTRIBUTES_VW WHERE USER = '${loginDetails?.userName}';`,
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES WHERE USER = '${loginDetails?.userName}';`,
           },
         })
         .then((response) => {
@@ -123,6 +124,9 @@ const Login = () => {
                   userData?.ADMIN?.toLowerCase() === "true"
                 ) {
                   userRole.push("Provider_Admin");
+                }
+                if (userData?.DATAEXADMIN?.toLowerCase() === "true") {
+                  userRole.push("DATAEXADMIN");
                 }
 
                 if (

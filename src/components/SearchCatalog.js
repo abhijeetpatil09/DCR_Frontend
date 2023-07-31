@@ -17,6 +17,7 @@ import searchillustration from "../Assets/search_illustration.svg";
 import Spinner from "./CommonComponent/Spinner";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const SearchCatalog = () => {
   const [selectedValues, setSelectedValues] = useState({
@@ -25,6 +26,8 @@ const SearchCatalog = () => {
     provider: [],
   });
   const [loader, setLoader] = useState(false);
+  const [loadingTable, setLoadingTable] = useState(true);
+
   const [data, setData] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
@@ -75,7 +78,7 @@ const SearchCatalog = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER order by entity_name limit 10`,
         },
@@ -84,16 +87,20 @@ const SearchCatalog = () => {
         if (response?.data?.data) {
           let data = response?.data?.data;
           setData(data);
+          setLoadingTable(false);
+        } else {
+          setLoadingTable(false);
         }
       })
       .catch((error) => {
         console.log(error);
+        setLoadingTable(false);
       });
   }, []);
 
   useEffect(() => {
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.CATEGORY_LIST`,
         },
@@ -111,7 +118,7 @@ const SearchCatalog = () => {
         console.log(error);
       });
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `select * from DATAEXCHANGEDB.DATACATALOG.PROVIDER_NAME;`,
         },
@@ -145,7 +152,7 @@ const SearchCatalog = () => {
         )
         .join("");
       axios
-        .get(`${baseURL}/dataexadmin`, {
+        .get(`${baseURL}/${redirectionUser}`, {
           params: {
             query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
               finalCategory !== "" ? `where (${finalCategory})` : ""
@@ -190,8 +197,6 @@ const SearchCatalog = () => {
   };
 
   const handleSubmit = (anchor) => {
-    setLoader(true);
-
     if (selectedValues.category?.length === 0) {
       setError({ ...errors, category: "Please select Category" });
       return;
@@ -203,6 +208,7 @@ const SearchCatalog = () => {
       return;
     }
 
+    setLoader(true);
     const finalCategory = selectedValues?.category
       ?.map((item, index) =>
         item !== "all"
@@ -245,10 +251,8 @@ const SearchCatalog = () => {
           ")"
         : "");
 
-    console.log("appendedString ==>", finalResult);
-
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${
             finalResult !== "" ? `where ${finalResult}` : ""
@@ -261,7 +265,6 @@ const SearchCatalog = () => {
           setLoader(false);
           setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: false });
         } else {
-          setData(response?.data?.data);
           setLoader(false);
         }
       })
@@ -275,9 +278,16 @@ const SearchCatalog = () => {
     setViewTable({ ...viewTable, head: [], rows: [] });
     toggleResultModal(true);
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select * from DATAEXCHANGEDB.DATACATALOG.PROVIDER where PROVIDER_NAME='${providerName}' and ENTITY_NAME='${entity}';`,
+          query: `select provider_name as Provider,
+          entity_name as Entity,
+          attribute_name as Attribute,
+          Category as Category,
+          Sub_Category as SubCategory,
+          Description as Description,
+          Tech_Name as TechName
+          from DATAEXCHANGEDB.DATACATALOG.PROVIDER where PROVIDER_NAME='${providerName}' and ENTITY_NAME='${entity}';`,
         },
       })
       .then((response) => {
@@ -291,10 +301,19 @@ const SearchCatalog = () => {
   };
 
   const fetchTable = (data) => {
-    let head = [];
+    let head = [
+      "PROVIDER",
+      "ENTITY",
+      "ATTRIBUTE",
+      "CATEGORY",
+      "SUBCATEGORY",
+      "DESCRIPTION",
+      "TECHNAME",
+    ];
+    // let head = [];
     let row = [];
     if (data?.length > 0) {
-      head = data && Object.keys(data[0]);
+      // head = data && Object.keys(data[0]);
       data?.map((obj) => {
         return row.push(head?.map((key) => obj[key]));
       });
@@ -429,12 +448,16 @@ const SearchCatalog = () => {
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <button
-                      className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
-                      type="submit"
-                      onClick={() => handleSubmit(anchor)}
-                    >
-                      {loader ? (
+                    {!loader ? (
+                      <button
+                        className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                        type="submit"
+                        onClick={() => handleSubmit(anchor)}
+                      >
+                        Filter
+                      </button>
+                    ) : (
+                      <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
                         <CircularProgress
                           style={{
                             width: "24px",
@@ -442,10 +465,8 @@ const SearchCatalog = () => {
                             color: "#FFFFFF",
                           }}
                         />
-                      ) : (
-                        "Filter"
-                      )}
-                    </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -454,151 +475,168 @@ const SearchCatalog = () => {
         ))}
       </div>
 
-      {data?.length > 0 ? (
-        <div className="flex flex-col w-full">
-          <TableContainer>
-            <Table
-              sx={{ minWidth: 650, borderRadius: 0 }}
-              stickyHeader
-              size="small"
-              classes={{ root: "w-100" }}
-              aria-label="simple table"
-            >
-              <TableHead>
-                <TableRow
-                  sx={{
-                    "& th": {
-                      fontSize: "0.9rem",
-                      fontWeight: 900,
-                      color: "#0A2756",
-                      backgroundColor: "#e8effb",
-                      borderRadius: 0,
-                      borderTop: 1,
-                      borderRight: 1,
-                      borderColor: "#d6d3d1",
-                    },
-                    "& th:first-of-type": {
-                      borderLeft: 1,
-                      borderColor: "#d6d3d1",
-                    },
-                  }}
-                >
-                  <TableCell key={0} align="center">
-                    Provider Name
-                  </TableCell>
-                  <TableCell key={1} align="center">
-                    Attribute Name
-                  </TableCell>
-                  <TableCell key={2} align="center">
-                    Category
-                  </TableCell>
-                  <TableCell key={3} align="center">
-                    Sub Category
-                  </TableCell>
-                  <TableCell key={4} align="center">
-                    Description
-                  </TableCell>
-                  <TableCell key={5} align="center">
-                    Entity Name
-                  </TableCell>
-                  <TableCell key={6} align="center">
-                    Tech Name
-                  </TableCell>
-                  <TableCell key={6} align="center">
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data &&
-                  data
-                    ?.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                    ?.map((row, index) => {
-                      return (
-                        <TableRow
-                          key={index}
-                          sx={{
-                            "& td:last-child": {
-                              borderRight: 1,
-                              borderColor: "#d6d3d1",
-                            },
-                            "& td": {
-                              borderLeft: 1,
-                              borderColor: "#d6d3d1",
-                              color: "#0A2756",
-                            },
-                          }}
-                        >
-                          <TableCell align="center">
-                            {row.PROVIDER_NAME}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.ATTRIBUTE_NAME}
-                          </TableCell>
-                          <TableCell align="center">{row.CATEGORY}</TableCell>
-                          <TableCell align="center">
-                            {row.SUB_CATEGORY}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.DESCRIPTION}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.ENTITY_NAME}
-                          </TableCell>
-                          <TableCell align="center">{row.TECH_NAME}</TableCell>
+      {!loadingTable ? (
+        data.length > 0 ? (
+          <div className="flex flex-col w-full">
+            <TableContainer>
+              <Table
+                sx={{ minWidth: 650, borderRadius: 0 }}
+                stickyHeader
+                size="small"
+                classes={{ root: "w-100" }}
+                aria-label="simple table"
+              >
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        fontSize: "0.9rem",
+                        fontWeight: 900,
+                        color: "#0A2756",
+                        backgroundColor: "#e8effb",
+                        borderRadius: 0,
+                        borderTop: 1,
+                        borderLeft: 1,
+                        borderColor: "#d6d3d1",
+                      },
+                      "& th:first-of-type": {
+                        borderLeft: 1,
+                        borderColor: "#d6d3d1",
+                      },
+                      "& th:last-child": {
+                        borderRight: 1,
+                        borderColor: "#d6d3d1",
+                      },
+                    }}
+                  >
+                    <TableCell key={0} align="center">
+                      Provider Name
+                    </TableCell>
+                    <TableCell key={5} align="center">
+                      Entity Name
+                    </TableCell>
+                    <TableCell key={1} align="center">
+                      Attribute Name
+                    </TableCell>
+                    <TableCell key={2} align="center">
+                      Category
+                    </TableCell>
+                    <TableCell key={3} align="center">
+                      Sub Category
+                    </TableCell>
+                    <TableCell key={4} align="center">
+                      Description
+                    </TableCell>
+                    <TableCell key={6} align="center">
+                      Tech Name
+                    </TableCell>
+                    <TableCell key={7} align="center">
+                      Actions
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data &&
+                    data
+                      ?.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      ?.map((row, index) => {
+                        return (
+                          <TableRow
+                            key={index}
+                            sx={{
+                              "& td:last-child": {
+                                borderRight: 1,
+                                borderColor: "#d6d3d1",
+                              },
+                              "& td": {
+                                borderLeft: 1,
+                                borderColor: "#d6d3d1",
+                                color: "#0A2756",
+                              },
+                            }}
+                          >
+                            <TableCell align="center">
+                              {row.PROVIDER_NAME}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.ENTITY_NAME}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.ATTRIBUTE_NAME}
+                            </TableCell>
+                            <TableCell align="center">{row.CATEGORY}</TableCell>
+                            <TableCell align="center">
+                              {row.SUB_CATEGORY}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.DESCRIPTION}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.TECH_NAME}
+                            </TableCell>
 
-                          <TableCell align="center">
-                            <div className="flex justify-between">
-                              <button
-                                onClick={() =>
-                                  fetchcsvTableData(
-                                    row.PROVIDER_NAME,
-                                    row.ENTITY_NAME
-                                  )
-                                }
-                                title="View"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="w-5 h-5"
+                            <TableCell align="center">
+                              <div className="flex justify-between">
+                                <button
+                                  onClick={() =>
+                                    fetchcsvTableData(
+                                      row.PROVIDER_NAME,
+                                      row.ENTITY_NAME
+                                    )
+                                  }
+                                  className="flex flex-row items-center px-2 justify-center"
+                                  title="View"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                                  />
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            component="div"
-            count={data?.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                    />
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                  </svg>
+                                  <span className="pl-2 underline">View</span>
+                                </button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, 50]}
+              component="div"
+              count={data?.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col w-full">
+            <span className="text-deep-navy font-bold mt-4">
+              We currently don't have data to display. Please apply some other
+              filter!!.
+            </span>
+          </div>
+        )
       ) : (
         <div className="flex justify-center mt-8">
           <Spinner />

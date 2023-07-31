@@ -8,6 +8,7 @@ import { read, utils } from "xlsx";
 import DummyCatalog from "../../../Assets/CSVTemplates/Dummy_Catalog.csv";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const CSVFileColumns = [
   "Entity",
@@ -187,7 +188,7 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
       console.log("result", result);
 
       axios
-        .get(`${baseURL}/dataexadmin`, {
+        .get(`${baseURL}/${redirectionUser}`, {
           params: {
             // query: `insert into DEMO1.PUBLIC.PROVIDER(PROVIDER_NAME,ATTRIBUTE_NAME,CATEGORY,SUBCATEGORY,subcategory_description,TECHNAME) values ${joinedValues};`,
             query: `insert into DATAEXCHANGEDB.DATACATALOG.JSON_TABLE select parse_json('${result}');`,
@@ -208,7 +209,7 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
   const callProcedure = () => {
     setNewCatUploaded(false);
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `call INSERTCATALOG();`,
         },

@@ -78,9 +78,7 @@ const OutputTable = ({
                     </span>
                   </div>
                 ) : (
-                  <span className="text-deep-navy px-1 py-3">
-                    <strong>Search Result</strong>
-                  </span>
+                  <span className="text-deep-navy px-1 py-3"></span>
                 )}
 
                 <TableContainer>
@@ -101,11 +99,15 @@ const OutputTable = ({
                             backgroundColor: "#e8effb",
                             borderRadius: 0,
                             borderTop: 1,
-                            borderRight: 1,
+                            borderLeft: 1,
                             borderColor: "#d6d3d1",
                           },
                           "& th:first-of-type": {
                             borderLeft: 1,
+                            borderColor: "#d6d3d1",
+                          },
+                          "& th:last-child": {
+                            borderRight: 1,
                             borderColor: "#d6d3d1",
                           },
                         }}

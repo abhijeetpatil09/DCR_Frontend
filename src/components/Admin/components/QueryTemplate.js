@@ -239,6 +239,8 @@ const QueryTemplate = ({ user, handleToggleDrawer }) => {
             {templateNames?.map((template, index) => (
               <option key={index} value={template?.TEMPLATE_NAME}>
                 {template?.TEMPLATE_NAME}
+                {"       "}
+                {template?.TEMPLATE_STATUS === true ? " ?" : "?"}
               </option>
             ))}
           </select>

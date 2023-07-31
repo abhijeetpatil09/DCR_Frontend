@@ -9,6 +9,7 @@ import dash1 from "../Assets/Designer _Two Color.svg";
 // import { latestPartners } from "../utils/data";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const Home = () => {
   const state = useSelector((state) => state);
@@ -17,7 +18,8 @@ const Home = () => {
 
   const user = state && state.user;
   const latestPartners = state && state.Home && state.Home.latestPartners;
-  const countProviderConsumer = state && state.Home && state.Home.countProviderConsumer;
+  const countProviderConsumer =
+    state && state.Home && state.Home.countProviderConsumer;
 
   const startExploring = () => {
     if (user?.role?.includes("Consumer")) {
@@ -33,7 +35,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query:
             "SELECT COUNT(*) AS Count, 'Consumers' AS Type FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE CONSUMER ='TRUE' AND ADMIN='TRUE' UNION ALL SELECT COUNT(*) AS Count, 'Providers' AS Type FROM DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW WHERE PROVIDER ='TRUE' AND ADMIN='TRUE';",
@@ -59,7 +61,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query:
             "SELECT partner_name, SUM(request_processed) AS total_requests, ARRAY_TO_STRING(ARRAY_AGG(template_name), ', ') AS all_templates, role FROM (SELECT * FROM DATAEXCHANGEDB.DATACATALOG.HOME_PAGE_VW WHERE role IN ('CONSUMER', 'CONSUMER_ADMIN')) AS filtered_data GROUP BY partner_name, role;",
@@ -155,73 +157,74 @@ const Home = () => {
 
             <h1 className="pl-2 text-deep-navy">Latest partners</h1>
           </div>
-          <div className="flex flex-wrap flex-row items-stretch w-full gap-y-3">
-            {latestPartners?.map((item) => {
-              return (
-                <div className="w-1/3 px-1">
-                  <div className="relative flex flex-col items-start p-4 border border-neutral-100 bg-white shadow-lg rounded-lg bg-opacity-40 ">
-                    <h4 className=" text-md font-medium text-deep-navy">
-                      {item.PARTNER_NAME}
-                    </h4>
-                    <div className="flex flex-row flex-wrap gap-2 mt-2">
-                      {item?.ALL_TEMPLATES?.split(",")?.map(
-                        (template, index) => {
-                          if (index < 2) {
-                            return (
-                              <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
-                                {template}
-                              </span>
-                            );
-                          } else if (index === 2) {
-                            return (
-                              <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
-                                {`+${
-                                  item?.ALL_TEMPLATES?.split(",")?.length - 2
-                                } more`}
-                              </span>
-                            );
-                          } else {
-                            return null;
+          {latestPartners?.length > 0 ? (
+            <div className="flex flex-wrap flex-row items-stretch w-full gap-y-3">
+              {latestPartners?.map((item) => {
+                return (
+                  <div className="w-1/3 px-1">
+                    <div className="relative flex flex-col items-start p-4 border border-neutral-100 bg-white shadow-lg rounded-lg bg-opacity-40 ">
+                      <h4 className=" text-md font-medium text-deep-navy">
+                        {item.PARTNER_NAME}
+                      </h4>
+                      <div className="flex flex-row flex-wrap gap-2 mt-2">
+                        {item?.ALL_TEMPLATES?.split(",")?.map(
+                          (template, index) => {
+                            if (index < 2) {
+                              return (
+                                <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
+                                  {template}
+                                </span>
+                              );
+                            } else if (index === 2) {
+                              return (
+                                <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
+                                  {`+${
+                                    item?.ALL_TEMPLATES?.split(",")?.length - 2
+                                  } more`}
+                                </span>
+                              );
+                            } else {
+                              return null;
+                            }
                           }
-                        }
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between mt-4 w-full text-xs gap-2 font-medium text-gray-400 h-8">
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-4 h-4 text-gray-300 fill-current"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M1.5 5.625c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v12.75c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 18.375V5.625zM21 9.375A.375.375 0 0020.625 9h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zm0 3.75a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zm0 3.75a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zM10.875 18.75a.375.375 0 00.375-.375v-1.5a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5zM3.375 15h7.5a.375.375 0 00.375-.375v-1.5a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375zm0-3.75h7.5a.375.375 0 00.375-.375v-1.5A.375.375 0 0010.875 9h-7.5A.375.375 0 003 9.375v1.5c0 .207.168.375.375.375z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <span className="ml-1 leading-none">
-                          {item.TOTAL_REQUESTS} requests processed
-                        </span>
+                        )}
                       </div>
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-4 h-4 text-gray-300 fill-current"
-                        >
-                          <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
-                        </svg>
-                        <span className="ml-1 leading-none">{item.ROLE}</span>
+                      <div className="flex items-center justify-between mt-4 w-full text-xs gap-2 font-medium text-gray-400 h-8">
+                        <div className="flex items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="w-4 h-4 text-gray-300 fill-current"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M1.5 5.625c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v12.75c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 18.375V5.625zM21 9.375A.375.375 0 0020.625 9h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zm0 3.75a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zm0 3.75a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zM10.875 18.75a.375.375 0 00.375-.375v-1.5a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5zM3.375 15h7.5a.375.375 0 00.375-.375v-1.5a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375zm0-3.75h7.5a.375.375 0 00.375-.375v-1.5A.375.375 0 0010.875 9h-7.5A.375.375 0 003 9.375v1.5c0 .207.168.375.375.375z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="ml-1 leading-none">
+                            {item.TOTAL_REQUESTS} requests processed
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="w-4 h-4 text-gray-300 fill-current"
+                          >
+                            <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+                          </svg>
+                          <span className="ml-1 leading-none">{item.ROLE}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
 
-            {/* <div className="w-1/3 px-1">
+              {/* <div className="w-1/3 px-1">
               <div className="relative flex flex-col items-start p-4 border border-neutral-100 bg-white shadow-lg rounded-lg bg-opacity-40 ">
                 <h4 className=" text-md font-medium text-deep-navy">
                   Acme Pvt Ltd.
@@ -347,7 +350,14 @@ const Home = () => {
                 </div>
               </div>
             </div> */}
-          </div>
+            </div>
+          ) : (
+            <div>
+              <span className="text-deep-navy font-bold text-sm w-full">
+                We are fetching the Latest Partners data. Please wait!!
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex flex-col w-2/5">
           {/* <h1 className="mt-6 mb-2 text-2xl font-bold text-deep-navy pb-4 border-b border-gray-200">How to videos</h1> */}

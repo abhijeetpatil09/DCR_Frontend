@@ -27,7 +27,7 @@ const AdminConsole = () => {
   const user = state && state.user;
   const UserRole = state && state.user && state.user.role;
 
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState("");
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = useState({
     right: false,
@@ -49,7 +49,6 @@ const AdminConsole = () => {
       tab: tab,
     });
   };
-  console.log("toggleDrawerPosition", toggleDrawerPosition);
   return (
     <div className="flex flex-col w-full">
       <div className="flex h-12 sticky top-0 z-30 py-2 text-deep-navy flex-row items-center justify-between w-full">

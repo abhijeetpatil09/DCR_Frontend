@@ -64,7 +64,7 @@ const Sidebar = ({ children }) => {
     <div className="flex flex-grow w-full h-[calc(100vh)]">
       <aside
         className={`${
-          isOpened ? "w-64 drawer" : ""
+          isOpened ? "w-72 drawer" : ""
         } z-50 flex flex-col items-start bg-deep-navy text-electric-green shadow h-[calc(100vh)] sticky top-0`}
       >
         <div className="flex flex-row items-center h-20">
@@ -124,6 +124,76 @@ const Sidebar = ({ children }) => {
             </button>
           </li>
 
+          {user?.role && user?.role?.includes("Consumer") && (
+            <li
+              className={`${
+                tab === 5 ? "text-white" : "text-electric-green"
+              } hover:text-white transition ease-in-out duration-500`}
+            >
+              <button
+                onClick={() => navigateTo("/search-catalog")}
+                className="py-4 px-6 flex flex justify-start items-center w-full"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-5 h-5 stroke-2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                  />
+                </svg>
+
+                <span
+                  className={`${
+                    isOpened ? "" : "hidden"
+                  } pl-5 uppercase font-semibold`}
+                >
+                  Search Catalog
+                </span>
+              </button>
+            </li>
+          )}
+          {user?.role && user?.role?.includes("Provider") && (
+            <li
+              className={`${
+                tab === 4 ? "text-white" : "text-electric-green"
+              } hover:text-white transition ease-in-out duration-500`}
+            >
+              <button
+                onClick={() => navigateTo("/upload-catalog")}
+                className="py-4 px-6 flex flex justify-start items-center w-full"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                  />
+                </svg>
+
+                <span
+                  className={`${
+                    isOpened ? "" : "hidden"
+                  } pl-5 uppercase font-semibold`}
+                >
+                  Upload Catalaog
+                </span>
+              </button>
+            </li>
+          )}
           {user["role"] && user["role"].includes("Publisher") && (
             <li
               className={`${
@@ -196,79 +266,9 @@ const Sidebar = ({ children }) => {
             </li>
           )}
 
-          {user?.role && user?.role?.includes("Provider") && (
-            <li
-              className={`${
-                tab === 4 ? "text-white" : "text-electric-green"
-              } hover:text-white transition ease-in-out duration-500`}
-            >
-              <button
-                onClick={() => navigateTo("/upload-catalog")}
-                className="py-4 px-6 flex flex justify-start items-center w-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                  />
-                </svg>
-
-                <span
-                  className={`${
-                    isOpened ? "" : "hidden"
-                  } pl-5 uppercase font-semibold`}
-                >
-                  Upload
-                </span>
-              </button>
-            </li>
-          )}
-
-          {user?.role && user?.role?.includes("Consumer") && (
-            <li
-              className={`${
-                tab === 5 ? "text-white" : "text-electric-green"
-              } hover:text-white transition ease-in-out duration-500`}
-            >
-              <button
-                onClick={() => navigateTo("/search-catalog")}
-                className="py-4 px-6 flex flex justify-start items-center w-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-5 h-5 stroke-2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                  />
-                </svg>
-
-                <span
-                  className={`${
-                    isOpened ? "" : "hidden"
-                  } pl-5 uppercase font-semibold`}
-                >
-                  Search
-                </span>
-              </button>
-            </li>
-          )}
           {((user["role"] && user["role"].includes("Consumer_Admin")) ||
-            (user["role"] && user["role"].includes("Provider_Admin"))) && (
+            (user["role"] && user["role"].includes("Provider_Admin")) ||
+            (user["role"] && user["role"].includes("DATAEXADMIN"))) && (
             <li
               className={`${
                 tab === 6 ? "text-white" : "text-electric-green"
@@ -295,48 +295,50 @@ const Sidebar = ({ children }) => {
                 <span
                   className={`${
                     isOpened ? "" : "hidden"
-                  } pl-3.5 uppercase font-semibold`}
+                  } pl-5 uppercase font-semibold`}
                 >
                   Admin Console
                 </span>
               </button>
             </li>
           )}
-          {user["role"] && !user["role"].includes("Provider") && (
-            <li
-              className={`${
-                tab === 7 ? "text-white" : "text-electric-green"
-              } hover:text-white transition ease-in-out duration-500`}
-            >
-              <button
-                onClick={() => navigateTo("/querystatus")}
-                className="py-4 px-6 flex flex justify-start items-center w-full"
+          {user["role"] &&
+            !user["role"].includes("Provider") &&
+            !user?.role.includes("DATAEXADMIN") && (
+              <li
+                className={`${
+                  tab === 7 ? "text-white" : "text-electric-green"
+                } hover:text-white transition ease-in-out duration-500`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5 stroke-2"
+                <button
+                  onClick={() => navigateTo("/querystatus")}
+                  className="py-4 px-6 flex flex justify-start items-center w-full"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5 stroke-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
 
-                <span
-                  className={`${
-                    isOpened ? "" : "hidden"
-                  } pl-5 uppercase font-semibold`}
-                >
-                  Status
-                </span>
-              </button>
-            </li>
-          )}
+                  <span
+                    className={`${
+                      isOpened ? "" : "hidden"
+                    } pl-5 uppercase font-semibold`}
+                  >
+                    Status
+                  </span>
+                </button>
+              </li>
+            )}
         </ul>
       </aside>
 

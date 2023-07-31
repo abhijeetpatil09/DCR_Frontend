@@ -1,20 +1,26 @@
-import * as actionType from '../actions/actionTypes';
-import { updateObject } from '../utility/utility';
+import * as actionType from "../actions/actionTypes";
+import { updateObject } from "../utility/utility";
 
 const initialState = {
-    latestPartners: [],
-    countProviderConsumer: []
+  latestPartners: [],
+  countProviderConsumer: [
+    {
+      Consumers: 0,
+    },
+    {
+      Providers: 0,
+    },
+  ],
 };
 
 const reducer = (state = initialState, action) => {
-   
-    switch (action.type) {
-        case actionType.HOME:
-            return updateObject(state, action.payload);
+  switch (action.type) {
+    case actionType.HOME:
+      return updateObject(state, action.payload);
 
-        default:
-            return state;
-    }
+    default:
+      return state;
+  }
 };
 
 export default reducer;

@@ -24,6 +24,7 @@ import { v4 as uuidv4 } from "uuid";
 import "../../styles.css";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel, attributeErrorMsg } = props;
@@ -101,7 +102,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       `We are fetching the data for ${selectedKey}. Please wait..`
     );
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER where entity_name = '${selectedKey}' and PROVIDER_NAME = '${user?.name}';`,
         },
@@ -139,7 +140,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const deleteRecordsAPI = (attributeName) => {
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `DELETE FROM DATAEXCHANGEDB.DATACATALOG.PROVIDER WHERE PROVIDER_NAME ='${user?.name}' AND ENTITY_NAME='${selectedKey}' AND ATTRIBUTE_NAME='${attributeName}';`,
         },
@@ -159,7 +160,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   const updateRecordsAPI = (result, tag) => {
     setLoader(true);
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `insert into DATAEXCHANGEDB.DATACATALOG.JSON_TABLE select PARSE_JSON('${result}');`,
         },
@@ -183,7 +184,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const callProcedureAddRecords = () => {
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `call ADDATTRIBUTE();`,
         },
@@ -201,7 +202,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const callProcedureUpdateRecords = () => {
     axios
-      .get(`${baseURL}/dataexadmin`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
           query: `call UPDATECATALOG();`,
         },
