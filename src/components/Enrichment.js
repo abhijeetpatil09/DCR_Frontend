@@ -38,9 +38,9 @@ import {
   downloadFileInCSV,
 } from "../utils/commonFunctions";
 
+import Spinner from "./CommonComponent/Spinner";
 import "./styles.css";
 import "./pure-react.css";
-import Spinner from "./CommonComponent/Spinner";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -553,6 +553,7 @@ const Enrichment = () => {
                         name="Attribute_Value"
                         onChange={handleCustomerFormData}
                         required
+                        value={formData["Attribute_Value"]}
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
