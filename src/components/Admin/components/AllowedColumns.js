@@ -56,7 +56,7 @@ const AllowedColumns = ({ user, handleToggleDrawer }) => {
     axios
       .get(`${baseURL}/${user.name}`, {
         params: {
-          query: `select distinct TEMPLATE_NAME from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where CONSUMER_NAME = '${publisherData.consumer}';`,
+          query: `select distinct TEMPLATE_NAME from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES where CONSUMER_NAME = '${publisherData.consumer}' and TEMPLATE_NAME not like '%advertiser_match%';`,
         },
       })
       .then((response) => {
