@@ -43,6 +43,7 @@ import "./styles.css";
 import "./pure-react.css";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const initialState = {
   Query_Name: "",
@@ -234,7 +235,7 @@ const Enrichment = () => {
           axios
             .get(`${baseURL}/${user?.name}`, {
               params: {
-                query: `select template_name from ${db_name}.CLEANROOM.TEMPLATES where template_name <> 'advertiser_match';`,
+                query: `select template_name from ${db_name}.CLEANROOM.TEMPLATES where template_name NOT LIKE '%advertiser_match%';`,
               },
             })
             .then((response) => {
@@ -300,7 +301,7 @@ const Enrichment = () => {
       });
   };
 
-  const callByPassAPI = () => {
+  const callByPassAPI = (newReqId) => {
     setByPassAPICalled(true);
     axios
       .get(`${baseURL}/${user?.name}/procedure`, {
@@ -309,9 +310,36 @@ const Enrichment = () => {
         },
       })
       .then((response) => {
-        if (response) {
+        if (parseInt(response?.status) === 200) {
           fetchMainTable();
           setByPassAPICalled(false);
+          axios
+            .get(`${baseURL}/${user?.name}`, {
+              params: {
+                query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'CUSTOMER ENRICHMENT' and RUN_ID='${newReqId}'`,
+              },
+            })
+            .then((response) => {
+              if (response?.data?.data) {
+                let result = response?.data?.data[0];
+                axios
+                  .get(`${baseURL}/${redirectionUser}`, {
+                    params: {
+                      query: `INSERT INTO DATAEXCHANGEDB.DATACATALOG.LOG_TABLE(RUN_ID, TEMPLATE_NAME, CONSUMER_RECORD_COUNT, PROVIDER_NAME, CONSUMER_NAME, REQUEST_TS, STATUS) VALUES ('${result.RUN_ID}', '${result.TEMPLATE_NAME}', '${result.CONSUMER_RECORD_COUNT}', '${result.PROVIDER_NAME}', '${result.CONSUMER_NAME}', '${result.REQUEST_TS}', '${result.STATUS}');`,
+                    },
+                  })
+                  .then((response) => {
+                    fetchMainTable();
+                    setByPassAPICalled(false);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         } else {
           fetchMainTable(false);
           setByPassAPICalled(false);
@@ -346,14 +374,9 @@ const Enrichment = () => {
         if (response) {
           fetchMainTable();
           setLoading(false);
-          dispatch(
-            actions.ConsumerQueryForm({
-              RequestId: formData?.RunId,
-            })
-          );
           setFormData({ ...initialState, Consumer_Name: user?.Consumer });
           setToggleDrawerPosition({ ...toggleDrawerPosition, right: false });
-          callByPassAPI();
+          callByPassAPI(formData?.RunId);
         }
       })
       .catch((error) => {
@@ -640,18 +663,21 @@ const Enrichment = () => {
                     Request ID
                   </TableCell>
                   <TableCell key={3} align="center">
-                    Column names
+                    Provider Name
                   </TableCell>
                   <TableCell key={4} align="center">
-                    Identifier Type
+                    Column names
                   </TableCell>
                   <TableCell key={5} align="center">
+                    Identifier Type
+                  </TableCell>
+                  <TableCell key={6} align="center">
                     Match count
                   </TableCell>
                   <TableCell key={7} align="center">
                     Actions
                   </TableCell>
-                  <TableCell key={6} align="center">
+                  <TableCell key={8} align="center">
                     Requested
                   </TableCell>
                 </TableRow>
@@ -690,6 +716,7 @@ const Enrichment = () => {
                         </span>
                       </TableCell>
                       <TableCell align="center">{row.RUN_ID}</TableCell>
+                      <TableCell align="center">{row.PROVIDER_NAME}</TableCell>
                       <TableCell align="center">{row.COLOUMNS}</TableCell>
                       <TableCell align="center">
                         {row.IDENTIFIER_TYPE}

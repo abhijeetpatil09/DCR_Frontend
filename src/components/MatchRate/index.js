@@ -44,6 +44,7 @@ import "../pure-react.css";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const nodeURL = process.env.REACT_APP_NODE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const initialState = {
   Query_Name: "",
@@ -73,12 +74,14 @@ const MatchRate = () => {
   });
 
   const [gender, setGender] = useState("male");
-  const [providerName, setProviderName] = useState("");
 
   const [age, setAge] = useState("age_0_6");
 
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
+
+  const [providerList, setProviderList] = useState([]);
+  const [templateList, setTemplateList] = useState("");
 
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
   const [tableData, setTableData] = useState([]);
@@ -154,8 +157,6 @@ const MatchRate = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // UseEffect used for Inserting the Provider...
-
   useEffect(() => {
     axios
       .get(`${baseURL}/${user?.name}`, {
@@ -164,14 +165,16 @@ const MatchRate = () => {
         },
       })
       .then((response) => {
-        if (response?.data?.data) {
-          let provider_name = response?.data?.data?.[0];
-          setProviderName(provider_name.PROVIDER);
+        if (response?.data) {
+          setProviderList(response?.data?.data);
+        } else {
+          setProviderList([]);
         }
       })
       .catch((error) => console.log(error));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.name]);
+
+  // UseEffect used for Inserting the Provider...
 
   const fetchMainTable = () => {
     axios
@@ -207,6 +210,42 @@ const MatchRate = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleSelectProvider = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+    setTemplateList([]);
+    getDatabaseName(event.target.value);
+  };
+
+  const getDatabaseName = (selectedProvider) => {
+    axios
+      .get(`${baseURL}/${user?.name}`, {
+        params: {
+          query: `select database from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS where provider = '${selectedProvider}';`,
+        },
+      })
+      .then((response) => {
+        if (response?.data) {
+          let db_name = response?.data?.data[0]?.DATABASE;
+          axios
+            .get(`${baseURL}/${user?.name}`, {
+              params: {
+                query: `select template_name from ${db_name}.CLEANROOM.TEMPLATES where template_name LIKE 'advertiser_match';`,
+              },
+            })
+            .then((response) => {
+              if (response?.data) {
+                setTemplateList(response.data.data);
+              }
+            })
+            .catch((error) => console.log(error));
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   const handleFileInput = (event) => {
@@ -301,7 +340,7 @@ const MatchRate = () => {
   //   return regex.test(inputString); // returns true if inputString matches the regex pattern, false otherwise
   // };
 
-  const callByPassAPI = () => {
+  const callByPassAPI = (newReqId) => {
     setByPassAPICalled(true);
     axios
       .get(`${baseURL}/${user?.name}/procedure`, {
@@ -310,9 +349,36 @@ const MatchRate = () => {
         },
       })
       .then((response) => {
-        if (response) {
+        if (parseInt(response?.status) === 200) {
           fetchMainTable();
           setByPassAPICalled(false);
+          axios
+            .get(`${baseURL}/${user?.name}`, {
+              params: {
+                query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'ADVERTISER MATCH' and RUN_ID='${newReqId}'`,
+              },
+            })
+            .then((response) => {
+              if (response?.data?.data) {
+                let result = response?.data?.data[0];
+                axios
+                  .get(`${baseURL}/${redirectionUser}`, {
+                    params: {
+                      query: `INSERT INTO DATAEXCHANGEDB.DATACATALOG.LOG_TABLE(RUN_ID, TEMPLATE_NAME, CONSUMER_RECORD_COUNT, PROVIDER_NAME, CONSUMER_NAME, REQUEST_TS, STATUS) VALUES ('${result.RUN_ID}', '${result.TEMPLATE_NAME}', '${result.CONSUMER_RECORD_COUNT}', '${result.PROVIDER_NAME}', '${result.CONSUMER_NAME}', '${result.REQUEST_TS}', '${result.STATUS}');`,
+                    },
+                  })
+                  .then((response) => {
+                    fetchMainTable();
+                    setByPassAPICalled(false);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         } else {
           setByPassAPICalled(false);
           fetchMainTable();
@@ -371,7 +437,7 @@ const MatchRate = () => {
                 axios
                   .get(`${baseURL}/${user?.name}`, {
                     params: {
-                      query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${providerName}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
+                      query: `insert into DCR_SAMP_CONSUMER1.PUBLIC.dcr_query_request1(template_name,provider_name,columns,consumer_name,run_id,file_name,attribute_name,attribute_value) values ('${formData.Query_Name}', '${formData.Provider_Name}','${formData.Column_Names}','${formData.Consumer_Name}','${formData.RunId}', '${formData.File_Name}','${formData.Match_Attribute}','${formData.Match_Attribute_Value}');`,
                     },
                   })
                   .then((response) => {
@@ -388,7 +454,7 @@ const MatchRate = () => {
                         ...toggleDrawerPosition,
                         right: false,
                       });
-                      callByPassAPI();
+                      callByPassAPI(formData.RunId);
                     }
                   })
                   .catch((error) => {
@@ -541,6 +607,28 @@ const MatchRate = () => {
                     </button>
                   </div>
                   <div>
+                    <div className="mt-2 pb-2 flex flex-col">
+                      <label>Provider name</label>
+                      <select
+                        id="provider"
+                        name="Provider_Name"
+                        required
+                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        value={formData["Provider_Name"]}
+                        onChange={handleSelectProvider}
+                      >
+                        <option value="">Select a provider</option>
+                        {providerList?.length > 0 ? (
+                          providerList.map((item, index) => (
+                            <option key={index} value={item.PROVIDER}>
+                              {item.PROVIDER}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">Loading...</option>
+                        )}
+                      </select>
+                    </div>
                     <div className=" mt-2 pb-2 flex flex-col">
                       <label>Query name</label>
                       <select
@@ -551,9 +639,15 @@ const MatchRate = () => {
                         className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                       >
                         <option value="">Please select</option>
-                        <option value="advertiser_match">
-                          Advertiser match
-                        </option>
+                        {templateList?.length > 0 ? (
+                          templateList.map((item, index) => (
+                            <option key={index} value={item.TEMPLATE_NAME}>
+                              {item.TEMPLATE_NAME}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">Loading...</option>
+                        )}
                       </select>
                     </div>
 
@@ -802,18 +896,21 @@ const MatchRate = () => {
                     Request ID
                   </TableCell>
                   <TableCell key={3} align="center">
-                    Identifier Type
+                    Provider Name
                   </TableCell>
                   <TableCell key={4} align="center">
-                    Match Attribute
+                    Identifier Type
                   </TableCell>
                   <TableCell key={5} align="center">
+                    Match Attribute
+                  </TableCell>
+                  <TableCell key={6} align="center">
                     Match count
                   </TableCell>
                   <TableCell key={7} align="center">
                     Actions
                   </TableCell>
-                  <TableCell key={6} align="center">
+                  <TableCell key={8} align="center">
                     Requested
                   </TableCell>
                 </TableRow>
@@ -852,6 +949,7 @@ const MatchRate = () => {
                         </span>
                       </TableCell>
                       <TableCell align="center">{row.RUN_ID}</TableCell>
+                      <TableCell align="center">{row.PROVIDER_NAME}</TableCell>
                       <TableCell align="center">
                         {row.IDENTIFIER_TYPE}
                       </TableCell>

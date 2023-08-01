@@ -15,6 +15,7 @@ import {
 import SelectDropdown from "./CommonComponent/SelectDropdown";
 import searchillustration from "../Assets/search_illustration.svg";
 import Spinner from "./CommonComponent/Spinner";
+import IntegrationImage from "../Assets/integration.png";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
@@ -120,7 +121,7 @@ const SearchCatalog = () => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select * from DATAEXCHANGEDB.DATACATALOG.PROVIDER_NAME;`,
+          query: `SELECT distinct provider_name from DATAEXCHANGEDB.DATACATALOG.PROVIDER_VW;`,
         },
       })
       .then((response) => {
@@ -610,6 +611,25 @@ const SearchCatalog = () => {
                                     />
                                   </svg>
                                   <span className="pl-2 underline">View</span>
+                                </button>
+                                <button
+                                  // onClick={() =>
+                                  //   fetchcsvTableData(
+                                  //     row.PROVIDER_NAME,
+                                  //     row.ENTITY_NAME
+                                  //   )
+                                  // }
+                                  className="flex flex-row items-center px-2 justify-center"
+                                  title="Integration"
+                                >
+                                  <img
+                                    className="w-6 h-6"
+                                    src={IntegrationImage}
+                                    alt="IntegrationIcon"
+                                  />
+                                  <span className="pl-2 underline">
+                                    Integrate
+                                  </span>
                                 </button>
                               </div>
                             </TableCell>
