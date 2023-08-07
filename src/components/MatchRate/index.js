@@ -442,19 +442,32 @@ const MatchRate = () => {
                   })
                   .then((response) => {
                     if (response) {
-                      // Reset the file input
-                      if (fileInputRef.current) {
-                        fileInputRef.current.value = "";
-                      }
-                      setFormData({
-                        ...initialState,
-                        Consumer_Name: user?.Consumer,
-                      });
-                      setToggleDrawerPosition({
-                        ...toggleDrawerPosition,
-                        right: false,
-                      });
-                      callByPassAPI(formData.RunId);
+                      axios
+                        .get(`${baseURL}/${formData?.Provider_Name}`, {
+                          params: {
+                            query: `insert into DCR_SAMP_PROVIDER_DB.ADMIN.RUNID_TABLE(run_id) values('${formData.RunId}');`,
+                          },
+                        })
+                        .then((response) => {
+                          if (response) {
+                            // Reset the file input
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = "";
+                            }
+                            setFormData({
+                              ...initialState,
+                              Consumer_Name: user?.Consumer,
+                            });
+                            setToggleDrawerPosition({
+                              ...toggleDrawerPosition,
+                              right: false,
+                            });
+                            callByPassAPI(formData.RunId);
+                          }
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
                     }
                   })
                   .catch((error) => {
