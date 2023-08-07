@@ -287,7 +287,6 @@ const QueryStatus = () => {
         : "";
 
     let finalDate = "";
-    console.log("filteredData?.date", filteredData?.date);
     if (filteredData?.date) {
       const dateObj = new Date(parseInt((filteredData?.date).getTime()));
       const year = dateObj.getFullYear();
@@ -465,7 +464,8 @@ const QueryStatus = () => {
                           setFilteredData({ ...filteredData, date: date })
                         }
                         isClearable
-                        className="rounded-md pl-8 bg-transparent border border-electric-green"
+                        placeholderText="Please select a date"
+                        className="rounded-md pl-8 w-full bg-deep-navy ring-1  ring-electric-green placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6 text-electric-green"
                       />
                     </div>
                   </div>

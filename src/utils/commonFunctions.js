@@ -94,3 +94,9 @@ export const validateEmail = (mail) => {
   if (mail.match(mailformat)) return true;
   else return false;
 };
+
+/// Join an array elements...
+
+export const joinArray = (array) => {
+  return array?.join(",");
+}

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CommonTable from "./CommonComponent/Table";
 import axios from "axios";
+import { useSelector } from "react-redux";
+
 import { CircularProgress, SwipeableDrawer } from "@mui/material";
 import {
   Table,
@@ -21,6 +23,11 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const SearchCatalog = () => {
+  const state = useSelector((state) => state);
+  const user = state && state.user;
+
+  const [consumerSorceTable, setConsumerSorceTable] = useState("");
+
   const [selectedValues, setSelectedValues] = useState({
     category: [],
     subCategory: [],
@@ -99,47 +106,69 @@ const SearchCatalog = () => {
       });
   }, []);
 
+  //useEffect for finding the Consumers Source Table...
   useEffect(() => {
     axios
-      .get(`${baseURL}/${redirectionUser}`, {
+      .get(`${baseURL}/${user?.name}`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.CATEGORY_LIST`,
+          query: `select SETTING_VALUE from DCR_SAMP_CONSUMER1.LOCAL.USER_SETTINGS where SETTING_NAME='consumer_table';`,
         },
       })
       .then((response) => {
         if (response?.data?.data) {
-          const cat_list = [{ value: "all", name: "All" }];
-          response?.data?.data?.forEach((obj) => {
-            cat_list.push({ value: obj.CATEGORY, name: obj.CATEGORY });
-          });
-          setCategoryList(cat_list);
+          let data = response?.data?.data;
+          setConsumerSorceTable(data[0]?.SETTING_VALUE);
         }
       })
       .catch((error) => {
         console.log(error);
       });
-    axios
-      .get(`${baseURL}/${redirectionUser}`, {
-        params: {
-          query: `SELECT distinct provider_name from DATAEXCHANGEDB.DATACATALOG.PROVIDER_VW;`,
-        },
-      })
-      .then((response) => {
-        if (response?.data?.data) {
-          const prov_list = [{ value: "all", name: "All" }];
-          response?.data?.data?.forEach((obj) => {
-            prov_list.push({
-              value: obj.PROVIDER_NAME,
-              name: obj.PROVIDER_NAME,
-            });
-          });
-          setProviderList(prov_list);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (toggleDrawerPosition.right) {
+      axios
+        .get(`${baseURL}/${redirectionUser}`, {
+          params: {
+            query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.CATEGORY_LIST`,
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            const cat_list = [{ value: "all", name: "All" }];
+            response?.data?.data?.forEach((obj) => {
+              cat_list.push({ value: obj.CATEGORY, name: obj.CATEGORY });
+            });
+            setCategoryList(cat_list);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      axios
+        .get(`${baseURL}/${redirectionUser}`, {
+          params: {
+            query: `SELECT distinct provider_name from DATAEXCHANGEDB.DATACATALOG.PROVIDER_VW;`,
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            const prov_list = [{ value: "all", name: "All" }];
+            response?.data?.data?.forEach((obj) => {
+              prov_list.push({
+                value: obj.PROVIDER_NAME,
+                name: obj.PROVIDER_NAME,
+              });
+            });
+            setProviderList(prov_list);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [toggleDrawerPosition.right]);
 
   useEffect(() => {
     if (selectedValues.category?.length > 0) {
@@ -191,10 +220,18 @@ const SearchCatalog = () => {
     } else if (name === "provider") {
       setError({ ...errors, provider: null });
     }
-    setSelectedValues({
-      ...selectedValues,
-      [name]: event,
-    });
+    if(name === 'category') {
+      setSelectedValues({
+        ...selectedValues,
+        [name]: event,
+        subCategory: []
+      });
+    } else {
+      setSelectedValues({
+        ...selectedValues,
+        [name]: event,
+      });
+    }
   };
 
   const handleSubmit = (anchor) => {
@@ -320,6 +357,43 @@ const SearchCatalog = () => {
       });
     }
     setViewTable({ ...viewTable, head: head, rows: row });
+  };
+
+  const handleIntegration = (provider_name, entity_name) => {
+    axios
+      .get(`${baseURL}/${redirectionUser}`, {
+        params: {
+          query: `select party_account from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES where user='${provider_name}'`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          let data = response?.data?.data;
+          let providerPartyAccount = data[0]?.PARTY_ACCOUNT;
+          axios
+            .get(`${baseURL}/${redirectionUser}/integration`, {
+              params: {
+                provider_name: `${provider_name}`,
+                consumer_name: `${user?.Consumer}`,
+                provider_identifier: `${providerPartyAccount}`,
+                consumer_identifier: `${user?.ConsumerPartyAccount}`,
+                provider_source_table: `${entity_name}`,
+                consumer_source_table: `${consumerSorceTable}`,
+              },
+            })
+            .then((response) => {
+              if (response?.data?.data) {
+                console.log("response?.data?.data", response?.data?.data);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -613,12 +687,12 @@ const SearchCatalog = () => {
                                   <span className="pl-2 underline">View</span>
                                 </button>
                                 <button
-                                  // onClick={() =>
-                                  //   fetchcsvTableData(
-                                  //     row.PROVIDER_NAME,
-                                  //     row.ENTITY_NAME
-                                  //   )
-                                  // }
+                                  onClick={() =>
+                                    handleIntegration(
+                                      row.PROVIDER_NAME,
+                                      row.ENTITY_NAME
+                                    )
+                                  }
                                   className="flex flex-row items-center px-2 justify-center"
                                   title="Integration"
                                 >
