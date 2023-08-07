@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
+import { Alert, CircularProgress } from "@mui/material";
 
 import * as actions from "../../redux/actions/index";
 import BgVideo from "../../Assets/loginbg.mp4";
@@ -24,8 +24,9 @@ const Login = () => {
   const [errors, setErrors] = useState({
     userName: null,
     password: null,
-    captcha: null,
+    message: "",
   });
+  const [loginError, setLoginError] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -33,7 +34,7 @@ const Login = () => {
   const handleOnChange = (e) => {
     const inputName = e.target.name;
     const inputValue = e.target.value;
-
+    setLoginError("");
     if (inputName === "userName") {
       if (inputValue === "") {
         setErrors({ ...errors, userName: "Please enter User Name" });
@@ -50,7 +51,7 @@ const Login = () => {
     setLoginDetails({ ...loginDetails, [inputName]: inputValue });
   };
 
-  const getAllConsumers = async (userRole) => {
+  const getAllConsumers = async (userRole, partyAccount) => {
     await axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
@@ -68,12 +69,14 @@ const Login = () => {
               name: loginDetails?.userName,
               role: userRole,
               Consumer: data?.USER,
+              ConsumerPartyAccount: partyAccount,
             })
           );
           navigate("/home");
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.log(error);
       });
   };
@@ -89,66 +92,78 @@ const Login = () => {
       return;
     }
 
-    if (loginDetails?.userName !== "") {
+    if (loginDetails?.userName !== "" || loginDetails?.password !== "") {
       setLoading(true);
       await axios
-        .get(`${baseURL}/${redirectionUser}`, {
+        .get(`${baseURL}/${loginDetails?.userName}`, {
           params: {
-            query: `select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES WHERE USER = '${loginDetails?.userName}';`,
+            query: `select COUNT(*) AS Count from DATAEXCHANGE_ADMIN.ADMIN.USER_CREDENTIALS where user = '${loginDetails?.userName}' and password = '${loginDetails?.password}';`,
           },
         })
         .then((response) => {
-          if (response?.data?.data) {
-            let data = response?.data?.data; // Find user login info
+          if (parseInt(response?.data?.data[0]?.COUNT) === 1) {
+            axios
+              .get(`${baseURL}/${redirectionUser}`, {
+                params: {
+                  query: `select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES WHERE USER = '${loginDetails?.userName}';`,
+                },
+              })
+              .then((response) => {
+                if (response?.data?.data) {
+                  let data = response?.data?.data; // Find user login info]
+                  if (data?.length > 0) {
+                    const userData = data && data[0];
 
-            const userData = data ? data[0] : [];
+                    const userRole = [];
+                    if (userData?.PUBLISHER?.toLowerCase() === "true") {
+                      userRole.push("Publisher");
+                    }
+                    if (userData?.PROVIDER?.toLowerCase() === "true") {
+                      userRole.push("Provider");
+                    }
+                    if (userData?.CONSUMER?.toLowerCase() === "true") {
+                      userRole.push("Consumer");
+                    }
+                    if (
+                      userData?.PROVIDER?.toLowerCase() === "true" &&
+                      userData?.ADMIN?.toLowerCase() === "true"
+                    ) {
+                      userRole.push("Provider_Admin");
+                    }
+                    if (userData?.DATAEXADMIN?.toLowerCase() === "true") {
+                      userRole.push("DATAEXADMIN");
+                    }
 
-            // Compare user info
-            if (userData) {
-              if (userData.PASSWORD !== loginDetails?.password) {
-                setErrors({ ...errors, password: "Invalid Password" });
+                    if (
+                      userData?.CONSUMER?.toLowerCase() === "true" &&
+                      userData?.ADMIN?.toLowerCase() === "true"
+                    ) {
+                      userRole.push("Consumer_Admin");
+                    }
+
+                    getAllConsumers(userRole, userData.PARTY_ACCOUNT);
+                  } else {
+                    // Username not found
+                    setLoading(false);
+                    setLoginError("Invalid Credentials");
+                    toast.error(
+                      "You entered an incorrect username, password or both."
+                    );
+                  }
+                }
+              })
+              .catch((error) => {
+                setLoginError("Invalid Credentials");
                 setLoading(false);
-              } else {
-                const userRole = [];
-                if (userData?.PUBLISHER?.toLowerCase() === "true") {
-                  userRole.push("Publisher");
-                }
-                if (userData?.PROVIDER?.toLowerCase() === "true") {
-                  userRole.push("Provider");
-                }
-                if (userData?.CONSUMER?.toLowerCase() === "true") {
-                  userRole.push("Consumer");
-                }
-                if (
-                  userData?.PROVIDER?.toLowerCase() === "true" &&
-                  userData?.ADMIN?.toLowerCase() === "true"
-                ) {
-                  userRole.push("Provider_Admin");
-                }
-                if (userData?.DATAEXADMIN?.toLowerCase() === "true") {
-                  userRole.push("DATAEXADMIN");
-                }
-
-                if (
-                  userData?.CONSUMER?.toLowerCase() === "true" &&
-                  userData?.ADMIN?.toLowerCase() === "true"
-                ) {
-                  userRole.push("Consumer_Admin");
-                }
-                getAllConsumers(userRole);
-              }
-            } else {
-              // Username not found
-              setLoading(false);
-              setErrors({ ...errors, userName: "User name not found" });
-              toast.error(
-                "You entered an incorrect username, password or both."
-              );
-            }
+                console.log(error);
+              });
+          } else {
+            setLoginError("Invalid Credentials");
+            setLoading(false);
           }
         })
         .catch((error) => {
-          setErrors({ ...errors, userName: "User name not found" });
+          setLoginError("Invalid Credentials");
           setLoading(false);
           console.log(error);
         });
@@ -221,6 +236,13 @@ const Login = () => {
           >
             Log In
           </button>
+        )}
+      </div>
+      <div className="my-2">
+        {loginError !== "" && (
+          <Alert className="text-red-600" severity="error">
+            {loginError}
+          </Alert>
         )}
       </div>
     </div>

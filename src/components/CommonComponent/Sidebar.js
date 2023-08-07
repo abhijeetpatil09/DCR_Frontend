@@ -64,7 +64,7 @@ const Sidebar = ({ children }) => {
     <div className="flex flex-grow w-full h-[calc(100vh)]">
       <aside
         className={`${
-          isOpened ? "w-72 drawer" : ""
+          isOpened ? "w-80 drawer" : ""
         } z-50 flex flex-col items-start bg-deep-navy text-electric-green shadow h-[calc(100vh)] sticky top-0`}
       >
         <div className="flex flex-row items-center h-20">
