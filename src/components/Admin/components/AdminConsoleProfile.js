@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const AdminConsoleProfile = () => {
   const state = useSelector((state) => state);
@@ -47,7 +48,7 @@ const AdminConsoleProfile = () => {
   const fetchProfileTable = () => {
     if (UserRole?.includes("Consumer_Admin")) {
       axios
-        .get(`${baseURL}/${user?.name}`, {
+        .get(`${baseURL}/${redirectionUser}`, {
           params: {
             query: "select * from CONSUMER_ATTRIBUTES_VW order by admin desc;",
           },
@@ -62,10 +63,10 @@ const AdminConsoleProfile = () => {
         .catch((error) => console.log(error));
     } else {
       axios
-        .get(`${baseURL}/${user?.name}`, {
+        .get(`${baseURL}/${redirectionUser}`, {
           params: {
             query:
-              "select * from DCR_SAMP_PROVIDER_DB.DATAEX.CONSUMER_ATTRIBUTES_VW order by provider desc;",
+              "select * from DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW order by provider desc;",
           },
         })
         .then((response) => {
@@ -88,9 +89,9 @@ const AdminConsoleProfile = () => {
     setLoading(true);
     setDisableTemplate(!disableTemplate);
     axios
-      .get(`${baseURL}/${user?.name}`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `update DCR_SAMP_PROVIDER_DB.SHARED_SCHEMA.CONSUMER_ATTRIBUTES set CONSUMER = '${status}' where user= '${userName}';`,
+          query: `update DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES set CONSUMER = '${status}' where user= '${userName}';`,
         },
       })
       .then((response) => {
@@ -108,9 +109,9 @@ const AdminConsoleProfile = () => {
     setLoading(true);
     setDisableTemplate(!disableTemplate);
     axios
-      .get(`${baseURL}/${user?.name}`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `update DCR_SAMP_PROVIDER_DB.SHARED_SCHEMA.CONSUMER_ATTRIBUTES set PUBLISHER = '${status}' where user= '${userName}';`,
+          query: `update DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES set PUBLISHER = '${status}' where user= '${userName}';`,
         },
       })
       .then((response) => {
@@ -128,9 +129,9 @@ const AdminConsoleProfile = () => {
     setLoading(true);
     setDisableTemplate(!disableTemplate);
     axios
-      .get(`${baseURL}/${user?.name}`, {
+      .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `update DCR_SAMP_PROVIDER_DB.SHARED_SCHEMA.CONSUMER_ATTRIBUTES set ADMIN = '${status}' where user= '${userName}';`,
+          query: `update DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES set ADMIN = '${status}' where user= '${userName}';`,
         },
       })
       .then((response) => {

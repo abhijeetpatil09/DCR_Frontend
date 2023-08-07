@@ -22,6 +22,7 @@ import HowToVideos from "./components/CommonComponent/howToVideos";
 import AdminConsoleProfile from "./components/Admin/components/AdminConsoleProfile";
 
 import "react-toastify/dist/ReactToastify.css";
+import AdminConsoleLogsTable from "./components/Admin/components/LogsTable";
 
 const App = () => {
   return (
@@ -50,6 +51,10 @@ const App = () => {
                   <Route
                     path="/admin-console-profile"
                     element={<AdminConsoleProfile />}
+                  />
+                  <Route
+                    path="/admin-console-logs-table"
+                    element={<AdminConsoleLogsTable />}
                   />
                 </Routes>
               </Sidebar>

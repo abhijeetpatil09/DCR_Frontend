@@ -5,6 +5,7 @@ import { Alert } from "@mui/material";
 import ReactDatePicker from "react-datepicker";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const months = [
   "January",
@@ -110,9 +111,10 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
   useEffect(() => {
     if (user?.role && user?.role?.includes("Provider_Admin")) {
       axios
-        .get(`${baseURL}/${user?.name}`, {
+        .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: `select * from DCR_SAMP_PROVIDER_DB.DATAEX.CONSUMER_ATTRIBUTES_VW where PROVIDER='FALSE'and ADMIN='TRUE';`,
+            //DCR_SAMP_PROVIDER_DB
+            query: `select * from DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW where PROVIDER='FALSE'and ADMIN='TRUE';`,
           },
         })
         .then((response) => {

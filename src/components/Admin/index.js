@@ -9,6 +9,7 @@ import PublisherTemplate from "./components/AllowedColumns";
 
 import ProfileTable from "./components/AdminConsoleProfile";
 import ItemisedBills from "./components/ItemisedBills";
+import AdminConsoleLogsTable from "./components/LogsTable";
 
 import {
   adminConsumerConsoleTabs,
@@ -19,6 +20,7 @@ import AllowedColumns from "./components/AllowedColumns";
 
 import Query_Template_Image from "../../Assets/admin_console_query_template.svg";
 import Allowed_Columns_Image from "../../Assets/admin_console_allowed_columns.svg";
+import Admin_Console_Logs_Image from "../../Assets/AdminConsoleLogs.svg";
 
 const AdminConsole = () => {
   const state = useSelector((state) => state);
@@ -211,6 +213,24 @@ const AdminConsole = () => {
                 Download your monthly bills
               </p>
             </div>
+
+            {/* Tab used for only dataexadmin user */}
+            {user?.role && user?.role?.includes("DATAEXADMIN") && (
+              <div
+                onClick={() => navigate("/admin-console-logs-table")}
+                class="bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
+              >
+                <div class="h-24">
+                  <img src={Admin_Console_Logs_Image} alt="" class="mx-auto" />
+                </div>
+                <h4 class="text-md uppercase text-deep-navy font-bold mt-10">
+                  Logs
+                </h4>
+                <p class="text-base text-gray-600 mt-2">
+                  Check your Template Logs
+                </p>
+              </div>
+            )}
           </div>
         </section>
       </React.Fragment>
@@ -235,6 +255,9 @@ const AdminConsole = () => {
           )}
           {toggleDrawerPosition.tab === "itemised_bills" && (
             <ItemisedBills handleToggleDrawer={handleToggleDrawer} />
+          )}
+          {toggleDrawerPosition.tab === "logs-table" && (
+            <AdminConsoleLogsTable handleToggleDrawer={handleToggleDrawer} />
           )}
         </div>
       </SwipeableDrawer>
