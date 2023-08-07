@@ -9,7 +9,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, MenuItem, Select } from "@mui/material";
 
 import {
   GridRowModes,
@@ -22,15 +22,24 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 import "../../styles.css";
+import { joinArray } from "../../../utils/commonFunctions";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 function EditToolbar(props) {
-  const { setRows, setRowModesModel, attributeErrorMsg } = props;
+  const {
+    setRows,
+    setSelectedValues,
+    setIsEdit,
+    setRowModesModel,
+    attributeErrorMsg,
+  } = props;
 
   const handleClick = () => {
     const id = uuidv4();
+    setSelectedValues({ category: [], subCategory: [] });
+    setIsEdit(true);
     setRows((oldRows) => [
       ...oldRows,
       {
@@ -53,7 +62,7 @@ function EditToolbar(props) {
     <GridToolbarContainer className="m-2 justify-between">
       <div>
         {attributeErrorMsg !== "" && (
-          <div className="text-red-600 font-bold text-md py-2">
+          <div className="text-red-600 font-bold text-sm py-2">
             {attributeErrorMsg}
           </div>
         )}
@@ -73,21 +82,29 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   const [rows, setRows] = useState([]);
   const [attributeList, setAttributeList] = useState([]);
 
+  const [isEdit, setIsEdit] = useState(false);
+
   const [rowModesModel, setRowModesModel] = useState({});
   const [clickDeleteButton, setClickDeleteButton] = useState({ id: "" });
   const [loader, setLoader] = useState(false);
   const [loadingDataMessage, setLoadingDataMessage] = useState("");
   const [editableAttribute, setEditableAttribute] = useState("");
   const [attributeErrorMsg, setAttributeErrorMsg] = useState("");
+  const [categoryList, setCategoryList] = useState([]);
+  const [subCategoryList, setSubCategoryList] = useState([]);
 
-  console.log("editableAttribute", editableAttribute);
+  const [selectedValues, setSelectedValues] = useState({
+    category: [],
+    subCategory: [],
+  });
+
   useEffect(() => {
     let timeoutId = null;
 
     if (attributeErrorMsg) {
       timeoutId = setTimeout(() => {
         setAttributeErrorMsg("");
-      }, 5000); // Duration in milliseconds (5 seconds)
+      }, 10000); // Duration in milliseconds (5 seconds)
     }
 
     return () => {
@@ -104,7 +121,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER where entity_name = '${selectedKey}' and PROVIDER_NAME = '${user?.name}';`,
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER where entity_name = '${selectedKey}' and PROVIDER_NAME = '${user?.name}' order by ATTRIBUTE_NAME;`,
         },
       })
       .then((response) => {
@@ -131,12 +148,77 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       });
   };
 
+  const getAllCategories = () => {
+    axios
+      .get(`${baseURL}/${redirectionUser}`, {
+        params: {
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.CATEGORY_LIST`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          const cat_list = [];
+          response?.data?.data?.forEach((obj) => {
+            cat_list.push(obj.CATEGORY);
+          });
+          setCategoryList(cat_list);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     if (selectedKey !== false) {
       getDataFromEntity();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedKey]);
+
+  useEffect(() => {
+    if (isEdit) {
+      getAllCategories();
+    }
+  }, [isEdit]);
+
+  useEffect(() => {
+    if (selectedValues.category?.length > 0) {
+      const finalCategory = selectedValues?.category
+        ?.map(
+          (item, index) =>
+            " Category = '" +
+            item +
+            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+        )
+        .join("");
+      axios
+        .get(`${baseURL}/${redirectionUser}`, {
+          params: {
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
+              finalCategory !== "" ? `where (${finalCategory})` : ""
+            };`,
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            let data = response?.data?.data;
+            if (data?.length > 0) {
+              const sub_cat_list = [];
+              response?.data?.data?.forEach((obj) => {
+                sub_cat_list.push(obj);
+              });
+              setSubCategoryList(sub_cat_list);
+            } else {
+              setSubCategoryList([]);
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [selectedValues.category]);
 
   const deleteRecordsAPI = (attributeName) => {
     axios
@@ -228,9 +310,13 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     const editableAttribute = rows.filter((row) => row.id === id);
     setEditableAttribute(editableAttribute[0].ATTRIBUTE_NAME);
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    setIsEdit(true);
+    setSelectedValues({ category: [], subCategory: [] });
+    setSubCategoryList([]);
   };
 
   const handleSaveClick = (id) => () => {
+    setIsEdit(false);
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
@@ -253,7 +339,25 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   };
 
   const processRowUpdate = (newRow) => {
-    // const updatedRow = { ...newRow, isNew: false };
+    const filteredArray2 = subCategoryList
+      .filter((obj) => selectedValues.subCategory?.includes(obj.SUB_CATEGORY))
+      ?.map((filteredObj) => filteredObj.CATEGORY);
+
+    const categoriesNotSubCategory = selectedValues.category?.filter(
+      (obj1) => !filteredArray2?.includes(obj1)
+    );
+
+    if (categoriesNotSubCategory.length > 0) {
+      setAttributeErrorMsg(
+        `Please select Sub Category for Category - ${joinArray(
+          categoriesNotSubCategory
+        )}`
+      );
+      return;
+    }
+    newRow.CATEGORY = joinArray(selectedValues.category);
+    newRow.SUB_CATEGORY = joinArray(selectedValues.subCategory);
+
     const updatedRow = { ...newRow };
     const index = attributeList?.filter(
       (item) => item === updatedRow.ATTRIBUTE_NAME
@@ -309,8 +413,8 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       updateRecordsAPI(result, "update");
     }
 
-    // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    // return updatedRow;
+    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    return updatedRow;
   };
 
   const handleRowModesModelChange = (newRowModesModel) => {
@@ -318,12 +422,66 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   };
 
   const columns = [
-    { field: "CATEGORY", headerName: "Category", flex: 1, editable: true },
+    {
+      field: "CATEGORY",
+      headerName: "Category",
+      flex: 1,
+      editable: true,
+      renderEditCell: (params) => {
+        const handleMultiSelectChange = (event) => {
+          setSelectedValues({
+            ...selectedValues,
+            category: event.target.value,
+            subCategory: [],
+          });
+        };
+
+        return (
+          <Select
+            labelId={`role-label-${params.id}`}
+            id={`role-select-${params.id}`}
+            multiple
+            value={selectedValues.category}
+            onChange={handleMultiSelectChange}
+          >
+            {categoryList?.map((item) => {
+              return <MenuItem value={item}>{item}</MenuItem>;
+            })}
+          </Select>
+        );
+      },
+    },
     {
       field: "SUB_CATEGORY",
       headerName: "Sub Category",
       flex: 1,
       editable: true,
+      renderEditCell: (params) => {
+        const handleMultiSelectChange = (event) => {
+          setSelectedValues({
+            ...selectedValues,
+            subCategory: event.target.value,
+          });
+        };
+
+        return (
+          <Select
+            labelId={`role-label-${params.id}`}
+            id={`role-select-${params.id}`}
+            multiple
+            value={selectedValues.subCategory}
+            onChange={handleMultiSelectChange}
+          >
+            {subCategoryList?.map((item) => {
+              return (
+                <MenuItem value={item.SUB_CATEGORY}>
+                  {item.SUB_CATEGORY}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        );
+      },
     },
     {
       field: "ATTRIBUTE_NAME",
@@ -450,8 +608,16 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
             toolbar: EditToolbar,
           }}
           slotProps={{
-            toolbar: { setRows, setRowModesModel, attributeErrorMsg },
+            toolbar: {
+              setRows,
+              setSelectedValues,
+              setIsEdit,
+              setRowModesModel,
+              attributeErrorMsg,
+            },
           }}
+          disableColumnMenu={true} // Disable column menu (including sorting options)
+          disableColumnFilter={true} // Disable column filter menu
         />
       ) : (
         loadingDataMessage !== "" && (
@@ -460,6 +626,13 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
           </div>
         )
       )}
+      <div className="my-2">
+        {attributeErrorMsg !== "" && (
+          <div className="text-red-600 font-bold text-sm py-2">
+            {attributeErrorMsg}
+          </div>
+        )}
+      </div>
     </Box>
   );
 };

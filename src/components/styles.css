@@ -166,7 +166,9 @@ th, td {
   z-index: 20000;
 }
 
-.ant-select-selection-placeholder, .ant-select-arrow, .ant-tag-close-icon {
+.ant-select-selection-placeholder,
+.ant-select-arrow,
+.ant-tag-close-icon {
   color: #08f0a9 !important;
 }
 
@@ -225,13 +227,25 @@ th, td {
 }
 
 .fa {
-  font-family: 'Lato', 'Font Awesome 5 Free', 'Font Awesome 5 Brands';
-   font-weight: 900;
- padding: 1rem 2rem;
- color: #3a9c7d;
-
+  font-family: "Lato", "Font Awesome 5 Free", "Font Awesome 5 Brands";
+  font-weight: 900;
+  padding: 1rem 2rem;
+  color: #3a9c7d;
 }
 
 .react-datepicker-wrapper {
   width: 100% !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-cellContent {
+  white-space: normal !important;
+}
+
+.MuiOutlinedInput-root {
+  width: 100% !important;
+}
+
+.MuiSelect-select {
+  padding: 7px 14px !important;
+  white-space: normal !important;
 }

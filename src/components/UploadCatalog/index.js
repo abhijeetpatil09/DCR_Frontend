@@ -12,6 +12,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import NewCatalogUploadModal from "./components/NewCatalogUploadModal";
 
 import UpdateAttributeTable from "./components/UpdateAttributeTable";
+import Spinner from "../CommonComponent/Spinner";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
@@ -25,6 +26,8 @@ const UploadCatalog = () => {
 
   const [newCatalogModal, setNewCatalogModal] = useState(false);
 
+  const [loader, setLoader] = useState(false);
+
   const [expanded, setExpanded] = React.useState(false);
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -32,6 +35,7 @@ const UploadCatalog = () => {
   };
 
   useEffect(() => {
+    setLoader(true);
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
@@ -43,6 +47,7 @@ const UploadCatalog = () => {
           const data = response?.data?.data;
           let result = data?.map((item) => item.ENTITY_NAME);
           setEntityList(result);
+          setLoader(false);
         } else {
           setEntityList([]);
         }
@@ -62,29 +67,42 @@ const UploadCatalog = () => {
         </button>
       </div>
 
-      <div className="mt-4 rounded-md">
-        {entityList?.map((key) => {
-          return (
-            <Accordion expanded={expanded === key} onChange={handleChange(key)}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-                className={expanded === key ? "bg-downriver-300 rounded-md": "bg-slate-200 rounded-md"}
+      {!loader ? (
+        <div className="mt-4 rounded-md">
+          {entityList?.map((key) => {
+            return (
+              <Accordion
+                expanded={expanded === key}
+                onChange={handleChange(key)}
               >
-                <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                  {key}
-                </Typography>
-              </AccordionSummary>
-              {expanded === key && (
-                <AccordionDetails>
-                  <UpdateAttributeTable selectedKey={expanded} user={user} />
-                </AccordionDetails>
-              )}
-            </Accordion>
-          );
-        })}
-      </div>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1bh-content"
+                  id="panel1bh-header"
+                  className={
+                    expanded === key
+                      ? "bg-downriver-300 rounded-md"
+                      : "bg-slate-200 rounded-md"
+                  }
+                >
+                  <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                    {key}
+                  </Typography>
+                </AccordionSummary>
+                {expanded === key && (
+                  <AccordionDetails>
+                    <UpdateAttributeTable selectedKey={expanded} user={user} />
+                  </AccordionDetails>
+                )}
+              </Accordion>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex justify-center mt-8">
+          <Spinner />
+        </div>
+      )}
 
       {newCatalogModal && (
         <NewCatalogUploadModal
