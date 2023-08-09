@@ -290,114 +290,115 @@ const AdminConsoleLogsTable = () => {
               </svg>
               Filter
             </button>
-            <SwipeableDrawer
-              anchor={anchor}
-              open={toggleDrawerPosition[anchor]}
-              onClose={toggleDrawer(anchor, false)}
-              onOpen={toggleDrawer(anchor, true)}
-            >
-              <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
-                <img
-                  className="absolute w-80  bottom-0 opacity-90 z-0 right-0 text-amarant-400"
-                  src={Admin_Console_Logs_Image}
-                  alt=""
-                />
-                <div
-                  className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy/50"
-                  name="myForm"
-                >
-                  <div className="flex flex-row justify-between">
-                    <h3 className="text-xl font-semibold">Logs filter</h3>
-                    <button onClick={toggleDrawer("right", false)}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
+            {toggleDrawerPosition[anchor] && (
+              <SwipeableDrawer
+                anchor={anchor}
+                open={toggleDrawerPosition[anchor]}
+                onClose={toggleDrawer(anchor, false)}
+                onOpen={toggleDrawer(anchor, true)}
+              >
+                <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
+                  <img
+                    className="absolute w-80  bottom-0 opacity-90 z-0 right-0 text-amarant-400"
+                    src={Admin_Console_Logs_Image}
+                    alt=""
+                  />
+                  <div
+                    className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy/50"
+                    name="myForm"
+                  >
+                    <div className="flex flex-row justify-between">
+                      <h3 className="text-xl font-semibold">Logs filter</h3>
+                      <button onClick={toggleDrawer("right", false)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="mt-4 pb-2 flex flex-col gap-3">
+                      <div className="w-full">
+                        <SelectDropdown
+                          title="Select Provider"
+                          mode="multiple"
+                          name="providerName"
+                          placeholder="Please select"
+                          value={filteredData?.providerName}
+                          data={filteredList.providersList}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
+                          }}
                         />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="mt-4 pb-2 flex flex-col gap-3">
-                    <div className="w-full">
-                      <SelectDropdown
-                        title="Select Provider"
-                        mode="multiple"
-                        name="providerName"
-                        placeholder="Please select"
-                        value={filteredData?.providerName}
-                        data={filteredList.providersList}
-                        setValue={(e, value) => {
-                          handleChange(e, value);
-                        }}
-                      />
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-4 pb-2 flex flex-col gap-3">
-                    <div className="w-full">
-                      <SelectDropdown
-                        title="Select Template"
-                        mode="multiple"
-                        name="templateName"
-                        placeholder="Please select"
-                        value={filteredData?.templateName}
-                        data={filteredList.templatesList}
-                        setValue={(e, value) => {
-                          handleChange(e, value);
-                        }}
-                      />
+                    <div className="mt-4 pb-2 flex flex-col gap-3">
+                      <div className="w-full">
+                        <SelectDropdown
+                          title="Select Template"
+                          mode="multiple"
+                          name="templateName"
+                          placeholder="Please select"
+                          value={filteredData?.templateName}
+                          data={filteredList.templatesList}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-4 pb-2 flex flex-col gap-3">
-                    <div className="w-full">
-                      <SelectDropdown
-                        title="Select Status"
-                        mode="multiple"
-                        name="status"
-                        placeholder="Please select"
-                        value={filteredData?.status}
-                        data={filteredList.statusList}
-                        setValue={(e, value) => {
-                          handleChange(e, value);
-                        }}
-                      />
+                    <div className="mt-4 pb-2 flex flex-col gap-3">
+                      <div className="w-full">
+                        <SelectDropdown
+                          title="Select Status"
+                          mode="multiple"
+                          name="status"
+                          placeholder="Please select"
+                          value={filteredData?.status}
+                          data={filteredList.statusList}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-4 pb-2 flex flex-col gap-1">
-                    <label className="ml-1 montserrat">Select Date</label>
-                    <div className="w-full">
-                      <DatePicker
-                        showIcon
-                        selected={filteredData?.date}
-                        onChange={(date) =>
-                          setFilteredData({ ...filteredData, date: date })
-                        }
-                        isClearable
-                        placeholderText="Please select a date"
-                        className="rounded-md pl-8 w-full bg-deep-navy ring-1  ring-electric-green placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6 text-electric-green"
-                        
-                      />
+                    <div className="mt-4 pb-2 flex flex-col gap-1">
+                      <label className="ml-1 montserrat">Select Date</label>
+                      <div className="w-full">
+                        <DatePicker
+                          showIcon
+                          selected={filteredData?.date}
+                          onChange={(date) =>
+                            setFilteredData({ ...filteredData, date: date })
+                          }
+                          isClearable
+                          placeholderText="Please select a date"
+                          className="rounded-md pl-8 w-full bg-deep-navy ring-1  ring-electric-green placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6 text-electric-green"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex justify-end">
-                    <button
-                      className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
-                      type="submit"
-                      onClick={() => handleFilter(anchor)}
-                    >
-                      Filter
-                    </button>
+                    <div className="flex justify-end">
+                      <button
+                        className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                        type="submit"
+                        onClick={() => handleFilter(anchor)}
+                      >
+                        Filter
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SwipeableDrawer>
+              </SwipeableDrawer>
+            )}
           </React.Fragment>
         ))}
       </div>

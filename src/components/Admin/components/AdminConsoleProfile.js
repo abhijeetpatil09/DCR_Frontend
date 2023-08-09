@@ -50,7 +50,8 @@ const AdminConsoleProfile = () => {
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: "select * from CONSUMER_ATTRIBUTES_VW order by admin desc;",
+            query:
+              "select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES order by admin desc;",
           },
         })
         .then((response) => {
@@ -66,7 +67,7 @@ const AdminConsoleProfile = () => {
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
             query:
-              "select * from DCR_SAMP_APP.DATAEX.CONSUMER_ATTRIBUTES_VW order by provider desc;",
+              "select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES order by provider desc;",
           },
         })
         .then((response) => {

@@ -3,15 +3,14 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Button, Menu, MenuItem } from "@mui/material";
+import { HelpOutline } from "@material-ui/icons";
+
 import * as actions from "../../redux/actions/index";
 
 import GroupMLogo from "../../Assets/logo-download-01.png";
 import GroupMLogoDark from "../../Assets/logo-download-02.png";
-import { Button, Menu, MenuItem } from "@mui/material";
-import { HelpOutline } from "@material-ui/icons";
-
-// import "../pure-react.css";
-// import "../styles.css";
+import USER_MANUAL_PDF from "../../Assets/PDF/User_Manual.pdf";
 
 const Sidebar = ({ children }) => {
   const navigate = useNavigate();
@@ -382,7 +381,14 @@ const Sidebar = ({ children }) => {
                   "aria-labelledby": "basic-button",
                 }}
               >
-                <MenuItem onClick={handleClose}>User manual</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    window.open(USER_MANUAL_PDF, "_blank");
+                  }}
+                >
+                  User manual
+                </MenuItem>
                 <MenuItem onClick={handleClose}>FAQ</MenuItem>
                 {/* <MenuItem onClick={handleClose}>Logout</MenuItem> */}
               </Menu>

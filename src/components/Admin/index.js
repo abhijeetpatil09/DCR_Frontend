@@ -234,33 +234,35 @@ const AdminConsole = () => {
           </div>
         </section>
       </React.Fragment>
-      <SwipeableDrawer
-        anchor={"right"}
-        open={toggleDrawerPosition.right}
-        onClose={handleToggleDrawer("right", false, "")}
-        onOpen={handleToggleDrawer("right", true, toggleDrawerPosition.tab)}
-      >
-        <div className="flex flex-col flex-shrink h-full w-full px-5 bg-deep-navy text-electric-green bg-[url('/static/media/Target audience _Two Color.6aa8a9f45675ef6dfbc33c3c3b61aa03.svg')] ">
-          {toggleDrawerPosition.tab === "query_template" && (
-            <QueryTemplate
-              user={user}
-              handleToggleDrawer={handleToggleDrawer}
-            />
-          )}
-          {toggleDrawerPosition.tab === "allowed_columns" && (
-            <AllowedColumns
-              user={user}
-              handleToggleDrawer={handleToggleDrawer}
-            />
-          )}
-          {toggleDrawerPosition.tab === "itemised_bills" && (
-            <ItemisedBills handleToggleDrawer={handleToggleDrawer} />
-          )}
-          {toggleDrawerPosition.tab === "logs-table" && (
-            <AdminConsoleLogsTable handleToggleDrawer={handleToggleDrawer} />
-          )}
-        </div>
-      </SwipeableDrawer>
+      {toggleDrawerPosition.right && (
+        <SwipeableDrawer
+          anchor={"right"}
+          open={toggleDrawerPosition.right}
+          onClose={handleToggleDrawer("right", false, "")}
+          onOpen={handleToggleDrawer("right", true, toggleDrawerPosition.tab)}
+        >
+          <div className="flex flex-col flex-shrink h-full w-full px-5 bg-deep-navy text-electric-green bg-[url('/static/media/Target audience _Two Color.6aa8a9f45675ef6dfbc33c3c3b61aa03.svg')] ">
+            {toggleDrawerPosition.tab === "query_template" && (
+              <QueryTemplate
+                user={user}
+                handleToggleDrawer={handleToggleDrawer}
+              />
+            )}
+            {toggleDrawerPosition.tab === "allowed_columns" && (
+              <AllowedColumns
+                user={user}
+                handleToggleDrawer={handleToggleDrawer}
+              />
+            )}
+            {toggleDrawerPosition.tab === "itemised_bills" && (
+              <ItemisedBills handleToggleDrawer={handleToggleDrawer} />
+            )}
+            {toggleDrawerPosition.tab === "logs-table" && (
+              <AdminConsoleLogsTable handleToggleDrawer={handleToggleDrawer} />
+            )}
+          </div>
+        </SwipeableDrawer>
+      )}
     </div>
   );
 };

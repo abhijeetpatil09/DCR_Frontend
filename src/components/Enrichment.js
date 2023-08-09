@@ -480,152 +480,154 @@ const Enrichment = () => {
               </svg>
               Create new
             </button>
-            <SwipeableDrawer
-              anchor={anchor}
-              open={toggleDrawerPosition[anchor]}
-              onClose={toggleDrawer(anchor, false)}
-              onOpen={toggleDrawer(anchor, true)}
-            >
-              <div className="flex flex-col flex-shrink h-full w-full px-5    bg-deep-navy text-electric-green">
-                <img
-                  className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
-                  src={searchillustration}
-                  alt=""
-                />
-                <form
-                  className=" z-20  my-4 px-4 py-2 w-96  bg-deep-navy/50"
-                  name="myForm"
-                  onSubmit={handleSubmit}
-                >
-                  <div className="flex flex-row justify-between">
-                    <h3 className="text-xl font-semibold">
-                      New consumer query
-                    </h3>
-                    <button onClick={toggleDrawer("right", false)}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div>
-                    <div className="mt-2 pb-2 flex flex-col">
-                      <label>Provider name</label>
-                      <select
-                        id="provider"
-                        name="Provider_Name"
-                        required
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                        value={formData["Provider_Name"]}
-                        onChange={handleSelectProvider}
-                      >
-                        <option value="">Select a provider</option>
-                        {providerList?.length > 0 ? (
-                          providerList.map((item, index) => (
-                            <option key={index} value={item.PROVIDER}>
-                              {item.PROVIDER}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="">Loading...</option>
-                        )}
-                      </select>
-                    </div>
-
-                    <div className="mt-2 pb-2 flex flex-col">
-                      <label>Query name </label>
-                      <select
-                        id="selectedTemp"
-                        required
-                        name="Query_Name"
-                        value={formData["Query_Name"]}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                        onChange={handleSelectedTemp}
-                      >
-                        <option value="">Select a template</option>
-                        {templateList?.length > 0 ? (
-                          templateList.map((item, index) => (
-                            <option key={index} value={item.TEMPLATE_NAME}>
-                              {item.TEMPLATE_NAME}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="">Loading...</option>
-                        )}
-                      </select>
-                    </div>
-
-                    <div className="mt-2 pb-2 flex flex-col">
-                      <SelectDropdown
-                        title="Columns"
-                        mode="multiple"
-                        name="Column_Names"
-                        value={formData?.Column_Names}
-                        placeholder="Select columns"
-                        data={columns}
-                        setValue={(e, value) => {
-                          handleChange(e, value);
-                        }}
-                      />
-                    </div>
-
-                    <div className="my-2">
-                      {columnError !== "" && (
-                        <Alert className="text-red-600" severity="error">
-                          {columnError}
-                        </Alert>
-                      )}
-                    </div>
-                    <div className="mt-2 pb-21 flex flex-col">
-                      <label>Identifier type</label>
-                      <select
-                        name="Attribute_Value"
-                        onChange={handleCustomerFormData}
-                        required
-                        value={formData["Attribute_Value"]}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Please select</option>
-                        <option value="email">Email</option>
-                        <option value="phone">Phone</option>
-                        <option value="MAID">MAID</option>
-                      </select>
-                    </div>
-
-                    <div className="flex justify-end">
-                      {loading ? (
-                        <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
-                          <CircularProgress
-                            style={{
-                              width: "24px",
-                              height: "24px",
-                              color: "#FFFFFF",
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <button
-                          className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
-                          type="submit"
+            {toggleDrawerPosition[anchor] && (
+              <SwipeableDrawer
+                anchor={anchor}
+                open={toggleDrawerPosition[anchor]}
+                onClose={toggleDrawer(anchor, false)}
+                onOpen={toggleDrawer(anchor, true)}
+              >
+                <div className="flex flex-col flex-shrink h-full w-full px-5    bg-deep-navy text-electric-green">
+                  <img
+                    className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
+                    src={searchillustration}
+                    alt=""
+                  />
+                  <form
+                    className=" z-20  my-4 px-4 py-2 w-96  bg-deep-navy/50"
+                    name="myForm"
+                    onSubmit={handleSubmit}
+                  >
+                    <div className="flex flex-row justify-between">
+                      <h3 className="text-xl font-semibold">
+                        New consumer query
+                      </h3>
+                      <button onClick={toggleDrawer("right", false)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6"
                         >
-                          Submit query
-                        </button>
-                      )}
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
                     </div>
-                  </div>
-                </form>
-              </div>
-            </SwipeableDrawer>
+                    <div>
+                      <div className="mt-2 pb-2 flex flex-col">
+                        <label>Provider name</label>
+                        <select
+                          id="provider"
+                          name="Provider_Name"
+                          required
+                          className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                          value={formData["Provider_Name"]}
+                          onChange={handleSelectProvider}
+                        >
+                          <option value="">Select a provider</option>
+                          {providerList?.length > 0 ? (
+                            providerList.map((item, index) => (
+                              <option key={index} value={item.PROVIDER}>
+                                {item.PROVIDER}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">Loading...</option>
+                          )}
+                        </select>
+                      </div>
+
+                      <div className="mt-2 pb-2 flex flex-col">
+                        <label>Query name </label>
+                        <select
+                          id="selectedTemp"
+                          required
+                          name="Query_Name"
+                          value={formData["Query_Name"]}
+                          className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                          onChange={handleSelectedTemp}
+                        >
+                          <option value="">Select a template</option>
+                          {templateList?.length > 0 ? (
+                            templateList.map((item, index) => (
+                              <option key={index} value={item.TEMPLATE_NAME}>
+                                {item.TEMPLATE_NAME}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">Loading...</option>
+                          )}
+                        </select>
+                      </div>
+
+                      <div className="mt-2 pb-2 flex flex-col">
+                        <SelectDropdown
+                          title="Columns"
+                          mode="multiple"
+                          name="Column_Names"
+                          value={formData?.Column_Names}
+                          placeholder="Select columns"
+                          data={columns}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
+                          }}
+                        />
+                      </div>
+
+                      <div className="my-2">
+                        {columnError !== "" && (
+                          <Alert className="text-red-600" severity="error">
+                            {columnError}
+                          </Alert>
+                        )}
+                      </div>
+                      <div className="mt-2 pb-21 flex flex-col">
+                        <label>Identifier type</label>
+                        <select
+                          name="Attribute_Value"
+                          onChange={handleCustomerFormData}
+                          required
+                          value={formData["Attribute_Value"]}
+                          className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        >
+                          <option value="">Please select</option>
+                          <option value="email">Email</option>
+                          <option value="phone">Phone</option>
+                          <option value="MAID">MAID</option>
+                        </select>
+                      </div>
+
+                      <div className="flex justify-end">
+                        {loading ? (
+                          <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
+                            <CircularProgress
+                              style={{
+                                width: "24px",
+                                height: "24px",
+                                color: "#FFFFFF",
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <button
+                            className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                            type="submit"
+                          >
+                            Submit query
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </SwipeableDrawer>
+            )}
           </React.Fragment>
         ))}
       </div>

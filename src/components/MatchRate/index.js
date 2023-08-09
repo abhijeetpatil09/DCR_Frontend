@@ -581,282 +581,287 @@ const MatchRate = () => {
               </svg>
               Create new
             </button>
-            <SwipeableDrawer
-              anchor={anchor}
-              open={toggleDrawerPosition[anchor]}
-              onClose={handleToggleDrawer(anchor, false)}
-              onOpen={handleToggleDrawer(anchor, true)}
-            >
-              <div className="flex flex-col flex-shrink h-full w-full px-5 bg-deep-navy text-electric-green bg-[url('/static/media/Target audience _Two Color.6aa8a9f45675ef6dfbc33c3c3b61aa03.svg')] ">
-                <img
-                  className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
-                  src={searchillustration}
-                  alt=""
-                />
-                <form
-                  className="  my-4 px-4 py-2 h-auto w-96 z-20  bg-deep-navy/50 "
-                  name="myForm"
-                  onSubmit={handleSubmit}
-                >
-                  <div className="flex flex-row justify-between ">
-                    <h3 className="text-xl font-semibold">
-                      New publisher query
-                    </h3>
-                    <button onClick={handleToggleDrawer("right", false)}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div>
-                    <div className="mt-2 pb-2 flex flex-col">
-                      <label>Provider name</label>
-                      <select
-                        id="provider"
-                        name="Provider_Name"
-                        required
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                        value={formData["Provider_Name"]}
-                        onChange={handleSelectProvider}
-                      >
-                        <option value="">Select a provider</option>
-                        {providerList?.length > 0 ? (
-                          providerList.map((item, index) => (
-                            <option key={index} value={item.PROVIDER}>
-                              {item.PROVIDER}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="">Loading...</option>
-                        )}
-                      </select>
-                    </div>
-                    <div className=" mt-2 pb-2 flex flex-col">
-                      <label>Query name</label>
-                      <select
-                        name="Query_Name"
-                        onChange={handleCustomerFormData}
-                        required
-                        value={formData.Query_Name}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Please select</option>
-                        {templateList?.length > 0 ? (
-                          templateList.map((item, index) => (
-                            <option key={index} value={item.TEMPLATE_NAME}>
-                              {item.TEMPLATE_NAME}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="">Loading...</option>
-                        )}
-                      </select>
-                    </div>
-
-                    <div className="mt-2 pb-21 flex flex-col">
-                      <label>Upload File</label>
-                      <input
-                        // className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                        className="block w-full text-sm text-true-teal
-                        file:mr-4 file:py-2 file:px-4 file:rounded-md
-                        file:border-0 file:text-sm file:font-semibold
-                        file:bg-electric-green file:text-deep-navy
-                        hover:file:bg-true-teal hover:file:cursor-pointer"
-                        type="file"
-                        id="myFileInput"
-                        onChange={handleFileInput}
-                        required
-                        ref={fileInputRef}
-                      />
-                    </div>
-                    <div className="my-4 flex flex-col">
-                      <button
-                        className="flex w-fit text-electric-green"
-                        onClick={() => {
-                          downloadNewFile();
-                          setDownloadSample(true);
-                        }}
-                      >
+            {toggleDrawerPosition[anchor] && (
+              <SwipeableDrawer
+                anchor={anchor}
+                open={toggleDrawerPosition[anchor]}
+                onClose={handleToggleDrawer(anchor, false)}
+                onOpen={handleToggleDrawer(anchor, true)}
+              >
+                <div className="flex flex-col flex-shrink h-full w-full px-5 bg-deep-navy text-electric-green bg-[url('/static/media/Target audience _Two Color.6aa8a9f45675ef6dfbc33c3c3b61aa03.svg')] ">
+                  <img
+                    className="absolute  w-96  bottom-1 opacity-90 z-10 right-0 text-amarant-400"
+                    src={searchillustration}
+                    alt=""
+                  />
+                  <form
+                    className="  my-4 px-4 py-2 h-auto w-96 z-20  bg-deep-navy/50 "
+                    name="myForm"
+                    onSubmit={handleSubmit}
+                  >
+                    <div className="flex flex-row justify-between ">
+                      <h3 className="text-xl font-semibold">
+                        New publisher query
+                      </h3>
+                      <button onClick={handleToggleDrawer("right", false)}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke-width="1.5"
+                          strokeWidth={1.5}
                           stroke="currentColor"
-                          class="w-6 h-6"
+                          className="w-6 h-6"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
                           />
                         </svg>
-                        <span className="pl-2 underline">
-                          Download Template
-                        </span>
                       </button>
                     </div>
-
-                    <div className="my-2">
-                      {fileErrorMessage !== "" && (
-                        <Alert className="my-4 text-red-600" severity="error">
-                          {fileErrorMessage}
-                        </Alert>
-                      )}
-                    </div>
-
-                    <div className="mt-2 pb-21 flex flex-col">
-                      <label>Identifier type</label>
-                      <select
-                        name="Column_Names"
-                        onChange={handleCustomerFormData}
-                        required
-                        value={formData.Column_Names}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Please select</option>
-                        <option value="email">Email</option>
-                        <option value="phone">Phone</option>
-                        <option value="MAID">MAID-WIP</option>
-                      </select>
-                    </div>
-
-                    <div className="mt-2 pb-21 flex flex-col">
-                      <label>Match attribute</label>
-                      <select
-                        name="Match_Attribute"
-                        onChange={handleCustomerFormData}
-                        required
-                        value={formData.Match_Attribute}
-                        className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-                      >
-                        <option value="">Please select</option>
-                        <option value="overall">Overall</option>
-                        <option value="age">Age</option>
-                        <option value="gender">Gender</option>
-                      </select>
-                      {formData["Match_Attribute"] === "gender" && (
-                        <div className="mt-2 pb-21 flex flex-col">
-                          Select Gender
-                          <label>
-                            <input
-                              type="radio"
-                              value="male"
-                              checked={gender === "male"}
-                              onChange={(e) => setGender(e.target.value)}
-                            />
-                            <span className="pl-2">Male</span>
-                          </label>
-                          <label>
-                            <input
-                              type="radio"
-                              value="female"
-                              checked={gender === "female"}
-                              onChange={(e) => setGender(e.target.value)}
-                            />
-                            <span className="pl-2">Female</span>
-                          </label>
-                        </div>
-                      )}
-                      {formData["Match_Attribute"] === "age" && (
-                        <div className="mt-2 pb-21 flex flex-col">
-                          Select Age
-                          <label>
-                            <input
-                              type="radio"
-                              value="age_0_6"
-                              checked={age === "age_0_6"}
-                              onChange={(e) => setAge(e.target.value)}
-                            />
-                            <span className="pl-2">0-6</span>
-                          </label>
-                          <label>
-                            <input
-                              type="radio"
-                              value="age_7_16"
-                              checked={age === "age_7_16"}
-                              onChange={(e) => setAge(e.target.value)}
-                            />
-                            <span className="pl-2">7-16</span>
-                          </label>
-                          <label>
-                            <input
-                              type="radio"
-                              value="age_17_25"
-                              checked={age === "age_17_25"}
-                              onChange={(e) => setAge(e.target.value)}
-                            />
-                            <span className="pl-2">17-25</span>
-                          </label>
-                          <label>
-                            <input
-                              type="radio"
-                              value="age_26_40"
-                              checked={age === "age_26_40"}
-                              onChange={(e) => setAge(e.target.value)}
-                            />
-                            <span className="pl-2">26-40</span>
-                          </label>
-                          <label>
-                            <input
-                              type="radio"
-                              value="age_41_above"
-                              checked={age === "age_41_above"}
-                              onChange={(e) => setAge(e.target.value)}
-                            />
-                            <span className="pl-2">41-above</span>
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex justify-end">
-                      {loading ? (
-                        <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
-                          <CircularProgress
-                            style={{
-                              width: "24px",
-                              height: "24px",
-                              color: "#FFFFFF",
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <button
-                          className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
-                          type="submit"
+                    <div>
+                      <div className="mt-2 pb-2 flex flex-col">
+                        <label>Provider name</label>
+                        <select
+                          id="provider"
+                          name="Provider_Name"
+                          required
+                          className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                          value={formData["Provider_Name"]}
+                          onChange={handleSelectProvider}
                         >
-                          Submit query
+                          <option value="">Select a provider</option>
+                          {providerList?.length > 0 ? (
+                            providerList.map((item, index) => (
+                              <option key={index} value={item.PROVIDER}>
+                                {item.PROVIDER}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">Loading...</option>
+                          )}
+                        </select>
+                      </div>
+                      <div className=" mt-2 pb-2 flex flex-col">
+                        <label>Query name</label>
+                        <select
+                          name="Query_Name"
+                          onChange={handleCustomerFormData}
+                          required
+                          value={formData.Query_Name}
+                          className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        >
+                          <option value="">Please select</option>
+                          {templateList?.length > 0 ? (
+                            templateList.map((item, index) => (
+                              <option key={index} value={item.TEMPLATE_NAME}>
+                                {item.TEMPLATE_NAME}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">Loading...</option>
+                          )}
+                        </select>
+                      </div>
+
+                      <div className="mt-2 pb-21 flex flex-col">
+                        <label>Upload File</label>
+                        <input
+                          // className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                          className="block w-full text-sm text-true-teal
+                        file:mr-4 file:py-2 file:px-4 file:rounded-md
+                        file:border-0 file:text-sm file:font-semibold
+                        file:bg-electric-green file:text-deep-navy
+                        hover:file:bg-true-teal hover:file:cursor-pointer"
+                          type="file"
+                          id="myFileInput"
+                          onChange={handleFileInput}
+                          required
+                          ref={fileInputRef}
+                        />
+                      </div>
+                      <div className="my-4 flex flex-col">
+                        <button
+                          className="flex w-fit text-electric-green"
+                          onClick={() => {
+                            downloadNewFile();
+                            setDownloadSample(true);
+                          }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="pl-2 underline">
+                            Download Template
+                          </span>
                         </button>
-                      )}
-                    </div>
-                    <div className="py-2">
-                      {errorMessage !== "" ? (
-                        <Alert className="my-4 text-red-600" severity="error">
-                          {errorMessage}
-                        </Alert>
-                      ) : (
-                        loading && (
+                      </div>
+
+                      <div className="my-2">
+                        {fileErrorMessage !== "" && (
                           <Alert className="my-4 text-red-600" severity="error">
-                            Uploading the Attachment. Please wait
+                            {fileErrorMessage}
                           </Alert>
-                        )
-                      )}
+                        )}
+                      </div>
+
+                      <div className="mt-2 pb-21 flex flex-col">
+                        <label>Identifier type</label>
+                        <select
+                          name="Column_Names"
+                          onChange={handleCustomerFormData}
+                          required
+                          value={formData.Column_Names}
+                          className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        >
+                          <option value="">Please select</option>
+                          <option value="email">Email</option>
+                          <option value="phone">Phone</option>
+                          <option value="MAID">MAID-WIP</option>
+                        </select>
+                      </div>
+
+                      <div className="mt-2 pb-21 flex flex-col">
+                        <label>Match attribute</label>
+                        <select
+                          name="Match_Attribute"
+                          onChange={handleCustomerFormData}
+                          required
+                          value={formData.Match_Attribute}
+                          className="block w-full rounded-md border-0 py-1.5 text-electric-green  bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+                        >
+                          <option value="">Please select</option>
+                          <option value="overall">Overall</option>
+                          <option value="age">Age</option>
+                          <option value="gender">Gender</option>
+                        </select>
+                        {formData["Match_Attribute"] === "gender" && (
+                          <div className="mt-2 pb-21 flex flex-col">
+                            Select Gender
+                            <label>
+                              <input
+                                type="radio"
+                                value="male"
+                                checked={gender === "male"}
+                                onChange={(e) => setGender(e.target.value)}
+                              />
+                              <span className="pl-2">Male</span>
+                            </label>
+                            <label>
+                              <input
+                                type="radio"
+                                value="female"
+                                checked={gender === "female"}
+                                onChange={(e) => setGender(e.target.value)}
+                              />
+                              <span className="pl-2">Female</span>
+                            </label>
+                          </div>
+                        )}
+                        {formData["Match_Attribute"] === "age" && (
+                          <div className="mt-2 pb-21 flex flex-col">
+                            Select Age
+                            <label>
+                              <input
+                                type="radio"
+                                value="age_0_6"
+                                checked={age === "age_0_6"}
+                                onChange={(e) => setAge(e.target.value)}
+                              />
+                              <span className="pl-2">0-6</span>
+                            </label>
+                            <label>
+                              <input
+                                type="radio"
+                                value="age_7_16"
+                                checked={age === "age_7_16"}
+                                onChange={(e) => setAge(e.target.value)}
+                              />
+                              <span className="pl-2">7-16</span>
+                            </label>
+                            <label>
+                              <input
+                                type="radio"
+                                value="age_17_25"
+                                checked={age === "age_17_25"}
+                                onChange={(e) => setAge(e.target.value)}
+                              />
+                              <span className="pl-2">17-25</span>
+                            </label>
+                            <label>
+                              <input
+                                type="radio"
+                                value="age_26_40"
+                                checked={age === "age_26_40"}
+                                onChange={(e) => setAge(e.target.value)}
+                              />
+                              <span className="pl-2">26-40</span>
+                            </label>
+                            <label>
+                              <input
+                                type="radio"
+                                value="age_41_above"
+                                checked={age === "age_41_above"}
+                                onChange={(e) => setAge(e.target.value)}
+                              />
+                              <span className="pl-2">41-above</span>
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex justify-end">
+                        {loading ? (
+                          <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
+                            <CircularProgress
+                              style={{
+                                width: "24px",
+                                height: "24px",
+                                color: "#FFFFFF",
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <button
+                            className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                            type="submit"
+                          >
+                            Submit query
+                          </button>
+                        )}
+                      </div>
+                      <div className="py-2">
+                        {errorMessage !== "" ? (
+                          <Alert className="my-4 text-red-600" severity="error">
+                            {errorMessage}
+                          </Alert>
+                        ) : (
+                          loading && (
+                            <Alert
+                              className="my-4 text-red-600"
+                              severity="error"
+                            >
+                              Uploading the Attachment. Please wait
+                            </Alert>
+                          )
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </form>
-              </div>
-            </SwipeableDrawer>
+                  </form>
+                </div>
+              </SwipeableDrawer>
+            )}
           </React.Fragment>
         ))}
       </div>

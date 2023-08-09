@@ -220,11 +220,11 @@ const SearchCatalog = () => {
     } else if (name === "provider") {
       setError({ ...errors, provider: null });
     }
-    if(name === 'category') {
+    if (name === "category") {
       setSelectedValues({
         ...selectedValues,
         [name]: event,
-        subCategory: []
+        subCategory: [],
       });
     } else {
       setSelectedValues({
@@ -431,121 +431,123 @@ const SearchCatalog = () => {
               </svg>
               Filter
             </button>
-            <SwipeableDrawer
-              anchor={anchor}
-              open={toggleDrawerPosition[anchor]}
-              onClose={toggleDrawer(anchor, false)}
-              onOpen={toggleDrawer(anchor, true)}
-            >
-              <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
-                <img
-                  className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
-                  src={searchillustration}
-                  alt=""
-                />
-                <div
-                  className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy/50"
-                  name="myForm"
-                >
-                  <div className="flex flex-row justify-between">
-                    <h3 className="text-xl font-semibold">Catalog filter</h3>
-                    <button onClick={toggleDrawer("right", false)}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="mt-4 pb-2 flex flex-col gap-3">
-                    <div className="w-full mt-2">
-                      <SelectDropdown
-                        title="Select category"
-                        mode="multiple"
-                        name="category"
-                        value={selectedValues?.category}
-                        placeholder="Please select"
-                        data={categoryList}
-                        setValue={(e, value) => {
-                          handleChange(e, value);
-                        }}
-                      />
-                      {errors.category !== null ? (
-                        <span className="text-[#f44336] text-sm">
-                          {errors.category}
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="w-full mt-2">
-                      <SelectDropdown
-                        title="Select Sub category"
-                        name="subCategory"
-                        mode="multiple"
-                        value={selectedValues?.subCategory}
-                        placeholder="Please select"
-                        data={subCategoryList}
-                        setValue={(e, value) => {
-                          handleChange(e, value);
-                        }}
-                      />
-                      {errors.subCategory !== null ? (
-                        <span className="text-[#f44336] text-sm">
-                          {errors.subCategory}
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="w-full mt-2">
-                      <SelectDropdown
-                        title="Select provider"
-                        name="provider"
-                        mode="multiple"
-                        value={selectedValues?.provider}
-                        placeholder="Please select"
-                        data={providerList}
-                        setValue={(e, value) => {
-                          handleChange(e, value);
-                        }}
-                      />
-                      {errors.provider !== null ? (
-                        <span className="text-[#f44336] text-sm">
-                          {errors.provider}
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="flex justify-end">
-                    {!loader ? (
-                      <button
-                        className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
-                        type="submit"
-                        onClick={() => handleSubmit(anchor)}
-                      >
-                        Filter
+            {toggleDrawerPosition[anchor] && (
+              <SwipeableDrawer
+                anchor={anchor}
+                open={toggleDrawerPosition[anchor]}
+                onClose={toggleDrawer(anchor, false)}
+                onOpen={toggleDrawer(anchor, true)}
+              >
+                <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
+                  <img
+                    className="absolute  w-96  bottom-1 opacity-90 z-0 right-0 text-amarant-400"
+                    src={searchillustration}
+                    alt=""
+                  />
+                  <div
+                    className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy/50"
+                    name="myForm"
+                  >
+                    <div className="flex flex-row justify-between">
+                      <h3 className="text-xl font-semibold">Catalog filter</h3>
+                      <button onClick={toggleDrawer("right", false)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
                       </button>
-                    ) : (
-                      <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
-                        <CircularProgress
-                          style={{
-                            width: "24px",
-                            height: "24px",
-                            color: "#FFFFFF",
+                    </div>
+                    <div className="mt-4 pb-2 flex flex-col gap-3">
+                      <div className="w-full mt-2">
+                        <SelectDropdown
+                          title="Select category"
+                          mode="multiple"
+                          name="category"
+                          value={selectedValues?.category}
+                          placeholder="Please select"
+                          data={categoryList}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
                           }}
                         />
+                        {errors.category !== null ? (
+                          <span className="text-[#f44336] text-sm">
+                            {errors.category}
+                          </span>
+                        ) : null}
                       </div>
-                    )}
+                      <div className="w-full mt-2">
+                        <SelectDropdown
+                          title="Select Sub category"
+                          name="subCategory"
+                          mode="multiple"
+                          value={selectedValues?.subCategory}
+                          placeholder="Please select"
+                          data={subCategoryList}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
+                          }}
+                        />
+                        {errors.subCategory !== null ? (
+                          <span className="text-[#f44336] text-sm">
+                            {errors.subCategory}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="w-full mt-2">
+                        <SelectDropdown
+                          title="Select provider"
+                          name="provider"
+                          mode="multiple"
+                          value={selectedValues?.provider}
+                          placeholder="Please select"
+                          data={providerList}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
+                          }}
+                        />
+                        {errors.provider !== null ? (
+                          <span className="text-[#f44336] text-sm">
+                            {errors.provider}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="flex justify-end">
+                      {!loader ? (
+                        <button
+                          className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4"
+                          type="submit"
+                          onClick={() => handleSubmit(anchor)}
+                        >
+                          Filter
+                        </button>
+                      ) : (
+                        <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green mt-4">
+                          <CircularProgress
+                            style={{
+                              width: "24px",
+                              height: "24px",
+                              color: "#FFFFFF",
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SwipeableDrawer>
+              </SwipeableDrawer>
+            )}
           </React.Fragment>
         ))}
       </div>
