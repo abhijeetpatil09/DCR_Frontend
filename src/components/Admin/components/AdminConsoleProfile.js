@@ -86,53 +86,13 @@ const AdminConsoleProfile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, UserRole]);
 
-  const handleConsumerRole = (status, userName) => {
+  const handleRole = (status, userName, role) => {
     setLoading(true);
     setDisableTemplate(!disableTemplate);
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `update DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES set CONSUMER = '${status}' where user= '${userName}';`,
-        },
-      })
-      .then((response) => {
-        if (response?.data?.data) {
-          fetchProfileTable();
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log("In API catch", error);
-      });
-  };
-
-  const handlePublisherRole = (status, userName) => {
-    setLoading(true);
-    setDisableTemplate(!disableTemplate);
-    axios
-      .get(`${baseURL}/${redirectionUser}`, {
-        params: {
-          query: `update DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES set PUBLISHER = '${status}' where user= '${userName}';`,
-        },
-      })
-      .then((response) => {
-        if (response?.data?.data) {
-          fetchProfileTable();
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log("In API catch", error);
-      });
-  };
-
-  const handleAdminRole = (status, userName) => {
-    setLoading(true);
-    setDisableTemplate(!disableTemplate);
-    axios
-      .get(`${baseURL}/${redirectionUser}`, {
-        params: {
-          query: `update DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES set ADMIN = '${status}' where user= '${userName}';`,
+          query: `update DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES set ${role} = '${status}' where user= '${userName}';`,
         },
       })
       .then((response) => {
@@ -225,7 +185,7 @@ const AdminConsoleProfile = () => {
               </TableCell>
             </TableRow>
           </TableHead>
-          {UserRole?.includes("Provider_Admin") ? (
+          {UserRole?.includes("DATAEXADMIN") ? (
             <TableBody>
               {data?.map((row, index) => {
                 return (
@@ -249,11 +209,12 @@ const AdminConsoleProfile = () => {
                         <Switch
                           checked={row.CONSUMER.toLowerCase() === "true"}
                           onChange={() =>
-                            handleConsumerRole(
+                            handleRole(
                               row.CONSUMER.toLowerCase() === "true"
                                 ? "FALSE"
                                 : "TRUE",
-                              row.USER
+                              row.USER,
+                              "CONSUMER"
                             )
                           }
                           inputProps={{ "aria-label": "controlled" }}
@@ -283,11 +244,12 @@ const AdminConsoleProfile = () => {
                         <Switch
                           checked={row.PUBLISHER.toLowerCase() === "true"}
                           onChange={() =>
-                            handlePublisherRole(
+                            handleRole(
                               row.PUBLISHER.toLowerCase() === "true"
                                 ? "FALSE"
                                 : "TRUE",
-                              row.USER
+                              row.USER,
+                              "PUBLISHER"
                             )
                           }
                           inputProps={{ "aria-label": "controlled" }}
@@ -339,11 +301,12 @@ const AdminConsoleProfile = () => {
                         <Switch
                           checked={row.ADMIN.toLowerCase() === "true"}
                           onChange={() =>
-                            handleAdminRole(
+                            handleRole(
                               row.ADMIN.toLowerCase() === "true"
                                 ? "FALSE"
                                 : "TRUE",
-                              row.USER
+                              row.USER,
+                              "ADMIN"
                             )
                           }
                           inputProps={{ "aria-label": "controlled" }}

@@ -1,16 +1,10 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 
-import * as actions from "../../redux/actions/index";
 import BgVideo from "../../Assets/loginbg.mp4";
 import BgVideoGreen from "../../Assets/loginbg_green.mp4";
-// import "./pure-react.css";
-// import "./styles.css";
-import AWS from "aws-sdk";
+
 import {
   loadCaptchaEnginge,
   validateCaptcha,
@@ -18,8 +12,6 @@ import {
 } from "react-simple-captcha";
 
 const Register = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [userDetails, setUserDetails] = useState({
     fullName: "",
     email: "",
@@ -43,10 +35,7 @@ const Register = () => {
     captcha: null,
   });
 
-  const [formValidated, setFormValidated] = useState(false);
-
   const [loading, setLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     loadCaptchaEnginge(6);
@@ -56,27 +45,6 @@ const Register = () => {
     loadCaptchaEnginge(6);
   };
 
-  useEffect(() => {
-    let isValid =
-      userDetails.fullName !== "" &&
-      userDetails.email !== "" &&
-      userDetails.designation !== "" &&
-      userDetails.company !== "" &&
-      userDetails.userName !== "" &&
-      userDetails.password !== "" &&
-      userDetails.confirmPassword !== "" &&
-      userDetails.accountRadio !== "" &&
-      errors.fullName === null &&
-      errors.email === null &&
-      errors.designation === null &&
-      errors.company === null &&
-      errors.userName === null &&
-      errors.password === null &&
-      errors.confirmPassword === null &&
-      errors.accountRadio === null;
-    setFormValidated(isValid);
-  }, [userDetails, errors]);
-
   const validateEmail = (mail) => {
     var mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     if (mail.match(mailformat)) return true;
@@ -84,8 +52,16 @@ const Register = () => {
   };
 
   const isValidInput = (input) => {
+    const specialCharactersRegex = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
     const pattern = /^[a-zA-Z\s]+$/;
-    return pattern.test(input);
+
+    if (specialCharactersRegex.test(input)) {
+      return "specialCharacter";
+    } else if (!pattern.test(input)) {
+      return "number";
+    } else {
+      return "";
+    }
   };
 
   const validatePassword = (password) => {
@@ -94,8 +70,8 @@ const Register = () => {
     // let regex = '/(?=^.{8,24}$)(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/'; // Only letter and numbers, no special character
     // const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])(?=.*[a-zA-Z0-9@#$%^&+=!]).{8,}$/
     return password.match(
-      /(?=^.{8,24}$)(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-    );
+      /(?=^.{8,16}$)(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+    ); /// // Only letter and numbers, no special character
   };
 
   const onChangehandler = (e) => {
@@ -105,28 +81,22 @@ const Register = () => {
     const inputValue = e.target.value;
 
     if (inputName === "fullName") {
+      let character = isValidInput(inputValue);
       if (inputValue === "") {
         setErrors({ ...errors, fullName: emptyMsg });
-      } else if (!isValidInput(inputValue)) {
+      } else if (character === "specialCharacter") {
+        setErrors({
+          ...errors,
+          fullName: "Special Characters are not allowed",
+        });
+      } else if (character === "number") {
         setErrors({ ...errors, fullName: "Numbers are not allowed" });
       } else {
         setErrors({ ...errors, fullName: null });
       }
-    } else if (inputName === "designation") {
-      if (inputValue === "") {
-        setErrors({ ...errors, designation: emptyMsg });
-      } else if (!isValidInput(inputValue)) {
-        setErrors({ ...errors, designation: "Numbers are not allowed" });
-        return;
-      } else {
-        setErrors({ ...errors, designation: null });
-      }
     } else if (inputName === "company") {
       if (inputValue === "") {
         setErrors({ ...errors, company: emptyMsg });
-      } else if (!isValidInput(inputValue)) {
-        setErrors({ ...errors, company: "Numbers are not allowed" });
-        return;
       } else {
         setErrors({ ...errors, company: null });
       }
@@ -151,10 +121,19 @@ const Register = () => {
         setErrors({ ...errors, password: emptyMsg });
       } else if (!isPasswordValid) {
         let passErrorMsg =
-          "Password must be between 8 and 16 characters long and must contain one letters and numbers with special character is allowed";
+          "Password must be between 8 to 16 characters long with Characters(Uppercase or Lowercase) and numbers. No special characters are allowed.";
         setErrors({ ...errors, password: passErrorMsg });
+      } else if (
+        userDetails.confirmPassword !== "" &&
+        userDetails.confirmPassword !== inputValue
+      ) {
+        setErrors({
+          ...errors,
+          password: null,
+          confirmPassword: "Password doesn't match",
+        });
       } else {
-        setErrors({ ...errors, password: null });
+        setErrors({ ...errors, password: null, confirmPassword: null });
       }
     } else if (inputName === "confirmPassword") {
       if (inputValue === "") {
@@ -164,9 +143,8 @@ const Register = () => {
       } else {
         setErrors({ ...errors, confirmPassword: null });
       }
-    } else if (inputName === "accountRadio") {
-      console.log("e.target", e.target.value);
-    } else if (inputName === "captcha") {
+    }
+    if (inputName === "captcha") {
       if (inputValue === "") {
         setErrors({ ...errors, captcha: "Please enter Captcha" });
       } else {
@@ -176,16 +154,49 @@ const Register = () => {
     setUserDetails({ ...userDetails, [inputName]: inputValue });
   };
 
-  const handleSubmit = () => {
+  const validateForm = () => {
+    const emptyMsg = "Required field";
+
+    const newErrors = {};
+
+    if (userDetails.fullName === "") {
+      newErrors.fullName = emptyMsg;
+    }
+    if (userDetails.company === "") {
+      newErrors.company = emptyMsg;
+    }
+    if (userDetails.email === "") {
+      newErrors.email = emptyMsg;
+    }
+    if (userDetails.userName === "") {
+      newErrors.userName = emptyMsg;
+    }
+    if (userDetails.password === "") {
+      newErrors.password = emptyMsg;
+    }
+    if (userDetails.confirmPassword === "") {
+      newErrors.confirmPassword = emptyMsg;
+    }
     if (validateCaptcha(userDetails?.captcha) === true) {
       loadCaptchaEnginge(6);
-      setErrors({ ...errors, captcha: null });
     } else {
-      setErrors({ ...errors, captcha: "Please enter correct Captcha" });
-      return;
+      newErrors.captcha = "Please enter correct Captcha";
     }
-   
-    toast.success("Registration has been successfull...");
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    setLoading(true);
+    const isFormValid = validateForm();
+
+    if (isFormValid) {
+      toast.success("Registration has been successfull...");
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
   };
 
   // JSX code for login form
@@ -197,9 +208,9 @@ const Register = () => {
             <div className="">
               <label
                 htmlFor="fullname"
-                className="block text-sm font-medium leading-6 text-electric-green"
+                className="flex text-sm font-medium leading-6 text-electric-green"
               >
-                Full name{" "}
+                Full name<p className="text-red-600 pl-1">*</p>
               </label>
               <div className="mt-2">
                 <input
@@ -210,7 +221,7 @@ const Register = () => {
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                 />
-                {errors.fullName !== null ? (
+                {errors?.fullName && errors?.fullName !== null ? (
                   <span className="text-[#f44336] text-sm">
                     {errors.fullName}
                   </span>
@@ -233,7 +244,7 @@ const Register = () => {
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                 />
-                {errors.designation !== null ? (
+                {errors?.designation && errors?.designation !== null ? (
                   <span className="text-[#f44336] text-sm">
                     {errors.designation}
                   </span>
@@ -245,9 +256,9 @@ const Register = () => {
             <div className="">
               <label
                 htmlFor="company"
-                className="block text-sm font-medium leading-6 text-electric-green"
+                className="flex text-sm font-medium leading-6 text-electric-green"
               >
-                Company
+                Company<p className="text-red-600 pl-1">*</p>
               </label>
               <div className="mt-2">
                 <input
@@ -258,7 +269,7 @@ const Register = () => {
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                 />
-                {errors.company !== null ? (
+                {errors?.company && errors?.company !== null ? (
                   <span className="text-[#f44336] text-sm">
                     {errors.company}
                   </span>
@@ -268,9 +279,9 @@ const Register = () => {
             <div className="mt-2">
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-electric-green"
+                className="flex text-sm font-medium leading-6 text-electric-green"
               >
-                Email Id
+                Email Id<p className="text-red-600 pl-1">*</p>
               </label>
               <div className="mt-2">
                 <input
@@ -281,7 +292,7 @@ const Register = () => {
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
                 />
-                {errors.email !== null ? (
+                {errors?.email && errors?.email !== null ? (
                   <span className="text-[#f44336] text-sm">{errors.email}</span>
                 ) : null}
               </div>
@@ -337,9 +348,9 @@ const Register = () => {
           <div className="w-1/3">
             <label
               htmlFor="userName"
-              className="block text-sm font-medium leading-6 text-electric-green"
+              className="flex text-sm font-medium leading-6 text-electric-green"
             >
-              Username{" "}
+              Username<p className="text-red-600 pl-1">*</p>
             </label>
             <div className="mt-2">
               <input
@@ -351,7 +362,7 @@ const Register = () => {
                 required
                 className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
               />
-              {errors.userName !== null ? (
+              {errors?.userName && errors?.userName !== null ? (
                 <span className="text-[#f44336] text-sm">
                   {errors.userName}
                 </span>
@@ -361,9 +372,9 @@ const Register = () => {
           <div className="w-1/3 ">
             <label
               htmlFor="password"
-              className="block text-sm font-medium leading-6 text-electric-green"
+              className="flex text-sm font-medium leading-6 text-electric-green"
             >
-              Password
+              Password<p className="text-red-600 pl-1">*</p>
             </label>
             <div className="mt-2">
               <input
@@ -374,7 +385,7 @@ const Register = () => {
                 onChange={onChangehandler}
                 className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
               />
-              {errors.password !== null ? (
+              {errors?.password && errors?.password !== null ? (
                 <span className="text-[#f44336] text-sm">
                   Please check assumption
                 </span>
@@ -384,9 +395,9 @@ const Register = () => {
           <div className="w-1/3">
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium leading-6 text-electric-green"
+              className="flex text-sm font-medium leading-6 text-electric-green"
             >
-              Confirm Password
+              Confirm Password<p className="text-red-600 pl-1">*</p>
             </label>
             <div className="mt-2">
               <input
@@ -397,7 +408,7 @@ const Register = () => {
                 onChange={onChangehandler}
                 className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
               />
-              {errors.confirmPassword !== null ? (
+              {errors?.confirmPassword && errors.confirmPassword !== null ? (
                 <span className="text-[#f44336] text-sm">
                   {errors.confirmPassword}
                 </span>
@@ -405,10 +416,10 @@ const Register = () => {
             </div>
           </div>
         </div>
-        {errors.password !== null && (
+        {errors?.password && errors?.password !== null && (
           <span className="text-[#f44336] text-sm">
-            Password Policy : Password only contains more than 8 digits with
-            Characters(Uppercase or Lowercase) and numbers. No special
+            Password Policy : Password must be between 8 to 16 characters long
+            with Characters(Uppercase or Lowercase) and numbers. No special
             characters are allowed.
           </span>
         )}
@@ -417,7 +428,7 @@ const Register = () => {
         <div className="mx-2">
           <label
             htmlFor="captcha"
-            className="block text-sm font-medium leading-6 text-electric-green"
+            className="flex text-sm font-medium leading-6 text-electric-green"
           >
             Your Captcha
           </label>
@@ -439,9 +450,9 @@ const Register = () => {
         <div className="mx-2">
           <label
             htmlFor="captcha"
-            className="block text-sm font-medium leading-6 text-electric-green"
+            className="flex text-sm font-medium leading-6 text-electric-green"
           >
-            Enter Captcha
+            Enter Captcha<p className="text-red-600 pl-1">*</p>
           </label>
           <input
             id="user_captcha_input"
@@ -452,7 +463,7 @@ const Register = () => {
             onChange={onChangehandler}
             className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
           />
-          {errors.captcha !== null ? (
+          {errors?.captcha && errors?.captcha !== null ? (
             <span className="text-[#f44336] text-sm">{errors.captcha}</span>
           ) : null}
         </div>
@@ -460,27 +471,30 @@ const Register = () => {
       <div className="flex flex-row mt-4 gap-2 justify-center">
         <a
           href={"/"}
-          className="flex  justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green border border-electric-green"
+          className="flex  justify-center rounded-md bg-deep-navy px-6 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green border border-electric-green"
         >
           Back
         </a>
-        <button
-          disabled={!formValidated}
-          onClick={handleSubmit}
-          className={`flex justify-center rounded-md ${
-            formValidated
-              ? "bg-electric-green text-deep-navy shadow-sm hover:bg-true-teal"
-              : "bg-gray-500 text-white"
-          } px-3 py-1.5 text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green`}
-        >
+        <div>
           {loading ? (
-            <CircularProgress
-              style={{ width: "24px", height: "24px", color: "#FFFFFF" }}
-            />
+            <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green">
+              <CircularProgress
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  color: "#FFFFFF",
+                }}
+              />
+            </div>
           ) : (
-            "Submit"
+            <button
+              onClick={handleSubmit}
+              className="flex w-full justify-center rounded-md bg-electric-green px-6 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+            >
+              Register
+            </button>
           )}
-        </button>
+        </div>
       </div>
     </div>
   );
@@ -508,7 +522,7 @@ const Register = () => {
         <h2 className=" mb-4 text-center text-md font-light   leading-9 tracking-tight text-electric-green">
           Register yourself by giving us some basic details below.
         </h2>
-        {isSubmitted ? <div>User is successfully logged in</div> : renderForm}
+        {renderForm}
       </div>
     </div>
   );
