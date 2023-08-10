@@ -113,7 +113,6 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            //DCR_SAMP_PROVIDER_DB
             query: `select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES where PROVIDER='FALSE'and ADMIN='TRUE';`,
           },
         })

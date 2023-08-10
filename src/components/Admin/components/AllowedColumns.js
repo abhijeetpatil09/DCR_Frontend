@@ -37,7 +37,7 @@ const AllowedColumns = ({ user, handleToggleDrawer }) => {
       .get(`${baseURL}/${user.name}`, {
         params: {
           query:
-            "select distinct CONSUMER_NAME from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES;",
+            `select distinct CONSUMER_NAME from DCR_SAMP_PROVIDER_DB.TEMPLATES.DCR_TEMPLATES;`,
         },
       })
       .then((response) => {

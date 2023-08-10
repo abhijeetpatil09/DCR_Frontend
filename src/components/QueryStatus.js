@@ -119,7 +119,7 @@ const QueryStatus = () => {
       .get(`${baseURL}/${user?.name}`, {
         params: {
           query:
-            "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE order by RUN_ID desc;",
+            `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE order by RUN_ID desc;`,
         },
       })
       .then((response) => {
