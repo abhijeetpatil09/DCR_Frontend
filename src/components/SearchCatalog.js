@@ -49,7 +49,7 @@ const SearchCatalog = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
   const [sortedColumn, setSortedColumn] = useState(null);
 
   // result model
@@ -182,16 +182,17 @@ const SearchCatalog = () => {
         ?.map((item, index) =>
           item !== "all"
             ? "Category = '" +
-            item +
-            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+              item +
+              (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
             : ""
         )
         .join("");
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${finalCategory !== "" ? `where (${finalCategory})` : ""
-              };`,
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
+              finalCategory !== "" ? `where (${finalCategory})` : ""
+            };`,
           },
         })
         .then((response) => {
@@ -256,8 +257,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Category = '" +
-          item +
-          (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -266,8 +267,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Sub_Category = '" +
-          item +
-          (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -276,8 +277,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Provider_Name = '" +
-          item +
-          (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -289,16 +290,17 @@ const SearchCatalog = () => {
         : "") +
       (finalProvider !== ""
         ? (finalCategory !== "" || finalSubCategory !== "" ? " and " : "") +
-        "(" +
-        finalProvider +
-        ")"
+          "(" +
+          finalProvider +
+          ")"
         : "");
 
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${finalResult !== "" ? `where ${finalResult}` : ""
-            } order by entity_name;`,
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${
+            finalResult !== "" ? `where ${finalResult}` : ""
+          } order by entity_name;`,
         },
       })
       .then((response) => {
@@ -402,9 +404,9 @@ const SearchCatalog = () => {
 
   const handleSort = (columnKey) => {
     if (sortedColumn === columnKey) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      setSortOrder('asc');
+      setSortOrder("asc");
       setSortedColumn(columnKey);
     }
   };
@@ -415,7 +417,7 @@ const SearchCatalog = () => {
 
     if (!aValue || !bValue) return 0;
 
-    if (sortOrder === 'asc') {
+    if (sortOrder === "asc") {
       return String(aValue).localeCompare(String(bValue));
     } else {
       return String(bValue).localeCompare(String(aValue));
@@ -579,7 +581,7 @@ const SearchCatalog = () => {
       </div>
 
       {!loadingTable ? (
-        data.length > 0 ? (
+        sortedData?.length > 0 ? (
           <div className="flex flex-col w-full">
             <TableContainer>
               <Table
@@ -614,65 +616,65 @@ const SearchCatalog = () => {
                   >
                     <TableCell key={0} align="center">
                       <TableSortLabel
-                        active={sortedColumn === 'PROVIDER_NAME'}
+                        active={sortedColumn === "PROVIDER_NAME"}
                         direction={sortOrder}
-                        onClick={() => handleSort('PROVIDER_NAME')}
+                        onClick={() => handleSort("PROVIDER_NAME")}
                       >
                         Provider Name
                       </TableSortLabel>
                     </TableCell>
                     <TableCell key={5} align="center">
-                    <TableSortLabel
-                        active={sortedColumn === 'ENTITY_NAME'}
+                      <TableSortLabel
+                        active={sortedColumn === "ENTITY_NAME"}
                         direction={sortOrder}
-                        onClick={() => handleSort('ENTITY_NAME')}
+                        onClick={() => handleSort("ENTITY_NAME")}
                       >
-                      Entity Name
+                        Entity Name
                       </TableSortLabel>
                     </TableCell>
                     <TableCell key={1} align="center">
                       <TableSortLabel
-                        active={sortedColumn === 'ATTRIBUTE_NAME'}
+                        active={sortedColumn === "ATTRIBUTE_NAME"}
                         direction={sortOrder}
-                        onClick={() => handleSort('ATTRIBUTE_NAME')}
+                        onClick={() => handleSort("ATTRIBUTE_NAME")}
                       >
                         Attribute Name
                       </TableSortLabel>
                     </TableCell>
                     <TableCell key={2} align="center">
                       <TableSortLabel
-                        active={sortedColumn === 'CATEGORY'}
+                        active={sortedColumn === "CATEGORY"}
                         direction={sortOrder}
-                        onClick={() => handleSort('CATEGORY')}
+                        onClick={() => handleSort("CATEGORY")}
                       >
                         Category
                       </TableSortLabel>
                     </TableCell>
                     <TableCell key={3} align="center">
-                    <TableSortLabel
-                        active={sortedColumn === 'SUB_CATEGORY'}
+                      <TableSortLabel
+                        active={sortedColumn === "SUB_CATEGORY"}
                         direction={sortOrder}
-                        onClick={() => handleSort('SUB_CATEGORY')}
+                        onClick={() => handleSort("SUB_CATEGORY")}
                       >
-                      Sub Category
+                        Sub Category
                       </TableSortLabel>
                     </TableCell>
                     <TableCell key={4} align="center">
-                    <TableSortLabel
-                        active={sortedColumn === 'DESCRIPTION'}
+                      <TableSortLabel
+                        active={sortedColumn === "DESCRIPTION"}
                         direction={sortOrder}
-                        onClick={() => handleSort('DESCRIPTION')}
+                        onClick={() => handleSort("DESCRIPTION")}
                       >
-                      Description
+                        Description
                       </TableSortLabel>
                     </TableCell>
                     <TableCell key={6} align="center">
-                    <TableSortLabel
-                        active={sortedColumn === 'TECH_NAME'}
+                      <TableSortLabel
+                        active={sortedColumn === "TECH_NAME"}
                         direction={sortOrder}
-                        onClick={() => handleSort('TECH_NAME')}
+                        onClick={() => handleSort("TECH_NAME")}
                       >
-                      Tech Name
+                        Tech Name
                       </TableSortLabel>
                     </TableCell>
                     <TableCell key={7} align="center">
@@ -715,9 +717,7 @@ const SearchCatalog = () => {
                           <TableCell align="center">
                             {row.DESCRIPTION}
                           </TableCell>
-                          <TableCell align="center">
-                            {row.TECH_NAME}
-                          </TableCell>
+                          <TableCell align="center">{row.TECH_NAME}</TableCell>
 
                           <TableCell align="center">
                             <div className="flex justify-between">
