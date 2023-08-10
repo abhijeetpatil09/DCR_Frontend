@@ -4,6 +4,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 import { CircularProgress, SwipeableDrawer } from "@mui/material";
+
 import {
   Table,
   TableBody,
@@ -12,6 +13,7 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  TableSortLabel,
 } from "@mui/material";
 
 import SelectDropdown from "./CommonComponent/SelectDropdown";
@@ -46,6 +48,10 @@ const SearchCatalog = () => {
   });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [sortedColumn, setSortedColumn] = useState(null);
+
   // result model
   const [isResultModalOpen, toggleResultModal] = React.useState(false);
   const handleResultModalClose = () => toggleResultModal(false);
@@ -176,17 +182,16 @@ const SearchCatalog = () => {
         ?.map((item, index) =>
           item !== "all"
             ? "Category = '" +
-              item +
-              (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
             : ""
         )
         .join("");
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
-              finalCategory !== "" ? `where (${finalCategory})` : ""
-            };`,
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${finalCategory !== "" ? `where (${finalCategory})` : ""
+              };`,
           },
         })
         .then((response) => {
@@ -251,8 +256,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Category = '" +
-            item +
-            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+          item +
+          (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -261,8 +266,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Sub_Category = '" +
-            item +
-            (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
+          item +
+          (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -271,8 +276,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Provider_Name = '" +
-            item +
-            (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
+          item +
+          (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -284,17 +289,16 @@ const SearchCatalog = () => {
         : "") +
       (finalProvider !== ""
         ? (finalCategory !== "" || finalSubCategory !== "" ? " and " : "") +
-          "(" +
-          finalProvider +
-          ")"
+        "(" +
+        finalProvider +
+        ")"
         : "");
 
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${
-            finalResult !== "" ? `where ${finalResult}` : ""
-          } order by entity_name;`,
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${finalResult !== "" ? `where ${finalResult}` : ""
+            } order by entity_name;`,
         },
       })
       .then((response) => {
@@ -395,6 +399,28 @@ const SearchCatalog = () => {
         console.log(error);
       });
   };
+
+  const handleSort = (columnKey) => {
+    if (sortedColumn === columnKey) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortOrder('asc');
+      setSortedColumn(columnKey);
+    }
+  };
+
+  const sortedData = [...data].sort((a, b) => {
+    const aValue = a[sortedColumn];
+    const bValue = b[sortedColumn];
+
+    if (!aValue || !bValue) return 0;
+
+    if (sortOrder === 'asc') {
+      return String(aValue).localeCompare(String(bValue));
+    } else {
+      return String(bValue).localeCompare(String(aValue));
+    }
+  });
 
   return (
     <div className="flex flex-col w-full px-4">
@@ -587,25 +613,67 @@ const SearchCatalog = () => {
                     }}
                   >
                     <TableCell key={0} align="center">
-                      Provider Name
+                      <TableSortLabel
+                        active={sortedColumn === 'PROVIDER_NAME'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('PROVIDER_NAME')}
+                      >
+                        Provider Name
+                      </TableSortLabel>
                     </TableCell>
                     <TableCell key={5} align="center">
+                    <TableSortLabel
+                        active={sortedColumn === 'ENTITY_NAME'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('ENTITY_NAME')}
+                      >
                       Entity Name
+                      </TableSortLabel>
                     </TableCell>
                     <TableCell key={1} align="center">
-                      Attribute Name
+                      <TableSortLabel
+                        active={sortedColumn === 'ATTRIBUTE_NAME'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('ATTRIBUTE_NAME')}
+                      >
+                        Attribute Name
+                      </TableSortLabel>
                     </TableCell>
                     <TableCell key={2} align="center">
-                      Category
+                      <TableSortLabel
+                        active={sortedColumn === 'CATEGORY'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('CATEGORY')}
+                      >
+                        Category
+                      </TableSortLabel>
                     </TableCell>
                     <TableCell key={3} align="center">
+                    <TableSortLabel
+                        active={sortedColumn === 'SUB_CATEGORY'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('SUB_CATEGORY')}
+                      >
                       Sub Category
+                      </TableSortLabel>
                     </TableCell>
                     <TableCell key={4} align="center">
+                    <TableSortLabel
+                        active={sortedColumn === 'DESCRIPTION'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('DESCRIPTION')}
+                      >
                       Description
+                      </TableSortLabel>
                     </TableCell>
                     <TableCell key={6} align="center">
+                    <TableSortLabel
+                        active={sortedColumn === 'TECH_NAME'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('TECH_NAME')}
+                      >
                       Tech Name
+                      </TableSortLabel>
                     </TableCell>
                     <TableCell key={7} align="center">
                       Actions
@@ -613,105 +681,101 @@ const SearchCatalog = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data &&
-                    data
-                      ?.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      ?.map((row, index) => {
-                        return (
-                          <TableRow
-                            key={index}
-                            sx={{
-                              "& td:last-child": {
-                                borderRight: 1,
-                                borderColor: "#d6d3d1",
-                              },
-                              "& td": {
-                                borderLeft: 1,
-                                borderColor: "#d6d3d1",
-                                color: "#0A2756",
-                              },
-                            }}
-                          >
-                            <TableCell align="center">
-                              {row.PROVIDER_NAME}
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.ENTITY_NAME}
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.ATTRIBUTE_NAME}
-                            </TableCell>
-                            <TableCell align="center">{row.CATEGORY}</TableCell>
-                            <TableCell align="center">
-                              {row.SUB_CATEGORY}
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.DESCRIPTION}
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.TECH_NAME}
-                            </TableCell>
+                  {sortedData
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            "& td:last-child": {
+                              borderRight: 1,
+                              borderColor: "#d6d3d1",
+                            },
+                            "& td": {
+                              borderLeft: 1,
+                              borderColor: "#d6d3d1",
+                              color: "#0A2756",
+                            },
+                          }}
+                        >
+                          <TableCell align="center">
+                            {row.PROVIDER_NAME}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.ENTITY_NAME}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.ATTRIBUTE_NAME}
+                          </TableCell>
+                          <TableCell align="center">{row.CATEGORY}</TableCell>
+                          <TableCell align="center">
+                            {row.SUB_CATEGORY}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.DESCRIPTION}
+                          </TableCell>
+                          <TableCell align="center">
+                            {row.TECH_NAME}
+                          </TableCell>
 
-                            <TableCell align="center">
-                              <div className="flex justify-between">
-                                <button
-                                  onClick={() =>
-                                    fetchcsvTableData(
-                                      row.PROVIDER_NAME,
-                                      row.ENTITY_NAME
-                                    )
-                                  }
-                                  className="flex flex-row items-center px-2 justify-center"
-                                  title="View"
+                          <TableCell align="center">
+                            <div className="flex justify-between">
+                              <button
+                                onClick={() =>
+                                  fetchcsvTableData(
+                                    row.PROVIDER_NAME,
+                                    row.ENTITY_NAME
+                                  )
+                                }
+                                className="flex flex-row items-center px-2 justify-center"
+                                title="View"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-5 h-5"
                                 >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="w-5 h-5"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                                    />
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
-                                  </svg>
-                                  <span className="pl-2 underline">View</span>
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleIntegration(
-                                      row.PROVIDER_NAME,
-                                      row.ENTITY_NAME
-                                    )
-                                  }
-                                  className="flex flex-row items-center px-2 justify-center"
-                                  title="Integration"
-                                >
-                                  <img
-                                    className="w-6 h-6"
-                                    src={IntegrationImage}
-                                    alt="IntegrationIcon"
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
                                   />
-                                  <span className="pl-2 underline">
-                                    Integrate
-                                  </span>
-                                </button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                </svg>
+                                <span className="pl-2 underline">View</span>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleIntegration(
+                                    row.PROVIDER_NAME,
+                                    row.ENTITY_NAME
+                                  )
+                                }
+                                className="flex flex-row items-center px-2 justify-center"
+                                title="Integration"
+                              >
+                                <img
+                                  className="w-6 h-6"
+                                  src={IntegrationImage}
+                                  alt="IntegrationIcon"
+                                />
+                                <span className="pl-2 underline">
+                                  Integrate
+                                </span>
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                 </TableBody>
               </Table>
             </TableContainer>
