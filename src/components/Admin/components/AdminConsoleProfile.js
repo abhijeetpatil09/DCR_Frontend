@@ -276,7 +276,19 @@ const AdminConsoleProfile = () => {
 
                     <TableCell className="text-deep-navy" align="center">
                       {row.PROVIDER.toLowerCase() === "true" ? (
-                        "PROVIDER"
+                        <Switch
+                          checked={row.PROVIDER.toLowerCase() === "true"}
+                          onChange={() =>
+                            handleRole(
+                              row.PROVIDER.toLowerCase() === "true"
+                                ? "FALSE"
+                                : "TRUE",
+                              row.USER,
+                              "PROVIDER"
+                            )
+                          }
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
                       ) : (
                         <div className="flex justify-center">
                           <svg
@@ -297,43 +309,19 @@ const AdminConsoleProfile = () => {
                       )}
                     </TableCell>
                     <TableCell className="text-deep-navy" align="center">
-                      {row.PROVIDER.toLowerCase() !== "true" ? (
-                        <Switch
-                          checked={row.ADMIN.toLowerCase() === "true"}
-                          onChange={() =>
-                            handleRole(
-                              row.ADMIN.toLowerCase() === "true"
-                                ? "FALSE"
-                                : "TRUE",
-                              row.USER,
-                              "ADMIN"
-                            )
-                          }
-                          inputProps={{ "aria-label": "controlled" }}
-                        />
-                      ) : row.PROVIDER.toLowerCase() === "true" &&
-                        row.ADMIN.toLowerCase() === "true" ? (
-                        "ADMIN"
-                      ) : (
-                        <div className="flex justify-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="w-6 h-6"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M19.5 12h-15"
-                            />
-                          </svg>
-                        </div>
-                      )}
-                      {/* {row.ADMIN.toLowerCase() === "true" ? "ADMIN"
-                      : row.CONSUMER.toLowerCase() === "true" && row.ADMIN.toLowerCase() === "false" ? "CONSUMER" : "PROVIDER"} */}
+                      <Switch
+                        checked={row.ADMIN.toLowerCase() === "true"}
+                        onChange={() =>
+                          handleRole(
+                            row.ADMIN.toLowerCase() === "true"
+                              ? "FALSE"
+                              : "TRUE",
+                            row.USER,
+                            "ADMIN"
+                          )
+                        }
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
                     </TableCell>
                   </TableRow>
                 );
