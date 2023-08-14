@@ -161,7 +161,7 @@ const MatchRate = () => {
     axios
       .get(`${baseURL}/${user?.name}`, {
         params: {
-          query: "select provider from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS;",
+          query: `select provider from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS;`,
         },
       })
       .then((response) => {
@@ -181,7 +181,7 @@ const MatchRate = () => {
       .get(`${baseURL}/${user?.name}`, {
         params: {
           query:
-            "select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'ADVERTISER MATCH' order by RUN_ID desc limit 5;",
+            `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'ADVERTISER MATCH' order by RUN_ID desc limit 5;`,
         },
       })
       .then((response) => {

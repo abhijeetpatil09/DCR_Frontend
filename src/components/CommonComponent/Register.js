@@ -52,7 +52,7 @@ const Register = () => {
   };
 
   const isValidInput = (input) => {
-    const specialCharactersRegex = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
+    const specialCharactersRegex = /[!@#$%^&*~`()_+\-=[\]{};':"\\|,.<>/?]+/;
     const pattern = /^[a-zA-Z\s]+$/;
 
     if (specialCharactersRegex.test(input)) {

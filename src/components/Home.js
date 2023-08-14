@@ -110,26 +110,41 @@ const Home = () => {
     <>
       <div className="flex flex-row gap-2 w-full px-5">
         <div className="flex flex-row w-full ">
-          <div className="w-2/3 relative bg-electric-green mt-4 rounded-xl py-2 px-4 h-60 overflow-hidden shadow-lg">
+          <div className="w-2/3 relative bg-electric-green mt-4 rounded-xl py-2 px-4 h-72 overflow-hidden shadow-lg">
             <img
               src={dash1}
               className="absolute z-0   w-72  -bottom-8 -right-12"
               alt=""
             />
-            <div className="absolute z-10">
-              <h2 className="text-deep-navy text-3xl font-semibold mt-3">
+            <div className="absolute text-deep-navy z-10">
+              <h2 className="text-3xl font-semibold mt-3 capitalize">
                 Welcome {user?.name}!
               </h2>
-              <p className=" text-coal w-2/3 mt-3 text-sm ">
-                Build your DCR in Snowflake for use cases like a{" "}
-                <strong className=" italic">marketing campaign</strong>,
-                <strong className=" italic"> optimizing ad placement</strong>,
-                identifying common transaction patterns to improve fraud
-                detection, etc.
-              </p>
+              {user?.role?.includes("DATAEXADMIN") ? (
+                <div>
+                  <p className="w-2/3 mt-3 text-sm ">
+                    Discover the command center for data privacy and
+                    collaboration efforts. As the administrator of the Data
+                    Xchange, you hold the keys to a secure environment where
+                    privacy and insights converge.
+                  </p>
+                  <p className="w-2/3 mt-3 text-sm ">
+                    Here, you're in control, ensuring that data flows seamlessly
+                    while safeguarding sensitive information.
+                  </p>
+                </div>
+              ) : (
+                <p className="w-2/3 mt-3 text-sm ">
+                  Build your DCR in Snowflake for use cases like a{" "}
+                  <strong className=" italic">marketing campaign</strong>,
+                  <strong className=" italic"> optimizing ad placement</strong>,
+                  identifying common transaction patterns to improve fraud
+                  detection, etc.
+                </p>
+              )}
               <button
                 onClick={startExploring}
-                className="mt-7 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-deep-navy/80 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                className="hidden mt-7 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-deep-navy/80 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
               >
                 Start exploring
               </button>
@@ -138,7 +153,7 @@ const Home = () => {
           {countProviderConsumer?.map((item) => {
             return (
               <div className="w-1/3 relative p-5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl shadow-lg overflow-hidden mx-2 mt-4">
-                <div className="relative z-10 mb-4 text-white text-8xl leading-none font-semibold">
+                <div className="relative z-10 my-4 text-white text-8xl leading-none font-semibold">
                   {Object.values(item)}
                 </div>
                 <div className="relative z-10 text-blue-200 leading-none text-3xl font-semibold">

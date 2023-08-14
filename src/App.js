@@ -23,6 +23,7 @@ import AdminConsoleProfile from "./components/Admin/components/AdminConsoleProfi
 
 import "react-toastify/dist/ReactToastify.css";
 import AdminConsoleLogsTable from "./components/Admin/components/LogsTable";
+import ForgotPassword from "./components/CommonComponent/Login/components/ForgotPassword";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />

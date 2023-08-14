@@ -14,7 +14,7 @@ import {
   TablePagination,
 } from "@mui/material";
 
-import Admin_Console_Logs_Image from "../../../Assets/AdminConsoleLogs.svg";
+// import Admin_Console_Logs_Image from "../../../Assets/AdminConsoleLogs.svg";
 
 import {
   handleDate,
@@ -51,12 +51,14 @@ const AdminConsoleLogsTable = () => {
   const [loader, setLoader] = useState(false);
 
   const [filteredList, setFilteredList] = useState({
+    consumersList: [],
     providersList: [],
     templatesList: [],
     statusList: [],
   });
 
   const [filteredData, setFilteredData] = useState({
+    consumerName: [],
     providerName: [],
     templateName: [],
     status: [],
@@ -102,11 +104,16 @@ const AdminConsoleLogsTable = () => {
           let data = response?.data?.data;
           setData(data);
 
+          let consumerList = [{ value: "all", name: "All" }];
           let providerList = [{ value: "all", name: "All" }];
           let templateList = [{ value: "all", name: "All" }];
           let statuses = [{ value: "all", name: "All" }];
 
           data?.map((value) => {
+            consumerList.push({
+              value: value.CONSUMER_NAME,
+              name: value.CONSUMER_NAME,
+            });
             providerList.push({
               value: value.PROVIDER_NAME,
               name: value.PROVIDER_NAME,
@@ -123,6 +130,7 @@ const AdminConsoleLogsTable = () => {
           });
           setFilteredList({
             ...filteredList,
+            consumersList: removeDuplicateObjects(consumerList),
             providersList: removeDuplicateObjects(providerList),
             templatesList: removeDuplicateObjects(templateList),
             statusList: removeDuplicateObjects(statuses),
@@ -161,8 +169,23 @@ const AdminConsoleLogsTable = () => {
     setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: false });
     setData([]);
     setPage(0);
+    const finalConsumerList =
+      filteredData?.consumerName?.length > 0
+        ? filteredData?.consumerName
+            ?.map((item, index) =>
+              item !== "all"
+                ? "CONSUMER_NAME = '" +
+                  item +
+                  (index !== filteredData?.consumerName?.length - 1
+                    ? "' or "
+                    : "'")
+                : ""
+            )
+            .join("")
+        : "";
+
     const finalProviderList =
-      filteredData?.providerNam?.length > 0
+      filteredData?.providerName?.length > 0
         ? filteredData?.providerName
             ?.map((item, index) =>
               item !== "all"
@@ -213,15 +236,25 @@ const AdminConsoleLogsTable = () => {
       finalDate = "REQUEST_TS = '" + year + "-" + month + "-" + day + "'";
     }
     let finalResult =
-      (finalProviderList !== "" ? "(" + finalProviderList + ")" : "") +
+      (finalConsumerList !== "" ? "(" + finalConsumerList + ")" : "") +
+      (finalProviderList !== ""
+        ? (finalConsumerList !== "" ? " and " : "") +
+          "(" +
+          finalProviderList +
+          ")"
+        : "") +
       (finalTemplateList !== ""
-        ? (finalProviderList !== "" ? " and " : "") +
+        ? (finalConsumerList !== "" || finalProviderList !== ""
+            ? " and "
+            : "") +
           "(" +
           finalTemplateList +
           ")"
         : "") +
       (finalStatus !== ""
-        ? (finalProviderList !== "" || finalTemplateList !== ""
+        ? (finalConsumerList !== "" ||
+          finalProviderList !== "" ||
+          finalTemplateList !== ""
             ? " and "
             : "") +
           "(" +
@@ -230,6 +263,7 @@ const AdminConsoleLogsTable = () => {
         : "") +
       (finalDate !== ""
         ? (finalStatus !== "" ||
+          finalConsumerList !== "" ||
           finalProviderList !== "" ||
           finalTemplateList !== ""
             ? " and "
@@ -298,11 +332,11 @@ const AdminConsoleLogsTable = () => {
                 onOpen={toggleDrawer(anchor, true)}
               >
                 <div className="flex flex-col flex-shrink w-full h-full px-4 bg-deep-navy text-electric-green">
-                  <img
+                  {/* <img
                     className="absolute w-80  bottom-0 opacity-90 z-0 right-0 text-amarant-400"
                     src={Admin_Console_Logs_Image}
                     alt=""
-                  />
+                  /> */}
                   <div
                     className=" border-0 border-gray-400  mt-2 px-4 py-2 h-auto w-96 z-10  bg-deep-navy/50"
                     name="myForm"
@@ -325,6 +359,21 @@ const AdminConsoleLogsTable = () => {
                           />
                         </svg>
                       </button>
+                    </div>
+                    <div className="mt-4 pb-2 flex flex-col gap-3">
+                      <div className="w-full">
+                        <SelectDropdown
+                          title="Select Consumer"
+                          mode="multiple"
+                          name="consumerName"
+                          placeholder="Please select"
+                          value={filteredData?.consumerName}
+                          data={filteredList.consumersList}
+                          setValue={(e, value) => {
+                            handleChange(e, value);
+                          }}
+                        />
+                      </div>
                     </div>
                     <div className="mt-4 pb-2 flex flex-col gap-3">
                       <div className="w-full">

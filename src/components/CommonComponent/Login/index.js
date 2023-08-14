@@ -5,9 +5,9 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Alert, CircularProgress } from "@mui/material";
 
-import * as actions from "../../redux/actions/index";
-import BgVideo from "../../Assets/loginbg.mp4";
-import BgVideoGreen from "../../Assets/loginbg_green.mp4";
+import * as actions from "../../../redux/actions/index";
+import BgVideo from "../../../Assets/loginbg.mp4";
+import BgVideoGreen from "../../../Assets/loginbg_green.mp4";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
@@ -172,80 +172,93 @@ const Login = () => {
 
   // JSX code for login form
   const renderForm = (
-    <div className="space-y-6">
-      <div>
-        <label
-          htmlFor="uname"
-          className="block text-sm font-medium leading-6 text-electric-green"
-        >
-          User Name{" "}
-        </label>
-        <div className="mt-2">
-          <input
-            id="userName"
-            type="text"
-            name="userName"
-            placeholder="Please enter a username. e.g. aditi_nair"
-            onChange={handleOnChange}
-            required
-            className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-          />
-          {errors.userName !== null ? (
-            <span className="text-[#f44336] text-sm">{errors.userName}</span>
-          ) : null}
+    <>
+      <div className="space-y-6">
+        <div>
+          <label
+            htmlFor="uname"
+            className="block text-sm font-medium leading-6 text-electric-green"
+          >
+            User Name{" "}
+          </label>
+          <div className="mt-2">
+            <input
+              id="userName"
+              type="text"
+              name="userName"
+              placeholder="Please enter a username. e.g. aditi_nair"
+              onChange={handleOnChange}
+              required
+              className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+            />
+            {errors.userName !== null ? (
+              <span className="text-[#f44336] text-sm">{errors.userName}</span>
+            ) : null}
+          </div>
+        </div>
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium leading-6 text-electric-green"
+          >
+            Password
+          </label>
+          <div className="mt-2">
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="Please enter your password."
+              required
+              onChange={handleOnChange}
+              className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
+            />
+            {errors.password !== null ? (
+              <span className="text-[#f44336] text-sm">{errors.password}</span>
+            ) : null}
+          </div>
+        </div>
+
+        <div>
+          {loading ? (
+            <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green">
+              <CircularProgress
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  color: "#FFFFFF",
+                }}
+              />
+            </div>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+            >
+              Log In
+            </button>
+          )}
         </div>
       </div>
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium leading-6 text-electric-green"
+      {/* for Forgot password */}
+      <div className="my-2">
+        <span
+          className="text-sm font-medium leading-6 text-electric-green cursor-pointer"
+          onClick={() => navigate('/forgot-password')}
         >
-          Password
-        </label>
-        <div className="mt-2">
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Please enter your password."
-            required
-            onChange={handleOnChange}
-            className="block w-full rounded-md border-0 py-1.5 text-electric-green bg-blend-darken bg-deep-navy shadow-sm ring-1 ring-inset ring-true-teal placeholder:text-true-teal focus:ring-2 focus:ring-inset focus:ring-electric-green sm:text-sm sm:leading-6"
-          />
-          {errors.password !== null ? (
-            <span className="text-[#f44336] text-sm">{errors.password}</span>
-          ) : null}
-        </div>
+          Forgot password?
+        </span>
       </div>
 
-      <div>
-        {loading ? (
-          <div className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green">
-            <CircularProgress
-              style={{
-                width: "24px",
-                height: "24px",
-                color: "#FFFFFF",
-              }}
-            />
-          </div>
-        ) : (
-          <button
-            onClick={handleSubmit}
-            className="flex w-full justify-center rounded-md bg-electric-green px-3 py-1.5 text-sm font-semibold leading-6 text-deep-navy shadow-sm hover:bg-true-teal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-          >
-            Log In
-          </button>
-        )}
-      </div>
-      <div className="my-2">
+      {/* for showing error */}
+      <div className="my-4">
         {loginError !== "" && (
           <Alert className="text-red-600" severity="error">
             {loginError}
           </Alert>
         )}
       </div>
-    </div>
+    </>
   );
 
   return (
