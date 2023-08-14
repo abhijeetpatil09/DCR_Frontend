@@ -60,26 +60,50 @@ const Home = () => {
   }, [dispatch, user.name]);
 
   useEffect(() => {
-    axios
-      .get(`${baseURL}/${redirectionUser}`, {
-        params: {
-          query:
-            "SELECT partner_name, SUM(request_processed) AS total_requests, ARRAY_TO_STRING(ARRAY_AGG(template_name), ', ') AS all_templates, role FROM (SELECT * FROM DATAEXCHANGEDB.DATACATALOG.HOME_PAGE_VW WHERE role IN ('CONSUMER', 'CONSUMER_ADMIN')) AS filtered_data GROUP BY partner_name, role;",
-        },
-      })
-      .then((response) => {
-        if (response?.data?.data) {
-          let result = response?.data?.data;
-          dispatch(
-            actions.Home({
-              latestPartners: result,
-            })
-          );
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (user?.role?.includes("Provider")) {
+      axios
+        .get(`${baseURL}/${redirectionUser}`, {
+          params: {
+            query:
+              "SELECT partner_name, SUM(request_processed) AS total_requests, ARRAY_TO_STRING(ARRAY_AGG(template_name), ', ') AS all_templates, role FROM (SELECT * FROM DATAEXCHANGEDB.DATACATALOG.HOME_PAGE_VW WHERE role IN ('CONSUMER_ADMIN')) AS filtered_data GROUP BY partner_name, role;",
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            let result = response?.data?.data;
+            dispatch(
+              actions.Home({
+                latestPartners: result,
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      axios
+        .get(`${baseURL}/${redirectionUser}`, {
+          params: {
+            query:
+              "SELECT partner_name, SUM(request_processed) AS total_requests, ARRAY_TO_STRING(ARRAY_AGG(template_name), ', ') AS all_templates, role FROM (SELECT * FROM DATAEXCHANGEDB.DATACATALOG.HOME_PAGE_VW WHERE role IN ('PROVIDER_ADMIN')) AS filtered_data GROUP BY partner_name, role;",
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            let result = response?.data?.data;
+            dispatch(
+              actions.Home({
+                latestPartners: result,
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
   }, [dispatch, user.name]);
 
   return (
@@ -178,9 +202,8 @@ const Home = () => {
                             } else if (index === 2) {
                               return (
                                 <span className="flex items-center h-6 px-3 text-[10px] font-semibold text-deep-navy/80 bg-electric-green/50 rounded-full">
-                                  {`+${
-                                    item?.ALL_TEMPLATES?.split(",")?.length - 2
-                                  } more`}
+                                  {`+${item?.ALL_TEMPLATES?.split(",")?.length - 2
+                                    } more`}
                                 </span>
                               );
                             } else {

@@ -750,7 +750,7 @@ const SearchCatalog = () => {
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                                   />
                                 </svg>
-                                <span className="pl-2 underline">View</span>
+                                <span className="pl-1 underline">View</span>
                               </button>
                               <button
                                 onClick={() =>
@@ -759,7 +759,7 @@ const SearchCatalog = () => {
                                     row.ENTITY_NAME
                                   )
                                 }
-                                className="flex flex-row items-center px-2 justify-center"
+                                className="flex flex-row items-center px-6 justify-center"
                                 title="Integration"
                               >
                                 <img
@@ -767,7 +767,7 @@ const SearchCatalog = () => {
                                   src={IntegrationImage}
                                   alt="IntegrationIcon"
                                 />
-                                <span className="pl-2 underline">
+                                <span className="pl-1 underline">
                                   Integrate
                                 </span>
                               </button>
