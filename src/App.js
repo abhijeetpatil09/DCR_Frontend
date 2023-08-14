@@ -24,6 +24,7 @@ import AdminConsoleProfile from "./components/Admin/components/AdminConsoleProfi
 import "react-toastify/dist/ReactToastify.css";
 import AdminConsoleLogsTable from "./components/Admin/components/LogsTable";
 import ForgotPassword from "./components/CommonComponent/Login/components/ForgotPassword";
+import AdminConsoleIntegration from "./components/Admin/components/AdminConsoleIntegration";
 
 const App = () => {
   return (
@@ -57,6 +58,10 @@ const App = () => {
                   <Route
                     path="/admin-console-logs-table"
                     element={<AdminConsoleLogsTable />}
+                  />
+                  <Route
+                    path="/admin-console-integration"
+                    element={<AdminConsoleIntegration />}
                   />
                 </Routes>
               </Sidebar>

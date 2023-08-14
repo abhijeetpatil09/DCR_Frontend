@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  TableSortLabel,
 } from "@mui/material";
 
 // import Admin_Console_Logs_Image from "../../../Assets/AdminConsoleLogs.svg";
@@ -47,6 +48,8 @@ const AdminConsoleLogsTable = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
+  const [sortedColumn, setSortedColumn] = useState(null);
 
   const [loader, setLoader] = useState(false);
 
@@ -89,6 +92,28 @@ const AdminConsoleLogsTable = () => {
     fetchMainTable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleSort = (columnKey) => {
+    if (sortedColumn === columnKey) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortOrder("asc");
+      setSortedColumn(columnKey);
+    }
+  };
+
+  const sortedData = [...data].sort((a, b) => {
+    const aValue = a[sortedColumn];
+    const bValue = b[sortedColumn];
+
+    if (!aValue || !bValue) return 0;
+
+    if (sortOrder === "asc") {
+      return String(aValue).localeCompare(String(bValue));
+    } else {
+      return String(bValue).localeCompare(String(aValue));
+    }
+  });
 
   const fetchMainTable = () => {
     axios
@@ -485,31 +510,61 @@ const AdminConsoleLogsTable = () => {
                   }}
                 >
                   <TableCell key={0} align="center">
-                    Request ID
+                    <TableSortLabel
+                      active={sortedColumn === "RUN_ID"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("RUN_ID")}
+                    >
+                      Request ID
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={2} align="center">
-                    Consumer Name
+                    <TableSortLabel
+                      active={sortedColumn === "CONSUMER_NAME"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("CONSUMER_NAME")}
+                    >
+                      Consumer Name
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={2} align="center">
-                    Provider Name
+                    <TableSortLabel
+                      active={sortedColumn === "PROVIDER_NAME"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("PROVIDER_NAME")}
+                    >
+                      Provider Name
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={1} align="center">
-                    Template Name
+                    <TableSortLabel
+                      active={sortedColumn === "TEMPLATE_NAME"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("TEMPLATE_NAME")}
+                    >
+                      Template Name
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={1} align="center">
                     Consumer Record Count
                   </TableCell>
                   <TableCell key={4} align="center">
-                    Status
+                    <TableSortLabel
+                      active={sortedColumn === "STATUS"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("STATUS")}
+                    >
+                      Status
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={5} align="center">
                     Requested
                   </TableCell>
                 </TableRow>
               </TableHead>
-              {data && data?.length > 0 ? (
+              {sortedData && sortedData?.length > 0 ? (
                 <TableBody>
-                  {data
+                  {sortedData
                     ?.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage

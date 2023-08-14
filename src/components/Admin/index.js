@@ -21,6 +21,7 @@ import AllowedColumns from "./components/AllowedColumns";
 import Query_Template_Image from "../../Assets/admin_console_query_template.svg";
 import Allowed_Columns_Image from "../../Assets/admin_console_allowed_columns.svg";
 import Admin_Console_Logs_Image from "../../Assets/AdminConsoleLogs.svg";
+import Admin_Console_Integration_Image from "../../Assets/amin_console_integration.svg";
 
 const AdminConsole = () => {
   const state = useSelector((state) => state);
@@ -140,9 +141,30 @@ const AdminConsole = () => {
       {/* NEW LAYOUT */}
       <React.Fragment>
         <section class=" flex flex-row text-center px-4 w-full h-full">
-          <div class=" flex flex-row gap-4">
+          <div class=" flex flex-row gap-4 w-full">
+            {/* Tab used for only dataexadmin user */}
+            {user?.role && user?.role?.includes("DATAEXADMIN") && (
+              <div
+                onClick={() => navigate("/admin-console-integration")}
+                class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
+              >
+                <div class="h-24">
+                  <img
+                    src={Admin_Console_Integration_Image}
+                    alt=""
+                    class="mx-auto"
+                  />
+                </div>
+                <h4 class="text-md uppercase text-deep-navy font-bold mt-10">
+                  Integration
+                </h4>
+                <p class="text-base text-gray-600 mt-2">
+                  Check Integrated Consumers and Providers
+                </p>
+              </div>
+            )}
             <div
-              class="bg-white rounded-lg shadow-sm py-8 px-4  border border-gray-100 hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
+              class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4  border border-gray-100 hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
               onClick={() => navigate("/admin-console-profile")}
             >
               <div class="h-24">
@@ -164,7 +186,7 @@ const AdminConsole = () => {
             {user?.role && user?.role?.includes("Provider_Admin") && (
               <div
                 onClick={handleToggleDrawer("right", true, "query_template")}
-                class="bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
+                class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
               >
                 <div class="h-24">
                   <img src={Query_Template_Image} alt="" class="mx-auto" />
@@ -181,7 +203,7 @@ const AdminConsole = () => {
             {user?.role && user?.role?.includes("Provider_Admin") && (
               <div
                 onClick={handleToggleDrawer("right", true, "allowed_columns")}
-                class="bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
+                class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
               >
                 <div class="h-24">
                   <img src={Allowed_Columns_Image} alt="" class="mx-auto" />
@@ -197,7 +219,7 @@ const AdminConsole = () => {
 
             <div
               onClick={handleToggleDrawer("right", true, "itemised_bills")}
-              class="bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
+              class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
             >
               <div class="h-24">
                 <img
@@ -218,7 +240,7 @@ const AdminConsole = () => {
             {user?.role && user?.role?.includes("DATAEXADMIN") && (
               <div
                 onClick={() => navigate("/admin-console-logs-table")}
-                class="bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
+                class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
               >
                 <div class="h-24">
                   <img src={Admin_Console_Logs_Image} alt="" class="mx-auto" />
