@@ -558,7 +558,13 @@ const AdminConsoleLogsTable = () => {
                     </TableSortLabel>
                   </TableCell>
                   <TableCell key={5} align="center">
-                    Requested
+                  <TableSortLabel
+                      active={sortedColumn === "RUN_ID"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("RUN_ID")}
+                    >
+                      Requested
+                    </TableSortLabel>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -627,7 +633,7 @@ const AdminConsoleLogsTable = () => {
                     className="text-center border border-downriver-200"
                     colSpan={7}
                   >
-                    Currently We don't have data display!!
+                    NO DATA FOUND
                   </TableCell>
                 </TableRow>
               )}

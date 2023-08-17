@@ -716,7 +716,7 @@ const QueryStatus = () => {
                     className="text-center border border-downriver-200"
                     colSpan={7}
                   >
-                    Currently We don't have data display!!
+                    NO DATA FOUND
                   </TableCell>
                 </TableRow>
               )}
