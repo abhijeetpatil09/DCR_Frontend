@@ -52,7 +52,7 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
 
   const handleViewBill = () => {
     let selectedValue = "";
-    if (user?.role && user?.role?.includes("Consumer_Admin")) {
+    if (user?.role && user?.role?.includes("Consumer_Admin") || user?.role?.includes("Provider_Admin") ) {
       selectedValue =
         user?.name +
         "_" +
@@ -109,11 +109,11 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
   };
 
   useEffect(() => {
-    if (user?.role && user?.role?.includes("Provider_Admin")) {
+    if (user?.role && user?.role?.includes("DATAEXADMIN")) {
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: `select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES where PROVIDER='FALSE'and ADMIN='TRUE';`,
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES where ADMIN='TRUE';`,
           },
         })
         .then((response) => {
@@ -185,7 +185,7 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
         alt=""
       />
       <div className="pl-8">
-        {user?.role && user?.role?.includes("Provider_Admin") && (
+        {user?.role && user?.role?.includes("DATAEXADMIN") && (
           <>
             <div className="mt-2 flex flex-col">
               <label className="block text-sm font-medium leading-6 text-electric-green ">
