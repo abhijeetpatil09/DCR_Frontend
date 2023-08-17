@@ -180,8 +180,7 @@ const MatchRate = () => {
     axios
       .get(`${baseURL}/${user?.name}`, {
         params: {
-          query:
-            `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'ADVERTISER MATCH' order by RUN_ID desc limit 5;`,
+          query: `select * from DCR_SAMP_CONSUMER1.PUBLIC.DASHBOARD_TABLE where TEMPLATE_NAME = 'ADVERTISER MATCH' order by RUN_ID desc limit 5;`,
         },
       })
       .then((response) => {
@@ -1077,6 +1076,7 @@ const MatchRate = () => {
           );
         }}
         title={"Query Result"}
+        overflow={true}
       />
 
       {requestFailedReason.openModal ? (

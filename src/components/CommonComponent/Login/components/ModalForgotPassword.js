@@ -48,7 +48,9 @@ const ModalForgotPassword = ({ open, handleClose }) => {
             </h3>
             <div class="mt-2">
               <p class="text-sm">
-                <strong className={"text-deep-navy"}>Mail Sent</strong>
+                <span className={"text-deep-navy text-base"}>
+                  Mail Sent to your registered Email. Please check!
+                </span>
               </p>
             </div>
           </div>

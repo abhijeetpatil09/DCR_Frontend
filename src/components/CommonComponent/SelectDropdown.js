@@ -1,5 +1,5 @@
+import React, { useRef } from "react";
 import { Select, Tag } from "antd";
-import React from "react";
 const { Option } = Select;
 
 const SelectDropdown = ({
@@ -7,7 +7,6 @@ const SelectDropdown = ({
   name,
   value,
   setValue,
-  width,
   mode,
   placeholder,
   defaultValue,
@@ -17,15 +16,20 @@ const SelectDropdown = ({
   data,
 }) => {
   const disableSet = new Set(disabledSet);
+  const selectRef = useRef();
 
   const handleChange = (value) => {
-    const empty = value?.length > 0 && value?.includes("all");
-    if (empty) {
+    const notEmptyValues = value?.length > 0 && value?.includes("all");
+
+    if (notEmptyValues) {
       if (value?.length > 1 && value[0] === "all") {
         value?.splice(0, 1);
         setValue(value, name);
       } else {
         setValue(["all"], name);
+        if (selectRef.current) {
+          selectRef.current.blur();
+        }
       }
     } else {
       setValue(value, name);
@@ -34,7 +38,7 @@ const SelectDropdown = ({
 
   return (
     <div className="flex flex-col w-full" id="dateFilter">
-      <label className="ml-1 montserrat mb-1">{title}</label>
+      {title && <label className="ml-1 montserrat mb-1">{title}</label>}
       <Select
         defaultValue={defaultValue}
         value={value}
@@ -52,7 +56,6 @@ const SelectDropdown = ({
               style={{
                 margin: "5px 4px",
                 fontWeight: "500",
-                // fontFamily: "montserrat",
               }}
               closable={closable}
               onClose={onClose}
@@ -66,6 +69,7 @@ const SelectDropdown = ({
             ? customClass
             : `customSelector border overflow-auto border-gray-950`
         }
+        ref={selectRef} // Attach the ref to the Select component
       >
         {data?.map((item, key) => {
           return (
@@ -73,7 +77,7 @@ const SelectDropdown = ({
               key={key}
               value={item?.value}
               // disabled={value?.length > 0 && ((value?.includes('All') && item?.value !== 'All') || (!value?.includes('All') && item?.value === 'All'))}
-              title={"location"}
+              title={title ? title : ""}
               className=""
               disabled={disableSet.has(item?.value)}
             >

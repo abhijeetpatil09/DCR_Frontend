@@ -107,7 +107,7 @@ const AdminConsoleProfile = () => {
   };
 
   return (
-    <div className="p-4 w-11/12">
+    <div className="p-4 w-full">
       <div className="flex flex-row justify-start items-center w-full m-4">
         <div
           className="text-xl font-bold text-deep-navy mr-4 cursor-pointer"
@@ -148,39 +148,19 @@ const AdminConsoleProfile = () => {
                 },
               }}
             >
-              <TableCell
-                className="bg-table-head text-deep-navy"
-                key={0}
-                align="center"
-              >
+              <TableCell key={0} align="center">
                 User
               </TableCell>
-              <TableCell
-                className="bg-table-head text-deep-navy"
-                key={1}
-                align="center"
-              >
+              <TableCell key={1} align="center">
                 Consumer
               </TableCell>
-              <TableCell
-                className="bg-table-head text-deep-navy"
-                key={1}
-                align="center"
-              >
+              <TableCell key={1} align="center">
                 Publisher
               </TableCell>
-              <TableCell
-                className="bg-table-head text-deep-navy"
-                key={1}
-                align="center"
-              >
+              <TableCell key={1} align="center">
                 Provider
               </TableCell>
-              <TableCell
-                className="bg-table-head text-deep-navy"
-                key={2}
-                align="center"
-              >
+              <TableCell key={2} align="center">
                 Auth role
               </TableCell>
             </TableRow>
@@ -190,21 +170,22 @@ const AdminConsoleProfile = () => {
               {data?.map((row, index) => {
                 return (
                   <TableRow
-                    className="border-gray-200 hover:bg-table-head"
                     key={index}
                     sx={{
+                      "& td": {
+                        borderLeft: 1,
+                        borderColor: "#d6d3d1",
+                        color: "#0A2756",
+                      },
                       "& td:last-child": {
                         borderRight: 1,
                         borderColor: "#d6d3d1",
                       },
-                      "& td": { borderLeft: 1, borderColor: "#d6d3d1" },
                     }}
                   >
-                    <TableCell className="text-deep-navy" align="center">
-                      {row.USER}
-                    </TableCell>
+                    <TableCell align="center">{row.USER}</TableCell>
 
-                    <TableCell className="text-deep-navy " align="center">
+                    <TableCell align="center">
                       {row.PROVIDER.toLowerCase() !== "true" ? (
                         <Switch
                           checked={row.CONSUMER.toLowerCase() === "true"}
@@ -239,7 +220,7 @@ const AdminConsoleProfile = () => {
                       )}
                     </TableCell>
 
-                    <TableCell className="text-deep-navy " align="center">
+                    <TableCell align="center">
                       {row.PROVIDER.toLowerCase() !== "true" ? (
                         <Switch
                           checked={row.PUBLISHER.toLowerCase() === "true"}
@@ -274,7 +255,7 @@ const AdminConsoleProfile = () => {
                       )}
                     </TableCell>
 
-                    <TableCell className="text-deep-navy" align="center">
+                    <TableCell align="center">
                       {row.PROVIDER.toLowerCase() === "true" ? (
                         <Switch
                           checked={row.PROVIDER.toLowerCase() === "true"}
@@ -308,7 +289,7 @@ const AdminConsoleProfile = () => {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell className="text-deep-navy" align="center">
+                    <TableCell align="center">
                       <Switch
                         checked={row.ADMIN.toLowerCase() === "true"}
                         onChange={() =>
@@ -332,21 +313,22 @@ const AdminConsoleProfile = () => {
               {data?.map((row, index) => {
                 return (
                   <TableRow
-                    className="border-gray-200 hover:bg-table-head"
                     key={index}
                     sx={{
+                      "& td": {
+                        borderLeft: 1,
+                        borderColor: "#d6d3d1",
+                        color: "#0A2756",
+                      },
                       "& td:last-child": {
                         borderRight: 1,
                         borderColor: "#d6d3d1",
                       },
-                      "& td": { borderLeft: 1, borderColor: "#d6d3d1" },
                     }}
                   >
-                    <TableCell className="text-deep-navy" align="center">
-                      {row.USER}
-                    </TableCell>
+                    <TableCell align="center">{row.USER}</TableCell>
 
-                    <TableCell className="text-deep-navy " align="center">
+                    <TableCell align="center">
                       {row.CONSUMER.toLowerCase() === "true" ? (
                         <div className="flex justify-center">
                           <svg
@@ -384,7 +366,7 @@ const AdminConsoleProfile = () => {
                       )}
                     </TableCell>
 
-                    <TableCell className="text-deep-navy " align="center">
+                    <TableCell align="center">
                       {row.PUBLISHER.toLowerCase() === "true" ? (
                         <div className="flex justify-center">
                           <svg
@@ -422,7 +404,7 @@ const AdminConsoleProfile = () => {
                       )}
                     </TableCell>
 
-                    <TableCell className="text-deep-navy" align="center">
+                    <TableCell align="center">
                       {row.PROVIDER.toLowerCase() === "true" ? (
                         <div className="flex justify-center">
                           <svg
@@ -459,7 +441,7 @@ const AdminConsoleProfile = () => {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell className="text-deep-navy" align="center">
+                    <TableCell align="center">
                       {row.ADMIN.toLowerCase() === "true" ? (
                         <div className="flex justify-center">
                           <svg

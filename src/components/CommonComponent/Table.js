@@ -22,7 +22,6 @@ const resultstyle = {
   width: "95%",
   maxHeight: "90%",
   bgcolor: "background.paper",
-  overflow: "scroll",
 };
 
 const OutputTable = ({
@@ -33,6 +32,7 @@ const OutputTable = ({
   open,
   handleClose,
   title,
+  overflow,
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -53,7 +53,10 @@ const OutputTable = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={resultstyle}>
+      <Box
+        sx={resultstyle}
+        className={`${overflow ? "overflow-hidden" : "overflow-scroll"}`}
+      >
         <div className=" flex flex-col flex-grow w-full">
           <div className="flex flex-row items-center justify-between sticky z-30 py-2 px-4 top-0 w-full bg-deep-navy text-white">
             <h3 className="font-bold text-white">{title}</h3>
@@ -81,7 +84,7 @@ const OutputTable = ({
                   <span className="text-deep-navy px-1 py-3"></span>
                 )}
 
-                <TableContainer>
+                <TableContainer className={`${overflow ? "pb-4" : ""}`}>
                   <Table
                     sx={{ minWidth: 650, borderRadius: 0 }}
                     stickyHeader
