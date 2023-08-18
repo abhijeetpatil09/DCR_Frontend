@@ -146,6 +146,8 @@ const QueryStatus = () => {
               name:
                 value.STATUS.toLowerCase() === "false"
                   ? "Rejected"
+                  : value.STATUS.toLowerCase() === "true"
+                  ? "Approved"
                   : value.STATUS,
             });
             return null;

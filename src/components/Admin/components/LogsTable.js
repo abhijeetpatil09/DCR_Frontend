@@ -152,6 +152,8 @@ const AdminConsoleLogsTable = () => {
               name:
                 value.STATUS.toLowerCase() === "false"
                   ? "Rejected"
+                  : value.STATUS.toLowerCase() === "true"
+                  ? "Approved"
                   : value.STATUS,
             });
             return null;
