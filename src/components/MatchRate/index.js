@@ -551,7 +551,7 @@ const MatchRate = () => {
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
         <div>
           <h3 className="text-xl font-bold text-deep-navy mr-2">
-            Publisher query
+            Match Rate
           </h3>
           <p>
             Choose your query type, upload the data and publish it for your
@@ -600,7 +600,7 @@ const MatchRate = () => {
                   >
                     <div className="flex flex-row justify-between ">
                       <h3 className="text-xl font-semibold">
-                        New publisher query
+                        New Match Rate query
                       </h3>
                       <button onClick={handleToggleDrawer("right", false)}>
                         <svg

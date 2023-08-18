@@ -52,7 +52,11 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
 
   const handleViewBill = () => {
     let selectedValue = "";
-    if (user?.role && user?.role?.includes("Consumer_Admin") || user?.role?.includes("Provider_Admin") ) {
+    if (
+      user?.role &&
+      (user?.role?.includes("Consumer_Admin") ||
+        user?.role?.includes("Provider_Admin"))
+    ) {
       selectedValue =
         user?.name +
         "_" +
@@ -184,7 +188,7 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
         }
         alt=""
       />
-      <div className="pl-8">
+      <div className="pl-8 relative z-20">
         {user?.role && user?.role?.includes("DATAEXADMIN") && (
           <>
             <div className="mt-2 flex flex-col">
@@ -197,7 +201,7 @@ const ItemisedBills = ({ handleToggleDrawer }) => {
                 required
                 className="bg-deep-navy  block rounded-md border-0 py-1.5 text-electric-green shadow-sm ring-1 ring-inset ring-electric-green  placeholder:text-electric-green  focus:ring-2 focus:ring-inset focus:ring-electric-green  sm:text-sm sm:leading-6"
               >
-                <option value="">Select Consumer</option>
+                <option value="">Select Provider/Consumer</option>
                 {data.map((consumer, index) => {
                   return (
                     <option key={index} value={consumer.USER}>

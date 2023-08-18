@@ -176,7 +176,7 @@ const AdminConsole = () => {
                 />
               </div>
               <h4 class="text-md uppercase text-deep-navy font-bold mt-10">
-                Profile
+                User Profiles
               </h4>
               <p class="text-base text-gray-600 mt-2">
                 Check user profile details

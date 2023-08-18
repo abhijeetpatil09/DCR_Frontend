@@ -149,7 +149,10 @@ const AdminConsoleLogsTable = () => {
             });
             statuses.push({
               value: value.STATUS,
-              name: value.STATUS,
+              name:
+                value.STATUS.toLowerCase() === "false"
+                  ? "Rejected"
+                  : value.STATUS,
             });
             return null;
           });
@@ -558,7 +561,7 @@ const AdminConsoleLogsTable = () => {
                     </TableSortLabel>
                   </TableCell>
                   <TableCell key={5} align="center">
-                  <TableSortLabel
+                    <TableSortLabel
                       active={sortedColumn === "RUN_ID"}
                       direction={sortOrder}
                       onClick={() => handleSort("RUN_ID")}

@@ -99,28 +99,40 @@ const Home = () => {
               <h2 className="text-3xl font-semibold mt-3 capitalize">
                 Welcome {user?.name}!
               </h2>
-              {user?.role?.includes("DATAEXADMIN") ? (
-                <div>
+              {
+                user?.role?.includes("DATAEXADMIN") ? (
+                  <div>
+                    <p className="w-2/3 mt-3 text-sm ">
+                      Discover the command center for data privacy and
+                      collaboration efforts. As the administrator of the Data
+                      Xchange, you hold the keys to a secure environment where
+                      privacy and insights converge.
+                    </p>
+                    <p className="w-2/3 mt-3 text-sm ">
+                      Here, you're in control, ensuring that data flows
+                      seamlessly while safeguarding sensitive information.
+                    </p>
+                  </div>
+                ) : (
                   <p className="w-2/3 mt-3 text-sm ">
-                    Discover the command center for data privacy and
-                    collaboration efforts. As the administrator of the Data
-                    Xchange, you hold the keys to a secure environment where
-                    privacy and insights converge.
+                    Elevate Your Data with Confidence: Seamlessly Fuse and
+                    Enhance Information in a Secure Hub. Where Data Unites,
+                    Insights Ignite, and Decisions Shape. Our User-Friendly
+                    Approach Transforms Raw Data into Smart Solutions, Wrapped
+                    in Layers of Security. Embark on the Path to Smarter
+                    Decisions Today!
                   </p>
-                  <p className="w-2/3 mt-3 text-sm ">
-                    Here, you're in control, ensuring that data flows seamlessly
-                    while safeguarding sensitive information.
-                  </p>
-                </div>
-              ) : (
-                <p className="w-2/3 mt-3 text-sm ">
-                  Build your DCR in Snowflake for use cases like a{" "}
-                  <strong className=" italic">marketing campaign</strong>,
-                  <strong className=" italic"> optimizing ad placement</strong>,
-                  identifying common transaction patterns to improve fraud
-                  detection, etc.
-                </p>
-              )}
+                )
+                // : (
+                //   <p className="w-2/3 mt-3 text-sm ">
+                //     Build your DCR in Snowflake for use cases like a{" "}
+                //     <strong className=" italic">marketing campaign</strong>,
+                //     <strong className=" italic"> optimizing ad placement</strong>,
+                //     identifying common transaction patterns to improve fraud
+                //     detection, etc.
+                //   </p>
+                // )
+              }
               <button
                 onClick={startExploring}
                 className="hidden mt-7 pr-4 flex items-center justify-center rounded-md bg-deep-navy px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-deep-navy/80 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"

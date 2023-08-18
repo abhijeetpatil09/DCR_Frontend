@@ -133,7 +133,17 @@ const ForgotPassword = () => {
   };
 
   const handleForgotPassword = () => {
-    if (errors.userName !== null || errors.email !== null) {
+    if (
+      errors.userName !== null ||
+      errors.email !== null ||
+      details.userName === "" ||
+      details.email === ""
+    ) {
+      setErrors({
+        ...errors,
+        userName: "Required Field",
+        email: "Required Field",
+      });
       return;
     } else {
       setLoader(true);
@@ -213,9 +223,9 @@ const ForgotPassword = () => {
               <div className="py-4 border-t-[1px] border-opacity-50 border-electric-green ">
                 <label
                   htmlFor="uname"
-                  className="block text-sm font-medium leading-6 text-electric-green"
+                  className="flex text-sm font-medium leading-6 text-electric-green"
                 >
-                  User Name{" "}
+                  User Name<p className="text-red-600 pl-1">*</p>
                 </label>
                 <div className="mt-2">
                   <input
@@ -241,9 +251,9 @@ const ForgotPassword = () => {
               <div className="py-4 border-t-[1px] border-opacity-50 border-electric-green ">
                 <label
                   htmlFor="uname"
-                  className="block text-sm font-medium leading-6 text-electric-green"
+                  className="flex text-sm font-medium leading-6 text-electric-green"
                 >
-                  Registered Email{" "}
+                  Registered Email<p className="text-red-600 pl-1">*</p>
                 </label>
                 <div className="mt-2">
                   <input

@@ -201,7 +201,7 @@ const QueryTemplate = ({ user, handleToggleDrawer }) => {
         src={Query_Template_Image}
         alt=""
       />
-      <div className="pl-8">
+      <div className="pl-8 relative z-20">
         <div className="my-4 flex flex-col ">
           <label className="block text-sm font-medium leading-6 text-electric-green ">
             Consumer Name

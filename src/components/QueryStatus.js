@@ -143,7 +143,10 @@ const QueryStatus = () => {
             });
             statuses.push({
               value: value.STATUS,
-              name: value.STATUS,
+              name:
+                value.STATUS.toLowerCase() === "false"
+                  ? "Rejected"
+                  : value.STATUS,
             });
             return null;
           });

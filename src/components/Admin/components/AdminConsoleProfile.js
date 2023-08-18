@@ -115,7 +115,7 @@ const AdminConsoleProfile = () => {
         >
           <ArrowBackIcon />
         </div>
-        <h1 className="text-xl font-bold text-deep-navy mr-2">Profiles</h1>
+        <h1 className="text-xl font-bold text-deep-navy mr-2">User Profiles</h1>
       </div>
       <TableContainer className="mt-4">
         <Table
@@ -256,7 +256,8 @@ const AdminConsoleProfile = () => {
                     </TableCell>
 
                     <TableCell align="center">
-                      {row.PROVIDER.toLowerCase() === "true" ? (
+                      {row.CONSUMER.toLowerCase() !== "true" ||
+                      row.CONSUMER.toLowerCase() !== "true" ? (
                         <Switch
                           checked={row.PROVIDER.toLowerCase() === "true"}
                           onChange={() =>
