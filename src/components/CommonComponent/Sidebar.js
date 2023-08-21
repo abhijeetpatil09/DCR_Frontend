@@ -19,7 +19,7 @@ const Sidebar = ({ children }) => {
   const state = useSelector((state) => state);
   const user = state && state.user;
 
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(true);
   const [tab, setTab] = useState(0);
 
   useEffect(() => {

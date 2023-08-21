@@ -16,6 +16,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
 } from "@mui/material";
 
 import * as actions from "../../redux/actions/index";
@@ -85,6 +86,8 @@ const MatchRate = () => {
 
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
+  const [sortedColumn, setSortedColumn] = useState(null);
 
   const [viewActionModal, setViewActionModal] = useState(false);
   const [requestFailedReason, setRequestFailedReason] = React.useState({
@@ -546,13 +549,34 @@ const MatchRate = () => {
     setToggleDrawerPosition({ ...toggleDrawerPosition, [anchor]: open });
   };
 
+  /// Functions used for sort the columns...
+  const handleSort = (columnKey) => {
+    if (sortedColumn === columnKey) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortOrder("asc");
+      setSortedColumn(columnKey);
+    }
+  };
+
+  const sortedData = [...tableData].sort((a, b) => {
+    const aValue = a[sortedColumn];
+    const bValue = b[sortedColumn];
+
+    if (!aValue || !bValue) return 0;
+
+    if (sortOrder === "asc") {
+      return String(aValue).localeCompare(String(bValue));
+    } else {
+      return String(bValue).localeCompare(String(aValue));
+    }
+  });
+
   return (
     <div className="flex flex-col w-full px-4 overflow-hidden">
       <div className="flex flex-row justify-between items-center w-full mt-2 mb-4">
         <div>
-          <h3 className="text-xl font-bold text-deep-navy mr-2">
-            Match Rate
-          </h3>
+          <h3 className="text-xl font-bold text-deep-navy mr-2">Match Rate</h3>
           <p>
             Choose your query type, upload the data and publish it for your
             consumers.
@@ -907,33 +931,75 @@ const MatchRate = () => {
                   }}
                 >
                   <TableCell key={1} align="center">
-                    Status
+                    <TableSortLabel
+                      active={sortedColumn === "STATUS"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("STATUS")}
+                    >
+                      Status
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={2} align="center">
-                    Request ID
+                    <TableSortLabel
+                      active={sortedColumn === "RUN_ID"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("RUN_ID")}
+                    >
+                      Request ID
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={3} align="center">
-                    Provider Name
+                    <TableSortLabel
+                      active={sortedColumn === "PROVIDER_NAME"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("PROVIDER_NAME")}
+                    >
+                      Provider Name
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={4} align="center">
-                    Identifier Type
+                    <TableSortLabel
+                      active={sortedColumn === "IDENTIFIER_TYPE"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("IDENTIFIER_TYPE")}
+                    >
+                      Identifier Type
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={5} align="center">
-                    Match Attribute
+                    <TableSortLabel
+                      active={sortedColumn === "ATTRIBUTE"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("ATTRIBUTE")}
+                    >
+                      Match Attribute
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={6} align="center">
-                    Match count
+                    <TableSortLabel
+                      active={sortedColumn === "MATCH_COUNT"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("MATCH_COUNT")}
+                    >
+                      Match count
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={7} align="center">
                     Actions
                   </TableCell>
                   <TableCell key={8} align="center">
-                    Requested
+                    <TableSortLabel
+                      active={sortedColumn === "RUN_ID"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("RUN_ID")}
+                    >
+                      Requested
+                    </TableSortLabel>
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {tableData?.map((row, index) => {
+                {sortedData?.map((row, index) => {
                   return (
                     <TableRow
                       key={index}

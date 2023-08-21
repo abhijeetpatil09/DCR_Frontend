@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import { CircularProgress } from "@mui/material";
-
-import BgVideo from "../../Assets/loginbg.mp4";
-import BgVideoGreen from "../../Assets/loginbg_green.mp4";
-
+import { Alert, CircularProgress } from "@mui/material";
+import axios from "axios";
 import {
   loadCaptchaEnginge,
   validateCaptcha,
   LoadCanvasTemplateNoReload,
 } from "react-simple-captcha";
+
+import BgVideo from "../../Assets/loginbg.mp4";
+import BgVideoGreen from "../../Assets/loginbg_green.mp4";
+
+const baseURL = process.env.REACT_APP_BASE_URL;
+const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const Register = () => {
   const [userDetails, setUserDetails] = useState({
@@ -36,6 +38,7 @@ const Register = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [registrationError, setRegistrationError] = useState(null);
 
   useEffect(() => {
     loadCaptchaEnginge(6);
@@ -80,6 +83,7 @@ const Register = () => {
     const inputName = e.target.name;
     const inputValue = e.target.value;
 
+    setRegistrationError(null);
     if (inputName === "fullName") {
       let character = isValidInput(inputValue);
       if (inputValue === "") {
@@ -187,15 +191,113 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const sendEmail = () => {
+    axios
+      .get(`${baseURL}/mailtoadmin`, {
+        params: {
+          recipient: `${userDetails?.email}`,
+          subject: `${userDetails?.fullName} wants to register.`,
+          message: `Hello,
+                        ${userDetails?.fullName} wants to register for Data Exchange. He/she is filled the information as below.
+                        
+                        *Full Name    : ${userDetails?.fullName}
+                        *Company Name : ${userDetails?.company}
+                        *Designation  : ${userDetails?.designation}
+                        *Email Id     : ${userDetails?.email}
+                        *Does company
+                        have snowflake
+                        account       : ${userDetails?.accountRadio}
+                        *User Name    : ${userDetails?.userName}
+                        *Password     : ${userDetails?.password}
+
+                        Please connect with ${userDetails?.fullName} as soon as possible for the completion of the registration process.`,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          setLoading(false);
+          setRegistrationError(
+            "Our Expert team will connect with you within next 24 hours for the further process."
+          );
+        } else {
+          setLoading(false);
+          setRegistrationError(
+            "We are facing some issue, Please, try Again to register."
+          );
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        setRegistrationError(
+          "We are facing some issue, Please, try Again to register."
+        );
+        console.log(error);
+      });
+  };
+
+  const registerUser = () => {
+    axios
+      .get(`${baseURL}/${redirectionUser}`, {
+        params: {
+          query: `insert into DATAEXCHANGEDB.DATACATALOG.USER_DETAILS_REGISTRATION(full_name,company,designation,email_id,snowflake_account,username,password) values('${userDetails?.fullName}','${userDetails?.company}','${userDetails?.designation}', '${userDetails?.email}','${userDetails?.accountRadio}','${userDetails?.userName}','${userDetails?.password}');`,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          sendEmail();
+        } else {
+          setLoading(false);
+          setRegistrationError(
+            "We are facing some issue, Please, try Again to register."
+          );
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        setRegistrationError(
+          "We are facing some issue, Please, try Again to register."
+        );
+        console.log(error);
+      });
+  };
+
   const handleSubmit = () => {
-    setLoading(true);
     const isFormValid = validateForm();
 
     if (isFormValid) {
-      toast.success("Registration has been successfull...");
-      setLoading(false);
-    } else {
-      setLoading(false);
+      setLoading(true);
+
+      axios
+        .get(`${baseURL}/${redirectionUser}`, {
+          params: {
+            query: `select count(*) as count from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES where user='${userDetails.userName}';`,
+          },
+        })
+        .then((response) => {
+          if (response?.data?.data) {
+            let count = response?.data?.data[0]?.COUNT;
+            if (count) {
+              setRegistrationError(
+                "The User Name is already exist. Please use another User Name to register"
+              );
+              setLoading(false);
+            } else {
+              registerUser();
+            }
+          } else {
+            setLoading(false);
+            setRegistrationError(
+              "We are facing some issue, Please, try Again to register."
+            );
+          }
+        })
+        .catch((error) => {
+          setLoading(false);
+          setRegistrationError(
+            "We are facing some issue, Please, try Again to register."
+          );
+          console.log(error);
+        });
     }
   };
 
@@ -495,6 +597,14 @@ const Register = () => {
             </button>
           )}
         </div>
+      </div>
+      {/* for showing error */}
+      <div className="my-4">
+        {registrationError && (
+          <Alert className="text-red-600" severity="error">
+            {registrationError}
+          </Alert>
+        )}
       </div>
     </div>
   );

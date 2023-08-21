@@ -12,7 +12,10 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  TableSortLabel,
 } from "@mui/material";
+import RotateLeftIcon from "@mui/icons-material/RotateLeft";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 
 import searchillustration from "../Assets/search_illustration.svg";
 import {
@@ -43,6 +46,13 @@ import "./pure-react.css";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
+const initialFilters = {
+  providerName: [],
+  templateName: [],
+  status: [],
+  date: "",
+};
+
 const QueryStatus = () => {
   const state = useSelector((state) => state);
   const user = state && state.user;
@@ -50,7 +60,9 @@ const QueryStatus = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
+  const [sortedColumn, setSortedColumn] = useState(null);
+  const [resetFilter, setResetFilter] = useState(false);
   const [loader, setLoader] = useState(false);
 
   const [viewTable, setViewTable] = useState({
@@ -65,12 +77,7 @@ const QueryStatus = () => {
     statusList: [],
   });
 
-  const [filteredData, setFilteredData] = useState({
-    providerName: [],
-    templateName: [],
-    status: [],
-    date: "",
-  });
+  const [filteredData, setFilteredData] = useState(initialFilters);
 
   const [viewTemplate, setViewTemplate] = React.useState({
     openModal: false,
@@ -249,7 +256,7 @@ const QueryStatus = () => {
     setData([]);
     setPage(0);
     const finalProviderList =
-      filteredData?.providerNam?.length > 0
+      filteredData?.providerName?.length > 0
         ? filteredData?.providerName
             ?.map((item, index) =>
               item !== "all"
@@ -299,7 +306,6 @@ const QueryStatus = () => {
       const day = dateObj.getDate().toString().padStart(2, "0");
       finalDate = "REQUEST_TS = '" + year + "-" + month + "-" + day + "'";
     }
-    console.log("finalDate", finalDate);
 
     let finalResult =
       (finalProviderList !== "" ? "(" + finalProviderList + ")" : "") +
@@ -341,12 +347,43 @@ const QueryStatus = () => {
           setLoader(false);
           let data = response?.data?.data;
           setData(data);
+          setResetFilter(true);
         }
       })
       .catch((error) => {
         console.log("In API catch", error);
       });
   };
+
+  const handleResetFilter = () => {
+    fetchMainTable();
+    setLoader(true);
+    setResetFilter(false);
+    setFilteredData(initialFilters);
+  };
+
+  // Functions for handle sort for columns...
+  const handleSort = (columnKey) => {
+    if (sortedColumn === columnKey) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortOrder("asc");
+      setSortedColumn(columnKey);
+    }
+  };
+
+  const sortedData = [...data].sort((a, b) => {
+    const aValue = a[sortedColumn];
+    const bValue = b[sortedColumn];
+
+    if (!aValue || !bValue) return 0;
+
+    if (sortOrder === "asc") {
+      return String(aValue).localeCompare(String(bValue));
+    } else {
+      return String(bValue).localeCompare(String(aValue));
+    }
+  });
 
   return (
     <div className="flex flex-col w-full px-4">
@@ -359,26 +396,24 @@ const QueryStatus = () => {
         </div>
         {["right"].map((anchor) => (
           <React.Fragment key={anchor}>
-            <button
-              className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-4 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-              onClick={toggleDrawer(anchor, true)}
-            >
-              <svg
-                className="w-4 h-4 mr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
+            <div className="flex">
+              {resetFilter && (
+                <button
+                  className="my-2 mr-4 flex items-center justify-center rounded-md bg-deep-navy px-4 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                  onClick={handleResetFilter}
+                >
+                  <RotateLeftIcon />
+                  Reset Filter
+                </button>
+              )}
+              <button
+                className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-4 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                onClick={toggleDrawer(anchor, true)}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-                />
-              </svg>
-              Filter
-            </button>
+                <FilterAltIcon />
+                Filter
+              </button>
+            </div>
             {toggleDrawerPosition[anchor] && (
               <SwipeableDrawer
                 anchor={anchor}
@@ -525,31 +560,67 @@ const QueryStatus = () => {
                   }}
                 >
                   <TableCell key={0} align="center">
-                    Request ID
-                  </TableCell>
-                  <TableCell key={1} align="center">
-                    Template Name
+                    <TableSortLabel
+                      active={sortedColumn === "RUN_ID"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("RUN_ID")}
+                    >
+                      Request ID
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={2} align="center">
-                    Provider Name
+                    <TableSortLabel
+                      active={sortedColumn === "PROVIDER_NAME"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("PROVIDER_NAME")}
+                    >
+                      Provider Name
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell key={1} align="center">
+                    <TableSortLabel
+                      active={sortedColumn === "TEMPLATE_NAME"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("TEMPLATE_NAME")}
+                    >
+                      Template Name
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={3} align="center">
-                    Column Names
+                    <TableSortLabel
+                      active={sortedColumn === "COLOUMNS"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("COLOUMNS")}
+                    >
+                      Column Names
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={4} align="center">
-                    Status
+                    <TableSortLabel
+                      active={sortedColumn === "STATUS"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("STATUS")}
+                    >
+                      Status
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={6} align="center">
                     Actions
                   </TableCell>
                   <TableCell key={5} align="center">
-                    Requested
+                    <TableSortLabel
+                      active={sortedColumn === "RUN_ID"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("RUN_ID")}
+                    >
+                      Requested
+                    </TableSortLabel>
                   </TableCell>
                 </TableRow>
               </TableHead>
-              {data && data?.length > 0 ? (
+              {sortedData && sortedData?.length > 0 ? (
                 <TableBody>
-                  {data
+                  {sortedData
                     ?.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
@@ -572,10 +643,10 @@ const QueryStatus = () => {
                         >
                           <TableCell align="center">{row.RUN_ID}</TableCell>
                           <TableCell align="center">
-                            {row.TEMPLATE_NAME}
+                            {row.PROVIDER_NAME}
                           </TableCell>
                           <TableCell align="center">
-                            {row.PROVIDER_NAME}
+                            {row.TEMPLATE_NAME}
                           </TableCell>
                           <TableCell align="center">{row.COLOUMNS}</TableCell>
                           <TableCell align="center">

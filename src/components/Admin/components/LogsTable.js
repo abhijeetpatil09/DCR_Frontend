@@ -14,8 +14,8 @@ import {
   TablePagination,
   TableSortLabel,
 } from "@mui/material";
-
-// import Admin_Console_Logs_Image from "../../../Assets/AdminConsoleLogs.svg";
+import RotateLeftIcon from "@mui/icons-material/RotateLeft";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 
 import {
   handleDate,
@@ -41,6 +41,13 @@ import "../../pure-react.css";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
+const initialFilters = {
+  providerName: [],
+  templateName: [],
+  status: [],
+  date: "",
+};
+
 const AdminConsoleLogsTable = () => {
   const state = useSelector((state) => state);
   const user = state && state.user;
@@ -50,7 +57,7 @@ const AdminConsoleLogsTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
   const [sortedColumn, setSortedColumn] = useState(null);
-
+  const [resetFilter, setResetFilter] = useState(false);
   const [loader, setLoader] = useState(false);
 
   const [filteredList, setFilteredList] = useState({
@@ -60,13 +67,7 @@ const AdminConsoleLogsTable = () => {
     statusList: [],
   });
 
-  const [filteredData, setFilteredData] = useState({
-    consumerName: [],
-    providerName: [],
-    templateName: [],
-    status: [],
-    date: "",
-  });
+  const [filteredData, setFilteredData] = useState(initialFilters);
 
   const [toggleDrawerPosition, setToggleDrawerPosition] = React.useState({
     top: false,
@@ -316,11 +317,19 @@ const AdminConsoleLogsTable = () => {
           setLoader(false);
           let data = response?.data?.data;
           setData(data);
+          setResetFilter(true);
         }
       })
       .catch((error) => {
         console.log("In API catch", error);
       });
+  };
+
+  const handleResetFilter = () => {
+    fetchMainTable();
+    setLoader(true);
+    setResetFilter(false);
+    setFilteredData(initialFilters);
   };
 
   return (
@@ -334,26 +343,24 @@ const AdminConsoleLogsTable = () => {
         </div>
         {["right"].map((anchor) => (
           <React.Fragment key={anchor}>
-            <button
-              className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-4 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
-              onClick={toggleDrawer(anchor, true)}
-            >
-              <svg
-                className="w-4 h-4 mr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
+            <div className="flex">
+              {resetFilter && (
+                <button
+                  className="my-2 mr-4 flex items-center justify-center rounded-md bg-deep-navy px-4 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                  onClick={handleResetFilter}
+                >
+                  <RotateLeftIcon />
+                  Reset Filter
+                </button>
+              )}
+              <button
+                className="my-2 flex items-center justify-center rounded-md bg-deep-navy px-4 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-electric-green hover:text-deep-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-green"
+                onClick={toggleDrawer(anchor, true)}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-                />
-              </svg>
-              Filter
-            </button>
+                <FilterAltIcon />
+                Filter
+              </button>
+            </div>
             {toggleDrawerPosition[anchor] && (
               <SwipeableDrawer
                 anchor={anchor}
