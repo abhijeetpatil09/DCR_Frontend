@@ -48,7 +48,7 @@ const nodeURL = process.env.REACT_APP_NODE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const initialState = {
-  Query_Name: "",
+  Query_Name: "advertiser_match",
   Column_Names: "",
   Consumer_Name: "",
   File_Name: "",
@@ -82,7 +82,7 @@ const MatchRate = () => {
   const [tableRows, setTableRows] = useState([]);
 
   const [providerList, setProviderList] = useState([]);
-  const [templateList, setTemplateList] = useState("");
+  // const [templateList, setTemplateList] = useState("");
 
   const [byPassAPICalled, setByPassAPICalled] = useState(false);
   const [tableData, setTableData] = useState([]);
@@ -219,36 +219,36 @@ const MatchRate = () => {
       ...formData,
       [event.target.name]: event.target.value,
     });
-    setTemplateList([]);
-    getDatabaseName(event.target.value);
+    // setTemplateList([]);
+    // getDatabaseName(event.target.value);
   };
 
-  const getDatabaseName = (selectedProvider) => {
-    axios
-      .get(`${baseURL}/${user?.name}`, {
-        params: {
-          query: `select database from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS where provider = '${selectedProvider}';`,
-        },
-      })
-      .then((response) => {
-        if (response?.data) {
-          let db_name = response?.data?.data[0]?.DATABASE;
-          axios
-            .get(`${baseURL}/${user?.name}`, {
-              params: {
-                query: `select template_name from ${db_name}.CLEANROOM.TEMPLATES where template_name LIKE 'advertiser_match';`,
-              },
-            })
-            .then((response) => {
-              if (response?.data) {
-                setTemplateList(response.data.data);
-              }
-            })
-            .catch((error) => console.log(error));
-        }
-      })
-      .catch((error) => console.log(error));
-  };
+  // const getDatabaseName = (selectedProvider) => {
+  //   axios
+  //     .get(`${baseURL}/${user?.name}`, {
+  //       params: {
+  //         query: `select database from DCR_SAMP_CONSUMER1.PUBLIC.PROV_DETAILS where provider = '${selectedProvider}';`,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       if (response?.data) {
+  //         let db_name = response?.data?.data[0]?.DATABASE;
+  //         axios
+  //           .get(`${baseURL}/${user?.name}`, {
+  //             params: {
+  //               query: `select template_name from ${db_name}.CLEANROOM.TEMPLATES where template_name LIKE 'advertiser_match';`,
+  //             },
+  //           })
+  //           .then((response) => {
+  //             if (response?.data) {
+  //               setTemplateList(response.data.data);
+  //             }
+  //           })
+  //           .catch((error) => console.log(error));
+  //       }
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
 
   const handleFileInput = (event) => {
     event.preventDefault();
@@ -666,7 +666,7 @@ const MatchRate = () => {
                           )}
                         </select>
                       </div>
-                      <div className=" mt-2 pb-2 flex flex-col">
+                      {/* <div className=" mt-2 pb-2 flex flex-col">
                         <label>Query name</label>
                         <select
                           name="Query_Name"
@@ -686,7 +686,7 @@ const MatchRate = () => {
                             <option value="">Loading...</option>
                           )}
                         </select>
-                      </div>
+                      </div> */}
 
                       <div className="mt-2 pb-21 flex flex-col">
                         <label>Upload File</label>

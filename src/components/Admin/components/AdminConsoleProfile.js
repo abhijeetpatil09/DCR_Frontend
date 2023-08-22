@@ -46,39 +46,24 @@ const AdminConsoleProfile = () => {
   };
 
   const fetchProfileTable = () => {
-    if (UserRole?.includes("Consumer_Admin")) {
-      axios
-        .get(`${baseURL}/${redirectionUser}`, {
-          params: {
-            query:
-              "select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES order by admin desc;",
-          },
-        })
-        .then((response) => {
-          if (response?.data) {
-            setData(response?.data?.data);
-          } else {
-            setData([]);
-          }
-        })
-        .catch((error) => console.log(error));
-    } else {
-      axios
-        .get(`${baseURL}/${redirectionUser}`, {
-          params: {
-            query:
-              "select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES order by provider desc;",
-          },
-        })
-        .then((response) => {
-          if (response?.data) {
-            setData(response?.data?.data);
-          } else {
-            setData([]);
-          }
-        })
-        .catch((error) => console.log(error));
-    }
+    axios
+      .get(`${baseURL}/${redirectionUser}`, {
+        params: {
+          query: `select * from DATAEXCHANGEDB.DATACATALOG.CONSUMER_ATTRIBUTES ${
+            !UserRole?.includes("DATAEXADMIN")
+              ? `where party_account = '${user?.ConsumerPartyAccount}'`
+              : ""
+          } order by admin desc;`,
+        },
+      })
+      .then((response) => {
+        if (response?.data) {
+          setData(response?.data?.data);
+        } else {
+          setData([]);
+        }
+      })
+      .catch((error) => console.log(error));
   };
 
   useEffect(() => {
