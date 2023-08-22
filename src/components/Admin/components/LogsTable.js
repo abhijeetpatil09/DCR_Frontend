@@ -558,7 +558,13 @@ const AdminConsoleLogsTable = () => {
                     </TableSortLabel>
                   </TableCell>
                   <TableCell key={1} align="center">
-                    Consumer Record Count
+                    <TableSortLabel
+                      active={sortedColumn === "CONSUMER_RECORD_COUNT"}
+                      direction={sortOrder}
+                      onClick={() => handleSort("CONSUMER_RECORD_COUNT")}
+                    >
+                      Consumer Record Count
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell key={4} align="center">
                     <TableSortLabel

@@ -94,7 +94,7 @@ const SearchCatalog = () => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER order by entity_name limit 10`,
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER order by entity_name`,
         },
       })
       .then((response) => {
@@ -377,19 +377,32 @@ const SearchCatalog = () => {
           let data = response?.data?.data;
           let providerPartyAccount = data[0]?.PARTY_ACCOUNT;
           axios
-            .get(`${baseURL}/${redirectionUser}/integration`, {
+            .get(`${baseURL}/consumerintegrate`, {
               params: {
-                provider_name: `${provider_name}`,
-                consumer_name: `${user?.Consumer}`,
-                provider_identifier: `${providerPartyAccount}`,
-                consumer_identifier: `${user?.ConsumerPartyAccount}`,
+                provider: `${provider_name}`,
+                consumer: `${user?.Consumer}`,
+                provider_id: `${providerPartyAccount}`,
+                consumer_id: `${user?.ConsumerPartyAccount}`,
                 provider_source_table: `${entity_name}`,
                 consumer_source_table: `${consumerSorceTable}`,
               },
             })
             .then((response) => {
               if (response?.data?.data) {
-                console.log("response?.data?.data", response?.data?.data);
+                axios
+                  .get(`${baseURL}/${redirectionUser}`, {
+                    params: {
+                      query: `INSERT INTO DATAEXCHANGEDB.DATACATALOG.CONSUMER_INTEGRATIONS (CONSUMER_ACCOUNT, PROVIDER_ACCOUNT, ENABLED_FLAG, TEMPLATES, PROVIDER_NAME, CONSUMER_NAME) VALUES ('${user?.ConsumerPartyAccount}', '${providerPartyAccount}', 'TRUE', 'customer_enrichment,advertiser_match', '${provider_name}', '${user?.Consumer}')`,
+                    },
+                  })
+                  .then((response) => {
+                    if (response?.data?.data) {
+                      console.log("response?.data?.data", response?.data?.data);
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
               }
             })
             .catch((error) => {

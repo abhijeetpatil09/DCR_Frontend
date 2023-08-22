@@ -460,6 +460,7 @@ const MatchRate = () => {
                               ...initialState,
                               Consumer_Name: user?.Consumer,
                             });
+                            setAge("age_0_6");
                             setToggleDrawerPosition({
                               ...toggleDrawerPosition,
                               right: false,
@@ -490,7 +491,15 @@ const MatchRate = () => {
               );
               console.log(error);
             });
+        } else {
+          setLoading(false);
+          setErrorMessage("Something went wrong, please try again later !!!");
         }
+      })
+      .catch((error) => {
+        setLoading(false);
+        setErrorMessage("Something went wrong, please try again later !!!");
+        console.log(error);
       });
   };
 
