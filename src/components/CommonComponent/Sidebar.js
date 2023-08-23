@@ -188,7 +188,7 @@ const Sidebar = ({ children }) => {
                     isOpened ? "" : "hidden"
                   } pl-5 uppercase font-semibold`}
                 >
-                  Upload Catalaog
+                  Upload Catalog
                 </span>
               </button>
             </li>

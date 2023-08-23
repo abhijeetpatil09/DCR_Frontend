@@ -22,7 +22,8 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 import "../../styles.css";
-import { joinArray } from "../../../utils/commonFunctions";
+import CommonModal from "../../CommonComponent/Modal";
+// import { joinArray } from "../../../utils/commonFunctions";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
@@ -41,7 +42,6 @@ function EditToolbar(props) {
     setSelectedValues({ category: [], subCategory: [] });
     setIsEdit(true);
     setRows((oldRows) => [
-      ...oldRows,
       {
         id,
         CATEGORY: "",
@@ -51,6 +51,7 @@ function EditToolbar(props) {
         TECH_NAME: "",
         isNew: true,
       },
+      ...oldRows,
     ]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
@@ -94,9 +95,16 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   const [subCategoryList, setSubCategoryList] = useState([]);
 
   const [selectedValues, setSelectedValues] = useState({
-    category: [],
-    subCategory: [],
+    category: "",
+    subCategory: "",
   });
+  const [deleteAttribute, setDeleteAttribute] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleCloseModal = () => {
+    setOpenModal(!openModal);
+    setClickDeleteButton({ ...clickDeleteButton, id: "" });
+  };
 
   useEffect(() => {
     let timeoutId = null;
@@ -184,20 +192,10 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   useEffect(() => {
     if (selectedValues.category?.length > 0) {
-      const finalCategory = selectedValues?.category
-        ?.map(
-          (item, index) =>
-            " Category = '" +
-            item +
-            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
-        )
-        .join("");
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
-              finalCategory !== "" ? `where (${finalCategory})` : ""
-            };`,
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST where Category = '${selectedValues?.category}'`,
           },
         })
         .then((response) => {
@@ -220,26 +218,31 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     }
   }, [selectedValues.category]);
 
-  const deleteRecordsAPI = (attributeName) => {
+  const deleteRecordsAPI = () => {
+    setOpenModal(!openModal);
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `DELETE FROM DATAEXCHANGEDB.DATACATALOG.PROVIDER WHERE PROVIDER_NAME ='${user?.name}' AND ENTITY_NAME='${selectedKey}' AND ATTRIBUTE_NAME='${attributeName}';`,
+          query: `DELETE FROM DATAEXCHANGEDB.DATACATALOG.PROVIDER WHERE PROVIDER_NAME ='${user?.name}' AND ENTITY_NAME='${selectedKey}' AND ATTRIBUTE_NAME='${deleteAttribute}';`,
         },
       })
       .then((response) => {
         if (response) {
+          setDeleteAttribute("");
           setClickDeleteButton({ ...clickDeleteButton, id: "" });
           getDataFromEntity();
+          toast.success("Record Deleted Successfully");
         }
       })
       .catch((error) => {
+        setDeleteAttribute("");
         setClickDeleteButton({ ...clickDeleteButton, id: "" });
+        toast.error("We are facing issue while Deleting the Record.");
         console.log(error);
       });
   };
 
-  const updateRecordsAPI = (result, tag) => {
+  const updateRecordsAPI = (result, tag, newRow, updatedRow) => {
     setLoader(true);
     axios
       .get(`${baseURL}/${redirectionUser}`, {
@@ -250,9 +253,9 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       .then((response) => {
         if (response) {
           if (tag === "insert") {
-            callProcedureAddRecords();
+            callProcedureAddRecords(newRow, updatedRow);
           } else {
-            callProcedureUpdateRecords();
+            callProcedureUpdateRecords(newRow, updatedRow);
           }
         } else {
           setLoader(false);
@@ -264,7 +267,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       });
   };
 
-  const callProcedureAddRecords = () => {
+  const callProcedureAddRecords = (newRow, updatedRow) => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
@@ -272,17 +275,19 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
         },
       })
       .then((response) => {
+        setRows(rows?.map((row) => (row.id === newRow.id ? updatedRow : row)));
         toast.success("Record Added Successfully");
         setLoader(false);
         getDataFromEntity();
       })
       .catch((error) => {
         setLoader(false);
+        toast.error("There is an issue with Adding the record");
         console.log(error);
       });
   };
 
-  const callProcedureUpdateRecords = () => {
+  const callProcedureUpdateRecords = (newRow, updatedRow) => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
@@ -291,11 +296,14 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       })
       .then((response) => {
         toast.success("Record Updated Successfully");
+        setRows(rows?.map((row) => (row.id === newRow.id ? updatedRow : row)));
+
         setLoader(false);
         getDataFromEntity();
       })
       .catch((error) => {
         setLoader(false);
+        toast.error("There is an issue with Updating the record");
         console.log(error);
       });
   };
@@ -308,11 +316,13 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const handleEditClick = (id) => () => {
     const editableAttribute = rows.filter((row) => row.id === id);
-    setEditableAttribute(editableAttribute[0].ATTRIBUTE_NAME);
+    setEditableAttribute(editableAttribute[0]?.ATTRIBUTE_NAME);
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     setIsEdit(true);
-    setSelectedValues({ category: [], subCategory: [] });
-    setSubCategoryList([]);
+    setSelectedValues({
+      category: editableAttribute[0]?.CATEGORY,
+      subCategory: editableAttribute[0]?.SUB_CATEGORY,
+    });
   };
 
   const handleSaveClick = (id) => () => {
@@ -323,7 +333,8 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   const handleDeleteClick = (id) => () => {
     setClickDeleteButton({ ...clickDeleteButton, id: id });
     const attributeName = rows.filter((row) => row.id === id);
-    deleteRecordsAPI(attributeName[0].ATTRIBUTE_NAME);
+    setOpenModal(!openModal);
+    setDeleteAttribute(attributeName[0]?.ATTRIBUTE_NAME);
   };
 
   const handleCancelClick = (id) => () => {
@@ -339,26 +350,11 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   };
 
   const processRowUpdate = (newRow) => {
-    const filteredArray2 = subCategoryList
-      .filter((obj) => selectedValues.subCategory?.includes(obj.SUB_CATEGORY))
-      ?.map((filteredObj) => filteredObj.CATEGORY);
-
-    const categoriesNotSubCategory = selectedValues.category?.filter(
-      (obj1) => !filteredArray2?.includes(obj1)
-    );
-
-    if (categoriesNotSubCategory.length > 0) {
-      setAttributeErrorMsg(
-        `Please select Sub Category for Category - ${joinArray(
-          categoriesNotSubCategory
-        )}`
-      );
-      return;
-    }
-    newRow.CATEGORY = joinArray(selectedValues.category);
-    newRow.SUB_CATEGORY = joinArray(selectedValues.subCategory);
-
-    const updatedRow = { ...newRow };
+    const updatedRow = {
+      ...newRow,
+      CATEGORY: selectedValues.category,
+      SUB_CATEGORY: selectedValues.subCategory,
+    };
     const index = attributeList?.filter(
       (item) => item === updatedRow.ATTRIBUTE_NAME
     );
@@ -406,15 +402,13 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       delete updatedObj.Attributes;
       updatedObj.tag = "insert";
       let result = JSON.stringify(updatedObj);
-      updateRecordsAPI(result, "insert");
+      updateRecordsAPI(result, "insert", newRow, updatedRow);
     } else {
       updatedObj.tag = "update";
       let result = JSON.stringify(updatedObj);
-      updateRecordsAPI(result, "update");
+      updateRecordsAPI(result, "update", newRow, updatedRow);
     }
-
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
+    // return updatedRow;
   };
 
   const handleRowModesModelChange = (newRowModesModel) => {
@@ -432,7 +426,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
           setSelectedValues({
             ...selectedValues,
             category: event.target.value,
-            subCategory: [],
+            subCategory: "",
           });
         };
 
@@ -440,7 +434,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
           <Select
             labelId={`role-label-${params.id}`}
             id={`role-select-${params.id}`}
-            multiple
+            // multiple
             value={selectedValues.category}
             onChange={handleMultiSelectChange}
           >
@@ -468,7 +462,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
           <Select
             labelId={`role-label-${params.id}`}
             id={`role-select-${params.id}`}
-            multiple
+            // multiple
             value={selectedValues.subCategory}
             onChange={handleMultiSelectChange}
           >
@@ -633,6 +627,13 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
           </div>
         )}
       </div>
+      <CommonModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        handleClickYes={deleteRecordsAPI}
+        message={"Are you sure, you want to delete this Record?"}
+        buttons={true}
+      />
     </Box>
   );
 };
