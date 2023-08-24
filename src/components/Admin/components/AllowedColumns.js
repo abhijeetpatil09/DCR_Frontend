@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 
 import CommonModal from "../../CommonComponent/Modal";
-import Allowed_Columns_Image from "../../../Assets/admin_console_allowed_columns.svg";
+import Allowed_Columns_Image from "../../../Assets/AdminConsole/admin_console_allowed_columns.svg";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 

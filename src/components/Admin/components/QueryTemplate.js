@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 
 import CommonModal from "../../CommonComponent/Modal";
-import Query_Template_Image from "../../../Assets/admin_console_query_template.svg";
+import Query_Template_Image from "../../../Assets/AdminConsole/admin_console_query_template.svg";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 

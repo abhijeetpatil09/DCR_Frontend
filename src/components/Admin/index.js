@@ -18,10 +18,12 @@ import {
 } from "../../utils/data";
 import AllowedColumns from "./components/AllowedColumns";
 
-import Query_Template_Image from "../../Assets/admin_console_query_template.svg";
-import Allowed_Columns_Image from "../../Assets/admin_console_allowed_columns.svg";
-import Admin_Console_Logs_Image from "../../Assets/AdminConsoleLogs.svg";
-import Admin_Console_Integration_Image from "../../Assets/amin_console_integration.svg";
+import User_Profile_Image from "../../Assets/AdminConsole/admin_console_user_profile.svg";
+import Itemised_Bills_Image from "../../Assets/AdminConsole/admin_console_itemised_bills.svg";
+import Query_Template_Image from "../../Assets/AdminConsole/admin_console_query_template.svg";
+import Allowed_Columns_Image from "../../Assets/AdminConsole/admin_console_allowed_columns.svg";
+import Logs_Image from "../../Assets/AdminConsole/admin_console_logs.svg";
+import Integration_Image from "../../Assets/AdminConsole/admin_console_integration.svg";
 
 const AdminConsole = () => {
   const state = useSelector((state) => state);
@@ -150,8 +152,8 @@ const AdminConsole = () => {
               >
                 <div class="h-24">
                   <img
-                    src={Admin_Console_Integration_Image}
-                    alt=""
+                    src={Integration_Image}
+                    alt="Integration_Image"
                     class="mx-auto"
                   />
                 </div>
@@ -169,9 +171,9 @@ const AdminConsole = () => {
             >
               <div class="h-24">
                 <img
-                  src="https://tailwindcss-templates.netlify.com/fair-rate-mortgage/images/icon-home-2.svg
-"
-                  alt=""
+                  // src="https://tailwindcss-templates.netlify.com/fair-rate-mortgage/images/icon-home-2.svg"
+                  src={User_Profile_Image}
+                  alt="User_Profile_Image"
                   class="mx-auto"
                 />
               </div>
@@ -189,7 +191,11 @@ const AdminConsole = () => {
                 class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
               >
                 <div class="h-24">
-                  <img src={Query_Template_Image} alt="" class="mx-auto" />
+                  <img
+                    src={Query_Template_Image}
+                    alt="Query_Template_Image"
+                    class="mx-auto"
+                  />
                 </div>
                 <h4 class="text-md uppercase text-deep-navy font-bold mt-10">
                   CONFIGURE QUERY TEMPLATES
@@ -206,7 +212,11 @@ const AdminConsole = () => {
                 class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
               >
                 <div class="h-24">
-                  <img src={Allowed_Columns_Image} alt="" class="mx-auto" />
+                  <img
+                    src={Allowed_Columns_Image}
+                    alt="Allowed_Columns_Image"
+                    class="mx-auto"
+                  />
                 </div>
                 <h4 class="text-md uppercase text-deep-navy font-bold mt-10">
                   CONFIGURE ALLOWED COLUMNS
@@ -223,8 +233,9 @@ const AdminConsole = () => {
             >
               <div class="h-24">
                 <img
-                  src="https://tailwindcss-templates.netlify.com/fair-rate-mortgage/images/icon-home-3.svg"
-                  alt=""
+                  // src="https://tailwindcss-templates.netlify.com/fair-rate-mortgage/images/icon-home-3.svg"
+                  src={Itemised_Bills_Image}
+                  alt="Itemised_Bills_Image"
                   class="mx-auto"
                 />
               </div>
@@ -243,7 +254,7 @@ const AdminConsole = () => {
                 class="w-1/4 bg-white rounded-lg shadow-sm py-8 px-4 border border-gray-100  hover:border-electric-green hover:cursor-pointer hover:bg-electric-green/10"
               >
                 <div class="h-24">
-                  <img src={Admin_Console_Logs_Image} alt="" class="mx-auto" />
+                  <img src={Logs_Image} alt="Logs_Image" class="mx-auto" />
                 </div>
                 <h4 class="text-md uppercase text-deep-navy font-bold mt-10">
                   Logs

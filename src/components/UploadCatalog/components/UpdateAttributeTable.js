@@ -487,7 +487,6 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
           <Select
             labelId={`role-label-${params.id}`}
             id={`role-select-${params.id}`}
-            // multiple
             value={selectedValues.category}
             onChange={handleMultiSelectChange}
           >
@@ -515,7 +514,6 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
           <Select
             labelId={`role-label-${params.id}`}
             id={`role-select-${params.id}`}
-            // multiple
             value={selectedValues.subCategory}
             onChange={handleMultiSelectChange}
           >
