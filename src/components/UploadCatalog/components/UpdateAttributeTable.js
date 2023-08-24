@@ -33,13 +33,14 @@ function EditToolbar(props) {
     setRows,
     setSelectedValues,
     setIsEdit,
+    rowModesModel,
     setRowModesModel,
     attributeErrorMsg,
   } = props;
 
   const handleClick = () => {
     const id = uuidv4();
-    setSelectedValues({ category: [], subCategory: [] });
+    setSelectedValues({ category: "", subCategory: "" });
     setIsEdit(true);
     setRows((oldRows) => [
       {
@@ -53,10 +54,30 @@ function EditToolbar(props) {
       },
       ...oldRows,
     ]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "CATEGORY" },
-    }));
+
+    const updatedRowModesModel = Object.keys(rowModesModel).reduce(
+      (newRowModesModel, rowId) => {
+        newRowModesModel[rowId] = {
+          mode: GridRowModes.View,
+          ignoreModifications: true,
+        };
+        return newRowModesModel;
+      },
+      {}
+    );
+
+    // Set the editing mode of the clicked row to "Edit"
+    updatedRowModesModel[id] = {
+      mode: GridRowModes.Edit,
+      fieldToFocus: "CATEGORY",
+    };
+
+    setRowModesModel(updatedRowModesModel);
+
+    // setRowModesModel((oldModel) => ({
+    //   ...oldModel,
+    //   [id]: { mode: GridRowModes.Edit, fieldToFocus: "CATEGORY" },
+    // }));
   };
 
   return (
@@ -98,7 +119,10 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     category: "",
     subCategory: "",
   });
-  const [deleteAttribute, setDeleteAttribute] = useState("");
+  const [deleteAttribute, setDeleteAttribute] = useState({
+    attribute_name: "",
+    id: "",
+  });
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -191,7 +215,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   }, [isEdit]);
 
   useEffect(() => {
-    if (selectedValues.category?.length > 0) {
+    if (selectedValues.category !== "") {
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
@@ -220,22 +244,28 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
 
   const deleteRecordsAPI = () => {
     setOpenModal(!openModal);
+    setClickDeleteButton({ ...clickDeleteButton, id: deleteAttribute.id });
+
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `DELETE FROM DATAEXCHANGEDB.DATACATALOG.PROVIDER WHERE PROVIDER_NAME ='${user?.name}' AND ENTITY_NAME='${selectedKey}' AND ATTRIBUTE_NAME='${deleteAttribute}';`,
+          query: `DELETE FROM DATAEXCHANGEDB.DATACATALOG.PROVIDER WHERE PROVIDER_NAME ='${user?.name}' AND ENTITY_NAME='${selectedKey}' AND ATTRIBUTE_NAME='${deleteAttribute.attribute_name}';`,
         },
       })
       .then((response) => {
         if (response) {
-          setDeleteAttribute("");
+          setDeleteAttribute({
+            ...deleteAttribute,
+            attribute_name: "",
+            id: "",
+          });
           setClickDeleteButton({ ...clickDeleteButton, id: "" });
           getDataFromEntity();
           toast.success("Record Deleted Successfully");
         }
       })
       .catch((error) => {
-        setDeleteAttribute("");
+        setDeleteAttribute({ ...deleteAttribute, attribute_name: "", id: "" });
         setClickDeleteButton({ ...clickDeleteButton, id: "" });
         toast.error("We are facing issue while Deleting the Record.");
         console.log(error);
@@ -314,10 +344,30 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     }
   };
 
+  const removeOtherEditableCell = (id) => {
+    // Stop editing mode in all rows
+    const updatedRowModesModel = Object.keys(rowModesModel).reduce(
+      (newRowModesModel, rowId) => {
+        newRowModesModel[rowId] = {
+          mode: GridRowModes.View,
+          ignoreModifications: true,
+        };
+        return newRowModesModel;
+      },
+      {}
+    );
+
+    // Set the editing mode of the clicked row to "Edit"
+    updatedRowModesModel[id] = { mode: GridRowModes.Edit };
+
+    setRowModesModel(updatedRowModesModel);
+  };
+
   const handleEditClick = (id) => () => {
+    removeOtherEditableCell(id);
     const editableAttribute = rows.filter((row) => row.id === id);
     setEditableAttribute(editableAttribute[0]?.ATTRIBUTE_NAME);
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+
     setIsEdit(true);
     setSelectedValues({
       category: editableAttribute[0]?.CATEGORY,
@@ -331,10 +381,13 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   };
 
   const handleDeleteClick = (id) => () => {
-    setClickDeleteButton({ ...clickDeleteButton, id: id });
     const attributeName = rows.filter((row) => row.id === id);
     setOpenModal(!openModal);
-    setDeleteAttribute(attributeName[0]?.ATTRIBUTE_NAME);
+    setDeleteAttribute({
+      ...deleteAttribute,
+      attribute_name: attributeName[0]?.ATTRIBUTE_NAME,
+      id: id,
+    });
   };
 
   const handleCancelClick = (id) => () => {
@@ -606,6 +659,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
               setRows,
               setSelectedValues,
               setIsEdit,
+              rowModesModel,
               setRowModesModel,
               attributeErrorMsg,
             },
