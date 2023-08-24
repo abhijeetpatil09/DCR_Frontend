@@ -186,7 +186,17 @@ th, td {
 }
 
 .MuiDataGrid-columnHeaders {
-  background-color: #7ed8ff !important;
+  background-color: #09479f !important;
+  color: white !important;
+  justify-content: center !important;
+}
+
+.MuiDataGrid-columnHeaderTitleContainer {
+  justify-content: center !important;
+}
+
+.MuiDataGrid-cell--textLeft {
+  justify-content: center !important;
 }
 
 .MuiInputBase-root-MuiDataGrid-editInputCell input {
@@ -248,5 +258,5 @@ th, td {
   margin-right: 0px !important;
   margin-left: 0px !important;
   font-weight: 700 !important;
-  color: #0A2756 !important;
+  color: #0a2756 !important;
 }
