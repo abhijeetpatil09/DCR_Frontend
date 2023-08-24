@@ -87,7 +87,7 @@ const UploadCatalog = () => {
                   className={
                     expanded === key
                       ? "bg-downriver-950 text-white"
-                      : "bg-downriver-300"
+                      : "bg-electric-green"
                   }
                 >
                   <Typography sx={{ width: "33%", flexShrink: 0 }}>
