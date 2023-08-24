@@ -33,7 +33,6 @@ function EditToolbar(props) {
     setRows,
     setSelectedValues,
     setIsEdit,
-    rowModesModel,
     disabledButton,
     setDisabledButton,
     setRowModesModel,
@@ -57,30 +56,10 @@ function EditToolbar(props) {
       },
       ...oldRows,
     ]);
-
-    const updatedRowModesModel = Object.keys(rowModesModel).reduce(
-      (newRowModesModel, rowId) => {
-        newRowModesModel[rowId] = {
-          mode: GridRowModes.View,
-          ignoreModifications: true,
-        };
-        return newRowModesModel;
-      },
-      {}
-    );
-
-    // Set the editing mode of the clicked row to "Edit"
-    updatedRowModesModel[id] = {
-      mode: GridRowModes.Edit,
-      fieldToFocus: "CATEGORY",
-    };
-
-    setRowModesModel(updatedRowModesModel);
-
-    // setRowModesModel((oldModel) => ({
-    //   ...oldModel,
-    //   [id]: { mode: GridRowModes.Edit, fieldToFocus: "CATEGORY" },
-    // }));
+    setRowModesModel((oldModel) => ({
+      ...oldModel,
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "CATEGORY" },
+    }));
   };
 
   return (
@@ -93,7 +72,9 @@ function EditToolbar(props) {
         )}
       </div>
       <Button
-        className={`${disabledButton ? 'bg-gray-500' : 'bg-deep-navy'} text-white text-sm px-2 rounded-md`}
+        className={`${
+          disabledButton ? "bg-gray-500" : "bg-deep-navy"
+        } text-white text-sm px-2 rounded-md`}
         startIcon={<AddIcon />}
         onClick={handleClick}
         disabled={disabledButton}
@@ -334,12 +315,13 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
       .then((response) => {
         toast.success("Record Updated Successfully");
         setRows(rows?.map((row) => (row.id === newRow.id ? updatedRow : row)));
-
+        setDisabledButton(false);
         setLoader(false);
         getDataFromEntity();
       })
       .catch((error) => {
         setLoader(false);
+        setDisabledButton(false);
         toast.error("There is an issue with Updating the record");
         console.log(error);
       });
@@ -351,27 +333,8 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     }
   };
 
-  const removeOtherEditableCell = (id) => {
-    // Stop editing mode in all rows
-    const updatedRowModesModel = Object.keys(rowModesModel).reduce(
-      (newRowModesModel, rowId) => {
-        newRowModesModel[rowId] = {
-          mode: GridRowModes.View,
-          ignoreModifications: true,
-        };
-        return newRowModesModel;
-      },
-      {}
-    );
-
-    // Set the editing mode of the clicked row to "Edit"
-    updatedRowModesModel[id] = { mode: GridRowModes.Edit };
-
-    setRowModesModel(updatedRowModesModel);
-  };
-
   const handleEditClick = (id) => () => {
-    removeOtherEditableCell(id);
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     const editableAttribute = rows.filter((row) => row.id === id);
     setEditableAttribute(editableAttribute[0]?.ATTRIBUTE_NAME);
     setDisabledButton(true);
@@ -668,7 +631,6 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
               setIsEdit,
               disabledButton,
               setDisabledButton,
-              rowModesModel,
               setRowModesModel,
               attributeErrorMsg,
             },

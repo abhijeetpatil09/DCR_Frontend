@@ -68,21 +68,26 @@ const UploadCatalog = () => {
       </div>
 
       {!loader ? (
-        <div className="mt-4 rounded-md">
+        <div className="mt-4 rounded-none">
           {entityList?.map((key) => {
             return (
               <Accordion
                 expanded={expanded === key}
                 onChange={handleChange(key)}
+                className="my-4"
               >
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
+                  expandIcon={
+                    <ExpandMoreIcon
+                      className={expanded === key ? "text-white" : ""}
+                    />
+                  }
                   aria-controls="panel1bh-content"
                   id="panel1bh-header"
                   className={
                     expanded === key
-                      ? "bg-downriver-300 rounded-md"
-                      : "bg-slate-200 rounded-md"
+                      ? "bg-downriver-950 text-white"
+                      : "bg-downriver-300"
                   }
                 >
                   <Typography sx={{ width: "33%", flexShrink: 0 }}>
