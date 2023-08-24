@@ -34,6 +34,8 @@ function EditToolbar(props) {
     setSelectedValues,
     setIsEdit,
     rowModesModel,
+    disabledButton,
+    setDisabledButton,
     setRowModesModel,
     attributeErrorMsg,
   } = props;
@@ -42,6 +44,7 @@ function EditToolbar(props) {
     const id = uuidv4();
     setSelectedValues({ category: "", subCategory: "" });
     setIsEdit(true);
+    setDisabledButton(true);
     setRows((oldRows) => [
       {
         id,
@@ -90,9 +93,10 @@ function EditToolbar(props) {
         )}
       </div>
       <Button
-        className="text-white text-sm bg-deep-navy px-2 rounded-md"
+        className={`${disabledButton ? 'bg-gray-500' : 'bg-deep-navy'} text-white text-sm px-2 rounded-md`}
         startIcon={<AddIcon />}
         onClick={handleClick}
+        disabled={disabledButton}
       >
         Add record
       </Button>
@@ -114,6 +118,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
   const [attributeErrorMsg, setAttributeErrorMsg] = useState("");
   const [categoryList, setCategoryList] = useState([]);
   const [subCategoryList, setSubCategoryList] = useState([]);
+  const [disabledButton, setDisabledButton] = useState(false);
 
   const [selectedValues, setSelectedValues] = useState({
     category: "",
@@ -308,10 +313,12 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
         setRows(rows?.map((row) => (row.id === newRow.id ? updatedRow : row)));
         toast.success("Record Added Successfully");
         setLoader(false);
+        setDisabledButton(false);
         getDataFromEntity();
       })
       .catch((error) => {
         setLoader(false);
+        setDisabledButton(false);
         toast.error("There is an issue with Adding the record");
         console.log(error);
       });
@@ -367,7 +374,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     removeOtherEditableCell(id);
     const editableAttribute = rows.filter((row) => row.id === id);
     setEditableAttribute(editableAttribute[0]?.ATTRIBUTE_NAME);
-
+    setDisabledButton(true);
     setIsEdit(true);
     setSelectedValues({
       category: editableAttribute[0]?.CATEGORY,
@@ -400,6 +407,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     if (editedRow.isNew) {
       setRows(rows.filter((row) => row.id !== id));
     }
+    setDisabledButton(false);
   };
 
   const processRowUpdate = (newRow) => {
@@ -614,6 +622,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
               className="textPrimary"
               onClick={handleEditClick(id)}
               color="inherit"
+              disabled={disabledButton}
             />,
             <GridActionsCellItem
               icon={<DeleteIcon />}
@@ -657,6 +666,8 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
               setRows,
               setSelectedValues,
               setIsEdit,
+              disabledButton,
+              setDisabledButton,
               rowModesModel,
               setRowModesModel,
               attributeErrorMsg,
