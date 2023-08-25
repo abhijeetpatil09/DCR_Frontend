@@ -96,7 +96,7 @@ const UploadCatalog = () => {
                 </AccordionSummary>
                 {expanded === key && (
                   <AccordionDetails>
-                    <UpdateAttributeTable selectedKey={expanded} user={user} />
+                    <UpdateAttributeTable selectedKey={expanded} user={user} setNewCatUploaded={setNewCatUploaded} />
                   </AccordionDetails>
                 )}
               </Accordion>

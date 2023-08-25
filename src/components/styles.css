@@ -197,6 +197,7 @@ th, td {
 
 .MuiDataGrid-cell--textLeft {
   justify-content: center !important;
+  text-align: center !important;
 }
 
 .MuiInputBase-root-MuiDataGrid-editInputCell input {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -36,6 +36,9 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [fileError, setFileError] = useState("");
 
+  const [categoryList, setCategoryList] = useState([]);
+  const [subCategoryList, setSubCategoryList] = useState([]);
+
   const [loader, setLoader] = useState(false);
 
   const downloadNewFile = () => {
@@ -47,6 +50,37 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
     document.body.removeChild(link);
     toast.success(`Template List.csv has been downloaded...`);
   };
+
+  //useEffect for fetching Category and Sub category...
+  useEffect(() => {
+    axios
+      .get(`${baseURL}/${redirectionUser}`, {
+        params: {
+          query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST`,
+        },
+      })
+      .then((response) => {
+        if (response?.data?.data) {
+          let data = response?.data?.data;
+          if (data?.length > 0) {
+            const cat_list = [];
+            const sub_cat_list = [];
+            response?.data?.data?.forEach((obj) => {
+              cat_list.push(obj.CATEGORY);
+              sub_cat_list.push(obj.SUB_CATEGORY);
+            });
+            setCategoryList([...new Set(cat_list)]);
+            setSubCategoryList([...new Set(sub_cat_list)]);
+          } else {
+            setCategoryList([]);
+            setSubCategoryList([]);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleValidFileValidations = (rows) => {
     if (rows?.length > CSVFileColumns?.length) {
@@ -65,27 +99,6 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
   };
 
   const uploadFile = (event) => {
-    // Passing file data (event.target.files[0]) to parse using Papa.parse
-    // CSVParse.parse(event.target.files[0], {
-    //   header: true,
-    //   skipEmptyLines: true,
-    //   complete: function (results) {
-    //     console.log("results prev", results?.data);
-    //     setParsedData(results?.data);
-
-    //     const rows = [];
-    //     // Iterating data to get column name and their values
-    //     results?.data?.map((d) => {
-    //       return rows.push(Object.keys(d));
-    //       // values.push(Object.values(d));
-    //     });
-
-    //     // Parsed Data Response in array format
-    //     setFileUploaded(true);
-    //     handleValidFileValidations(rows);
-    //   },
-    // });
-
     var fileInput = document.getElementById("myFileInput");
     var file = fileInput?.files[0];
     if (file) {
@@ -95,6 +108,7 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
         Papa.parse(file, {
           complete: function (results) {
             const jsonData = results?.data;
+
             // Assuming the first row contains the column names
             const headers = jsonData[0];
 
@@ -105,9 +119,46 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
                 return obj;
               }, {})
             );
-            setParsedData(parsedData);
-            setFileUploaded(true);
+
             handleValidFileValidations(headers);
+            setFileUploaded(true);
+            let fileErrorPresent = false;
+            if (parsedData?.length > 0) {
+              parsedData?.forEach((obj) => {
+                // Code for checking Categories and Sub Catagories...
+                if (!categoryList?.includes(obj?.Category)) {
+                  setFileError(
+                    "The Category you have entered which is not present. Please download the template file."
+                  );
+                  fileErrorPresent = true;
+                } else if (!subCategoryList?.includes(obj["Sub Category"])) {
+                  setFileError(
+                    "The Sub Category you have entered which is not present. Please download the template file."
+                  );
+                  fileErrorPresent = true;
+                }
+                // code for checking the extra or less values in columns rows...
+                if (Object.keys(obj).length < CSVFileColumns?.length) {
+                  setFileError(
+                    "The file which you have uploaded doesn't have the values in some Columns"
+                  );
+                  fileErrorPresent = true;
+                } else if (Object.keys(obj).length > CSVFileColumns?.length) {
+                  setFileError(
+                    "You have added more column values than the specified one"
+                  );
+                  fileErrorPresent = true;
+                }
+              });
+
+              if (!fileErrorPresent) {
+                setParsedData(parsedData);
+              }
+            } else {
+              setFileError(
+                "The file which you have uploaded doesn't have the data"
+              );
+            }
           },
         });
       } else if (fileExtension === "xlsx") {
@@ -123,7 +174,6 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
 
           // Assuming the first row contains the column names
           const headers = jsonData[0];
-
           // Transform jsonData into an array of objects with key-value pairs
           const parsedData = jsonData?.slice(1).map((row) =>
             row.reduce((obj, value, columnIndex) => {
@@ -131,9 +181,46 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
               return obj;
             }, {})
           );
-          setParsedData(parsedData);
-          setFileUploaded(true);
+
           handleValidFileValidations(headers);
+          setFileUploaded(true);
+          let fileErrorPresent = false;
+          if (parsedData?.length > 0) {
+            parsedData?.forEach((obj) => {
+              // Code for checking Categories and Sub Catagories...
+              if (!categoryList?.includes(obj?.Category)) {
+                setFileError(
+                  "The Category you have entered which is not present. Please download the template file."
+                );
+                fileErrorPresent = true;
+              } else if (!subCategoryList?.includes(obj["Sub Category"])) {
+                setFileError(
+                  "The Sub Category you have entered which is not present. Please download the template file."
+                );
+                fileErrorPresent = true;
+              }
+              // code for checking the extra or less values in columns rows...
+              if (Object.keys(obj).length < CSVFileColumns?.length) {
+                setFileError(
+                  "The file which you have uploaded doesn't have the values in some Columns"
+                );
+                fileErrorPresent = true;
+              } else if (Object.keys(obj).length > CSVFileColumns?.length) {
+                setFileError(
+                  "You have added more column values than the specified one"
+                );
+                fileErrorPresent = true;
+              }
+            });
+
+            if (!fileErrorPresent) {
+              setParsedData(parsedData);
+            }
+          } else {
+            setFileError(
+              "The file which you have uploaded doesn't have the data"
+            );
+          }
         };
         reader.readAsArrayBuffer(file);
       } else {
@@ -211,7 +298,7 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `call INSERTCATALOG();`,
+          query: `call DATAEXCHANGEDB.DATACATALOG.INSERTCATALOG();`,
         },
       })
       .then((response) => {

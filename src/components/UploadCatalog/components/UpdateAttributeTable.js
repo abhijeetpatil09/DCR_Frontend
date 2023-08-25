@@ -37,7 +37,15 @@ function EditToolbar(props) {
     setDisabledButton,
     setRowModesModel,
     attributeErrorMsg,
+    selectedKey,
+    setNewCatUploaded,
   } = props;
+
+  const [openDeleteCatalogModal, setOpenDeleteCatalogModal] = useState(false);
+
+  const handleCloseModal = () => {
+    setOpenDeleteCatalogModal(!openDeleteCatalogModal);
+  };
 
   const handleClick = () => {
     const id = uuidv4();
@@ -62,6 +70,27 @@ function EditToolbar(props) {
     }));
   };
 
+  const handleDelete = () => {
+    setNewCatUploaded(false);
+    axios
+      .get(`${baseURL}/${redirectionUser}`, {
+        params: {
+          query: `DELETE FROM DATAEXCHANGEDB.DATACATALOG.PROVIDER
+            WHERE entity_name = '${selectedKey}';`,
+        },
+      })
+      .then((response) => {
+        setNewCatUploaded(true);
+        toast.success(`Catalog - ${selectedKey} Deleted Successfully`);
+      })
+      .catch((error) => {
+        toast.error(
+          `We are facing issue while deleting the Catalog - ${selectedKey}`
+        );
+        console.log(error);
+      });
+  };
+
   return (
     <GridToolbarContainer className="m-2 justify-between">
       <div>
@@ -71,21 +100,37 @@ function EditToolbar(props) {
           </div>
         )}
       </div>
-      <Button
-        className={`${
-          disabledButton ? "bg-gray-500" : "bg-deep-navy"
-        } text-white text-sm px-2 rounded-md`}
-        startIcon={<AddIcon />}
-        onClick={handleClick}
-        disabled={disabledButton}
-      >
-        Add record
-      </Button>
+      <div className="flex">
+        <Button
+          className="text-white text-sm bg-deep-navy rounded-md"
+          startIcon={<DeleteIcon />}
+          onClick={() => setOpenDeleteCatalogModal(!openDeleteCatalogModal)}
+        >
+          Delete Catalog
+        </Button>
+        <Button
+          className={`${
+            disabledButton ? "bg-gray-500" : "bg-deep-navy"
+          } text-white text-sm px-2 rounded-md ml-4`}
+          startIcon={<AddIcon />}
+          onClick={handleClick}
+          disabled={disabledButton}
+        >
+          Add record
+        </Button>
+      </div>
+      <CommonModal
+        open={openDeleteCatalogModal}
+        handleClose={handleCloseModal}
+        handleClickYes={handleDelete}
+        message={`Are you sure, you want to delete this Catalog - ${selectedKey}?`}
+        buttons={true}
+      />
     </GridToolbarContainer>
   );
 }
 
-const UpdateAttributeTable = ({ selectedKey, user }) => {
+const UpdateAttributeTable = ({ selectedKey, user, setNewCatUploaded }) => {
   const [rows, setRows] = useState([]);
   const [attributeList, setAttributeList] = useState([]);
 
@@ -287,7 +332,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `call ADDATTRIBUTE();`,
+          query: `call DATAEXCHANGEDB.DATACATALOG.ADDATTRIBUTE();`,
         },
       })
       .then((response) => {
@@ -309,7 +354,7 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `call UPDATECATALOG();`,
+          query: `call DATAEXCHANGEDB.DATACATALOG.UPDATECATALOG();`,
         },
       })
       .then((response) => {
@@ -633,6 +678,8 @@ const UpdateAttributeTable = ({ selectedKey, user }) => {
               setDisabledButton,
               setRowModesModel,
               attributeErrorMsg,
+              selectedKey,
+              setNewCatUploaded,
             },
           }}
           disableColumnMenu={true} // Disable column menu (including sorting options)
