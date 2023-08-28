@@ -36,7 +36,7 @@ const SearchCatalog = () => {
     provider: [],
   });
   const [loader, setLoader] = useState(false);
-  const [integrating, setIntegrating] = useState(false);
+  // const [integrating, setIntegrating] = useState(false);
   const [integratingRows, setIntegratingRows] = useState([]);
   const [integratedProviders, setIntegratedProviders] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
@@ -94,27 +94,41 @@ const SearchCatalog = () => {
   };
 
   useEffect(() => {
-    handleAlreadyIntegrated();
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER order by entity_name`,
+          query: `SELECT DISTINCT PROVIDER_NAME FROM DATAEXCHANGEDB.DATACATALOG.CONSUMER_INTEGRATIONS WHERE CONSUMER_NAME= '${user?.name}'`,
         },
       })
       .then((response) => {
         if (response?.data?.data) {
-          let data = response?.data?.data;
-          setData(data);
-          setLoadingTable(false);
-        } else {
-          setLoadingTable(false);
+          setIntegratedProviders(response?.data?.data[0]?.PROVIDER_NAME);
+
+          axios
+            .get(`${baseURL}/${redirectionUser}`, {
+              params: {
+                query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER order by entity_name`,
+              },
+            })
+            .then((response) => {
+              if (response?.data?.data) {
+                let data = response?.data?.data;
+                setData(data);
+                setLoadingTable(false);
+              } else {
+                setLoadingTable(false);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              setLoadingTable(false);
+            });
         }
       })
       .catch((error) => {
-        console.log(error);
-        setLoadingTable(false);
+        console.log("In API catch", error);
       });
-  }, []);
+  }, [user?.name]);
 
   //useEffect for finding the Consumers Source Table...
   useEffect(() => {
@@ -186,16 +200,17 @@ const SearchCatalog = () => {
         ?.map((item, index) =>
           item !== "all"
             ? "Category = '" +
-            item +
-            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+              item +
+              (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
             : ""
         )
         .join("");
       axios
         .get(`${baseURL}/${redirectionUser}`, {
           params: {
-            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${finalCategory !== "" ? `where (${finalCategory})` : ""
-              };`,
+            query: `select * from DATAEXCHANGEDB.DATACATALOG.SUB_CATEGORY_LIST ${
+              finalCategory !== "" ? `where (${finalCategory})` : ""
+            };`,
           },
         })
         .then((response) => {
@@ -260,8 +275,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Category = '" +
-          item +
-          (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.category?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -270,8 +285,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Sub_Category = '" +
-          item +
-          (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.subCategory?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -280,8 +295,8 @@ const SearchCatalog = () => {
       ?.map((item, index) =>
         item !== "all"
           ? "Provider_Name = '" +
-          item +
-          (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
+            item +
+            (index !== selectedValues?.provider?.length - 1 ? "' or " : "'")
           : ""
       )
       .join("");
@@ -293,16 +308,17 @@ const SearchCatalog = () => {
         : "") +
       (finalProvider !== ""
         ? (finalCategory !== "" || finalSubCategory !== "" ? " and " : "") +
-        "(" +
-        finalProvider +
-        ")"
+          "(" +
+          finalProvider +
+          ")"
         : "");
 
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
-          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${finalResult !== "" ? `where ${finalResult}` : ""
-            } order by entity_name;`,
+          query: `select distinct * from DATAEXCHANGEDB.DATACATALOG.PROVIDER ${
+            finalResult !== "" ? `where ${finalResult}` : ""
+          } order by entity_name;`,
         },
       })
       .then((response) => {
@@ -367,26 +383,12 @@ const SearchCatalog = () => {
     setViewTable({ ...viewTable, head: head, rows: row });
   };
 
-  const handleAlreadyIntegrated = () => {
-    axios
-      .get(`${baseURL}/${redirectionUser}`, {
-        params: {
-          query: `SELECT DISTINCT PROVIDER_NAME FROM DATAEXCHANGEDB.DATACATALOG.CONSUMER_INTEGRATIONS WHERE CONSUMER_NAME= '${user?.name}'`,
-        },
-      })
-      .then((response) => {
-        if (response?.data?.data) {
-          setIntegratedProviders(response?.data?.data[0].PROVIDER_NAME);
-        }
-      })
-      .catch((error) => {
-        console.log("In API catch", error);
-      });
-  }
-
   const handleIntegration = (provider_name, entity_name) => {
-    setIntegratingRows(prevRows => [...prevRows, `${provider_name}-${entity_name}`]);
-    setIntegrating(true);
+    setIntegratingRows((prevRows) => [
+      ...prevRows,
+      `${provider_name}-${entity_name}`,
+    ]);
+    // setIntegrating(true);
     axios
       .get(`${baseURL}/${redirectionUser}`, {
         params: {
@@ -419,24 +421,24 @@ const SearchCatalog = () => {
                   .then((response) => {
                     if (response?.data?.data) {
                       console.log("response?.data?.data", response?.data?.data);
-                      setIntegrating(false);
+                      // setIntegrating(false);
                     }
                   })
                   .catch((error) => {
                     console.log(error);
-                    setIntegrating(false);
+                    // setIntegrating(false);
                   });
               }
             })
             .catch((error) => {
               console.log(error);
-              setIntegrating(false);
+              // setIntegrating(false);
             });
         }
       })
       .catch((error) => {
         console.log(error);
-        setIntegrating(false);
+        // setIntegrating(false);
       });
   };
 
@@ -724,8 +726,12 @@ const SearchCatalog = () => {
                   {sortedData
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
-                      const isIntegrating = integratingRows.includes(`${row.PROVIDER_NAME}-${row.ENTITY_NAME}`);
-                      const isIntegrated = integratedProviders.includes(`${row.PROVIDER_NAME}`);
+                      const isIntegrating = integratingRows?.includes(
+                        `${row.PROVIDER_NAME}-${row.ENTITY_NAME}`
+                      );
+                      const isIntegrated = integratedProviders?.includes(
+                        `${row.PROVIDER_NAME}`
+                      );
                       return (
                         <TableRow
                           key={index}
@@ -793,44 +799,42 @@ const SearchCatalog = () => {
                                 <span className="pl-1 underline">View</span>
                               </button>
                               {isIntegrating ? (
-                                <div className="flex justify-center">
+                                <div className="flex justify-center px-8">
                                   <CircularProgress
                                     style={{
-                                      width: "16px",
-                                      height: "16px",
+                                      width: "20px",
+                                      height: "20px",
                                       color: "amaranth-600",
                                     }}
                                     title="Wait integrating is going on"
                                   />
                                 </div>
-                              ) 
-                              : isIntegrated ? (
-                                <span className="pl-1 underline" style={{ opacity: 0.5 }}>
-                                  Integrated
-                                </span>
-                              ) 
-                              :
-                                (
-                                  <button
-                                    onClick={() =>
-                                      handleIntegration(
-                                        row.PROVIDER_NAME,
-                                        row.ENTITY_NAME
-                                      )
-                                    }
-                                    className="flex flex-row items-center px-6 justify-center"
-                                    title="Integration"
-                                  >
-                                    <img
-                                      className="w-6 h-6"
-                                      src={IntegrationImage}
-                                      alt="IntegrationIcon"
-                                    />
-                                    <span className="pl-1 underline">
-                                      Integrate
-                                    </span>
-                                  </button>
-                                )}
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    handleIntegration(
+                                      row.PROVIDER_NAME,
+                                      row.ENTITY_NAME
+                                    )
+                                  }
+                                  disabled={isIntegrated}
+                                  className={`${
+                                    isIntegrated && "opacity-50"
+                                  } flex flex-row items-center px-6 justify-center`}
+                                  title={
+                                    isIntegrated ? "Integrated" : "Integrate"
+                                  }
+                                >
+                                  <img
+                                    className="w-6 h-6"
+                                    src={IntegrationImage}
+                                    alt="IntegrationIcon"
+                                  />
+                                  <span className="pl-1 underline">
+                                    {isIntegrated ? "Integrated" : "Integrate"}
+                                  </span>
+                                </button>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
