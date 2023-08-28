@@ -5,16 +5,16 @@ import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import Papa from "papaparse";
 import { read, utils } from "xlsx";
-import DummyCatalog from "../../../Assets/CSVTemplates/Dummy_Catalog.csv";
+import TemplateCatalogFile from "../../../Assets/CSVTemplates/Template-Catalog-File.xlsx";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 const redirectionUser = process.env.REACT_APP_REDIRECTION_URL;
 
 const CSVFileColumns = [
   "Entity",
-  "Attributes",
   "Category",
   "Sub Category",
+  "Attributes",
   "Description",
   "Tech Name",
 ];
@@ -43,12 +43,12 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
 
   const downloadNewFile = () => {
     const link = document.createElement("a");
-    link.href = DummyCatalog;
-    link.download = "Dummy Catalog.csv";
+    link.href = TemplateCatalogFile;
+    link.download = "Template-Catalog-File.xlsx";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success(`Template List.csv has been downloaded...`);
+    toast.success(`Template Catalog File has been downloaded...`);
   };
 
   //useEffect for fetching Category and Sub category...

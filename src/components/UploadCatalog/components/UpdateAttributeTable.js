@@ -581,10 +581,11 @@ const UpdateAttributeTable = ({ selectedKey, user, setNewCatUploaded }) => {
                     style={{ width: "20px", height: "20px", color: "#09479f" }}
                   />
                 }
-                label="Edit"
+                label="Loading"
                 className="textPrimary"
-                onClick={handleEditClick(id)}
+                // onClick={handleEditClick(id)}
                 color="inherit"
+                title="Loading"
               />,
             ];
           } else {
@@ -595,6 +596,7 @@ const UpdateAttributeTable = ({ selectedKey, user, setNewCatUploaded }) => {
                 sx={{
                   color: "primary.main",
                 }}
+                title="Save"
                 onClick={handleSaveClick(id)}
               />,
               <GridActionsCellItem
@@ -603,6 +605,7 @@ const UpdateAttributeTable = ({ selectedKey, user, setNewCatUploaded }) => {
                 className="textPrimary"
                 onClick={handleCancelClick(id)}
                 color="inherit"
+                title="Cancel"
               />,
             ];
           }
@@ -616,10 +619,11 @@ const UpdateAttributeTable = ({ selectedKey, user, setNewCatUploaded }) => {
                   style={{ width: "20px", height: "20px", color: "#09479f" }}
                 />
               }
-              label="Edit"
+              label="Loading"
               className="textPrimary"
-              onClick={handleEditClick(id)}
+              // onClick={handleEditClick(id)}
               color="inherit"
+              title="Loading"
             />,
           ];
         } else {
@@ -631,12 +635,14 @@ const UpdateAttributeTable = ({ selectedKey, user, setNewCatUploaded }) => {
               onClick={handleEditClick(id)}
               color="inherit"
               disabled={disabledButton}
+              title="Edit"
             />,
             <GridActionsCellItem
               icon={<DeleteIcon />}
               label="Delete"
               onClick={handleDeleteClick(id)}
               color="inherit"
+              title="Delete"
             />,
           ];
         }
