@@ -1056,7 +1056,7 @@ const MatchRate = () => {
                                 setRequestFailedReason({
                                   ...requestFailedReason,
                                   openModal: true,
-                                  message: row.ERROR,
+                                  message: row.ERROR_FOR_WEBUI,
                                 })
                               }
                               className="flex flex-row px-2 text-red-600"

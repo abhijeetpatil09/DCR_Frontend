@@ -1,17 +1,9 @@
-.App {
-  /* text-align: center;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  color: #3a3cbb; */
-  /* background-image: url('../Assets/DCR-background.png'); */
-}
 
 .header,
 .footer {
   display: flex;
-  background: #9ea2e4;
-  height: 50px;
+  background: #4149e6;
+  height: 250px;
   align-items: center;
   justify-content: center;
   color: #4749a7;
@@ -64,26 +56,6 @@
   justify-content: left;
   color: #fc86aa;
   margin-right: 30px;
-}
-
-.home {
-  /* background-color: azure; */
-  /* background-image: url('../Assets/DCR-background.png');
-  background-size: 100%;
-  justify-content: center;
-  text-align: left;
-  margin-left: 10px;
-  min-height: 100%; */
-}
-
-.homecenter {
-  /* background-color: azure; */
-  /* background-image: url('../Assets/DCR-background.png');
-  background-size: 100%;
-  justify-content: center; */
-  /* text-align: center; */
-  /* align-items: center;
-  min-height: 100%; */
 }
 
 .center {

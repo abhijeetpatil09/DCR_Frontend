@@ -108,12 +108,12 @@ const NewCatalogUploadModal = ({ open, close, user, setNewCatUploaded }) => {
         Papa.parse(file, {
           complete: function (results) {
             const jsonData = results?.data;
-
             // Assuming the first row contains the column names
             const headers = jsonData[0];
 
             // Transform jsonData into an array of objects with key-value pairs
             const parsedData = jsonData?.slice(1).map((row) =>
+
               row.reduce((obj, value, columnIndex) => {
                 obj[headers[columnIndex]] = value;
                 return obj;

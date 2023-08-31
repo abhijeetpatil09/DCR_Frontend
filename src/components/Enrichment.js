@@ -818,7 +818,7 @@ const Enrichment = () => {
                                 setRequestFailedReason({
                                   ...requestFailedReason,
                                   openModal: true,
-                                  message: row.ERROR,
+                                  message: row.ERROR_FOR_WEBUI,
                                 })
                               }
                               className="flex flex-row items-center px-2 justify-center text-red-600"
