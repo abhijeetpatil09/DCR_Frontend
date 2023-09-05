@@ -265,11 +265,6 @@ const LandingPage = () => {
                 <div className="col-12">
                   <h2 className="font-bold">Features</h2>
                   <hr />
-                  {/* <p>
-                    Aenean sollicitudin, lorem quis bibendum auctor, nisi elit
-                    consequat ipsum, nec sagittis sem nibh id elit. Duis sed
-                    odio sit amet nibh vulputate
-                  </p> */}
                 </div>
               </div>
               <div className="row features-cols ">
@@ -323,7 +318,7 @@ const LandingPage = () => {
                           <h3 className="font-bold text-lg">
                             Marketplace creation
                           </h3>
-                          <p className="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-10 lg:text-lg">
+                          <p>
                             Establish a thriving data marketplace ecosystem,
                             where data providers and consumers unite under the
                             vigilant protection of DataXchange.
@@ -378,7 +373,7 @@ const LandingPage = () => {
                           <h3 className="font-bold text-lg">
                             Scalable and Flexible
                           </h3>
-                          <p className="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-10 lg:text-lg">
+                          <p>
                             DataXchange is your versatile solution. Regardless
                             of your dataset's size, it is designed to scale
                             effortlessly to meet your needs. Its seamless
@@ -454,7 +449,10 @@ const LandingPage = () => {
       </div> */}
 
       {/* Use Cases */}
-      <div id="use-cases" className="main-container use-cases text-deep-navy py-20">
+      <div
+        id="use-cases"
+        className="main-container use-cases text-deep-navy py-20"
+      >
         <div className="inside-container ">
           <div className="row screen-detail">
             <div className="col-12">
@@ -475,7 +473,7 @@ const LandingPage = () => {
                     <h2 className="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
                       Match Rate
                     </h2>
-                    <p className="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+                    <p className="pt-4 pb-8 m-0  sm:pr-12 xl:pr-32 lg:text-lg">
                       DataHaven provides a secure environment for collaboration,
                       enabling multiple stakeholders to collaborate on sensitive
                       data projects without the risk of unauthorized access or
@@ -494,7 +492,7 @@ const LandingPage = () => {
                     <h2 className="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
                       Enrichment
                     </h2>
-                    <p className="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+                    <p className="pt-4 pb-8 m-0  sm:pr-12 xl:pr-32 lg:text-lg">
                       DataHaven provides a secure environment for collaboration,
                       enabling multiple stakeholders to collaborate on sensitive
                       data projects without the risk of unauthorized access or
@@ -517,7 +515,7 @@ const LandingPage = () => {
                     <h2 className="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
                       Search Catalogue
                     </h2>
-                    <p className="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+                    <p className="pt-4 pb-8 m-0  sm:pr-12 xl:pr-32 lg:text-lg">
                       DataHaven provides a secure environment for collaboration,
                       enabling multiple stakeholders to collaborate on sensitive
                       data projects without the risk of unauthorized access or
@@ -556,7 +554,7 @@ const LandingPage = () => {
                     <h2 className="m-0 text-xl font-semibold leading-tight border-0 border-gray-300 lg:text-3xl md:text-2xl">
                       Upload Catalogue
                     </h2>
-                    <p className="pt-4 pb-8 m-0 leading-7 text-gray-700 border-0 border-gray-300 sm:pr-12 xl:pr-32 lg:text-lg">
+                    <p className="pt-4 pb-8 m-0  sm:pr-12 xl:pr-32 lg:text-lg">
                       DataHaven provides a secure environment for collaboration,
                       enabling multiple stakeholders to collaborate on sensitive
                       data projects without the risk of unauthorized access or
@@ -626,7 +624,7 @@ const LandingPage = () => {
               <hr />
             </div>
           </div>
-          <div className="row team-members">
+          <div className="row team-members text-deep-navy">
             <div className="col-lg-2">
               <div className="team-hover">
                 <img
@@ -635,8 +633,8 @@ const LandingPage = () => {
                   alt=""
                 />
               </div>
-              <h3>Provider</h3>
-              <p className="team-role">Provider</p>
+              <h3 className="text-deep-navy">Provider</h3>
+              <p className="team-role text-deep-navy">Provider</p>
             </div>
             <div className="col-lg-2">
               <div className="team-hover">
@@ -646,8 +644,8 @@ const LandingPage = () => {
                   alt=""
                 />
               </div>
-              <h3>Provider2</h3>
-              <p className="team-role">Provider</p>
+              <h3 className="text-deep-navy">Provider</h3>
+              <p className="team-role text-deep-navy">Provider</p>
             </div>
             <div className="col-lg-2">
               <div className="team-hover">
@@ -657,8 +655,8 @@ const LandingPage = () => {
                   alt=""
                 />
               </div>
-              <h3>Provider</h3>
-              <p className="team-role">Provider</p>
+              <h3 className="text-deep-navy">Provider</h3>
+              <p className="team-role text-deep-navy">Provider</p>
             </div>
             <div className="col-lg-2">
               <div className="team-hover">
@@ -668,8 +666,8 @@ const LandingPage = () => {
                   alt=""
                 />
               </div>
-              <h3>Provider2</h3>
-              <p className="team-role">Provider</p>
+              <h3 className="text-deep-navy">Provider</h3>
+              <p className="team-role text-deep-navy">Provider</p>
             </div>
             <div className="col-lg-2">
               <div className="team-hover">
@@ -679,8 +677,8 @@ const LandingPage = () => {
                   alt=""
                 />
               </div>
-              <h3>Provider</h3>
-              <p className="team-role">Provider</p>
+              <h3 className="text-deep-navy">Provider</h3>
+              <p className="team-role text-deep-navy">Provider</p>
             </div>
             <div className="col-lg-2">
               <div className="team-hover">
@@ -690,8 +688,8 @@ const LandingPage = () => {
                   alt=""
                 />
               </div>
-              <h3>Provider2</h3>
-              <p className="team-role">Provider</p>
+              <h3 className="text-deep-navy">Provider</h3>
+              <p className="team-role text-deep-navy">Provider</p>
             </div>
           </div>
         </div>

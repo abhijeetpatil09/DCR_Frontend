@@ -23,6 +23,7 @@ html {
 
 body {
   margin: 0;
+  font-family: Poppins;
 }
 
 /**
@@ -986,13 +987,14 @@ button {
 .team-members h3 {
   margin-top: 25px;
   font-family: Poppins;
-  font-size: 25px;
+  font-size: 22px;
   line-height: 26px;
+  font-weight: 600;
   color: #262626;
 }
 .team-members .team-role {
   font-family: Poppins;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 26px;
   color: #666666;
 }
